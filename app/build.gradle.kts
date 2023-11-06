@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.unex.asee.ga02.beergo"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.unex.asee.ga02.beergo"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
