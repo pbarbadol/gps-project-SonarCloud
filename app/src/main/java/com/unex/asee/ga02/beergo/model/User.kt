@@ -1,5 +1,4 @@
 package com.unex.asee.ga02.beergo.model
-
 import java.io.Serializable
 
 data class User(

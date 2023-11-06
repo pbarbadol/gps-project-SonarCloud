@@ -1,38 +1,35 @@
 package com.unex.asee.ga02.beergo.utils
 
-class CredentialCheck private constructor() {
-
+class CredentialCheck {
     var fail: Boolean = false
     var msg: String = ""
     var error: CredentialError = CredentialError.PasswordError
 
     companion object{
-
         private val TAG = CredentialCheck::class.java.canonicalName
         private val MINCHARS = 4
 
         private val checks = arrayOf(
-            CredentialCheck().apply {
+            CredentialCheck().apply{
                 fail = false
                 msg = "Your credentials are OK"
                 error = CredentialError.Success
             },
-            CredentialCheck().apply {
+            CredentialCheck().apply{
                 fail = true
                 msg = "Invalid username"
                 error = CredentialError.UsernameError
             },
-            CredentialCheck().apply {
+            CredentialCheck().apply{
                 fail = true
                 msg = "Invalid password"
                 error = CredentialError.PasswordError
             },
-            CredentialCheck().apply {
+            CredentialCheck().apply{
                 fail = true
                 msg = "Passwords do not match"
                 error = CredentialError.PasswordError
             }
-
         )
 
         fun login(username: String, password: String): CredentialCheck {
