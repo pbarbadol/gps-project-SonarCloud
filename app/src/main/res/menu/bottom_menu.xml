@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/iniciarSesion"
+        android:enabled="true"
+        android:icon="@drawable/baseline_search_24"
+        android:title="Iniciar Sesion"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/listFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_home_24"
+        android:title="Home"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/settingFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="Ajustes"
+        app:showAsAction="ifRoom" />
+</menu>
