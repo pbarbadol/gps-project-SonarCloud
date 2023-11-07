@@ -2,21 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/iniciarSesion"
-        android:enabled="true"
-        android:icon="@drawable/baseline_search_24"
-        android:title="Iniciar Sesion"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/listFragment"
+        android:id="@+id/HomeFragment"
         android:enabled="true"
         android:icon="@drawable/baseline_home_24"
         android:title="Home"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/settingFragment"
+        android:id="@+id/LoginFragment"
         android:enabled="true"
-        android:icon="@drawable/baseline_settings_24"
-        android:title="Ajustes"
+        android:icon="@drawable/baseline_search_24"
+        android:title="Login"
         app:showAsAction="ifRoom" />
+
 </menu>
