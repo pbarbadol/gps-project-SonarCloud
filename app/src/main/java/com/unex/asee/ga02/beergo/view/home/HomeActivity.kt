@@ -60,7 +60,12 @@ import com.unex.asee.ga02.beergo.model.User
     }
 
     override fun onShowClick(beer: Beer) {
-        navController.navigate(R.id.action_listFragment_to_showBeerFragment)
+
+        navController.navigate(
+            ListFragmentDirections.actionListFragmentToShowBeerFragment(
+                beer
+            )
+        )
     }
 
     fun setUpUI(user: User) {
@@ -77,6 +82,7 @@ import com.unex.asee.ga02.beergo.model.User
 
             )
         )
+
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { _, destination, _ ->
