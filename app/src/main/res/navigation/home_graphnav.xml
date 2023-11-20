@@ -3,16 +3,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_graphnav"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/listFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.unex.asee.ga02.beergo.view.home.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/achievementsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.AchievementsFragment"
+        android:label="@string/achievementsFragment"
+        tools:layout="@layout/fragment_achievements" />
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.unex.asee.ga02.beergo.view.home.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        android:id="@+id/historyFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.HistoryFragment"
+        android:label="@string/historyFragment"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.StatisticsFragment"
+        android:label="@string/StatisticsFragment"
+        tools:layout="@layout/fragment_statistics" />
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.ListFragment"
+        android:label="@string/listFragment"
+        tools:layout="@layout/fragment_list" >
+        <action
+            android:id="@+id/action_listFragment_to_showBeerFragment"
+            app:destination="@id/showBeerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.SettingsFragment"
+        android:label="SettingsFragment" />
+    <action
+        android:id="@+id/action_home_to_settingsFragment"
+        app:destination="@id/settingsFragment" />
+    <fragment
+        android:id="@+id/showBeerFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.ShowBeerFragment"
+        android:label="Show Beer"
+        tools:layout="@layout/fragment_show_beer" />
 </navigation>

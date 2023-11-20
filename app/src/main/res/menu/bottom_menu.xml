@@ -1,17 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/HomeFragment"
+        android:id="@+id/statisticsFragment"
         android:enabled="true"
-        android:icon="@drawable/baseline_home_24"
-        android:title="Home"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/LoginFragment"
-        android:enabled="true"
-        android:icon="@drawable/baseline_search_24"
-        android:title="Login"
+        android:icon="@drawable/baseline_query_stats_24"
+        android:title="@string/StatisticsFragment"
         app:showAsAction="ifRoom" />
 
+
+    <item
+        android:id="@+id/achievementsFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_search_24"
+        android:title="@string/achievementsFragment"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/listFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_home_24"
+        android:title="@string/listFragment"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/historyFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_history_24"
+        android:title="@string/historyFragment"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/settingsFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="@string/settingsFragment"
+        app:showAsAction="ifRoom" />
 </menu>
