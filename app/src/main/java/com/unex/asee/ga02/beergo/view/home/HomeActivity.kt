@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -17,48 +18,54 @@ import com.unex.asee.ga02.beergo.databinding.ActivityHomeBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 
-
-/**
- * Solo un push por CU
- * En la rama develop tienen que meterse los requisitos.
- * Es la rama develop la que se entrega, hereda de la rama main
- */
- class HomeActivity : AppCompatActivity() , ListFragment.OnShowClickListener {
+class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding //Creamos el binding
     private val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
+    private lateinit var userViewModel: UserViewModel
 
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
+        val user = null
 
         public fun start(
-            context: Context,
-            user: User
+            context: Context, user: User
         ) {
-            //val intent = Intent(context, HomeActivity::class.java)
-            //intent.putExtra(LOGIN_USER, user)
-            //context.startActivity(intent)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) //Creamos la actividad
-        binding =
-            ActivityHomeBinding.inflate(layoutInflater) //Le decimos que el layout que va a usar es el activity_home.xml
+        super.onCreate(savedInstanceState) // Creamos la actividad
 
-        setContentView(binding.root) //Le decimos que el layout que va a usar es el activity_home.xml
+        // Inflar el diseño usando DataBinding
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Configuración de la barra de acción
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        val user =
-            intent.getSerializableExtra(LOGIN_USER) as User //Recogemos el usuario que nos ha pasado la actividad anterior
-        setUpUI(user) //Llamamos a la función que inicializa la interfaz de usuario
-        setUpListeners() //Llamamos a la función que inicializa los listeners
+
+        // Obtener el usuario desde la actividad anterior
+        val user = intent.getSerializableExtra(LOGIN_USER) as User
+
+        // Inicialización del ViewModel
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+        userViewModel.setUser(user)
+
+        // Inicialización de la interfaz de usuario
+        setUpUI(user)
+
+        // Inicialización de los listeners
+        setUpListeners()
     }
 
-    override fun onShowClick(beer: Beer) {
 
+    override fun onShowClick(beer: Beer) {
+        val bundle = Bundle()
+        bundle.putParcelable("user", user) //Pasamos en un bundle el user
         navController.navigate(
+
             ListFragmentDirections.actionListFragmentToShowBeerFragment(
                 beer
             )
@@ -95,53 +102,33 @@ import com.unex.asee.ga02.beergo.model.User
 
     }
 
-        override fun onSupportNavigateUp(): Boolean {
-            return navController.navigateUp(appBarConfiguration)
-                    || super.onSupportNavigateUp()
-        }
-
-        override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-            menuInflater.inflate(R.menu.appbar_menu, menu)
-            val searchItem = menu?.findItem(R.id.action_search)
-            val searchView =
-                searchItem?.actionView as SearchView // Configure the search info and add any event listeners.
-            return super.onCreateOptionsMenu(menu)
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem) = when
-                                                                     (item.itemId) {
-            //TODO: Comentado porque no está terminado. Ver sesión 4 de ASEE Ejers 2 y 3
-//        R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
-//            val action =
-//                ListFragmentDirections.actionHomeToSettingsFragment()
-//            navController.navigate(action)
-//            true
-//        }
-//            R.id.action_profile -> {
-//        // User chooses the "Settings" item. Show the app settings UI.
-//        Toast.makeText(this, "Perfil", Toast.LENGTH_SHORT).show()
-//            true
-//
-//        Toast.makeText(this, "Idioma", Toast.LENGTH_SHORT).show()
-//            true
-//
-//        Toast.makeText(this, "Cerrar sesión", Toast.LENGTH_SHORT).show()
-//            true
-//        }
-
-
-            else -> {
-                // The user's action isn't recognized.
-                // Invoke the superclass to handle it.
-                super.onOptionsItemSelected(item)
-            }
-        }
-
-        fun setUpListeners() {
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.appbar_menu, menu)
+        val searchItem = menu?.findItem(R.id.action_search)
+        val searchView =
+            searchItem?.actionView as SearchView // Configure the search info and add any event listeners.
+        return super.onCreateOptionsMenu(menu)
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        //TODO: Comentado porque no está terminado. Ver sesión 4 de ASEE Ejers 2 y 3
 
+        R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
+            val action = ListFragmentDirections.actionHomeToSettingsFragment()
+            navController.navigate(action)
+            true
+        }
 
-
+        else -> {
+            // The user's action isn't recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
+        }
+    }
+    fun setUpListeners() {
+    }
+}
