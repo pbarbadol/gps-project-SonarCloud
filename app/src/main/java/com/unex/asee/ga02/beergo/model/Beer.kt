@@ -1,10 +1,13 @@
 package com.unex.asee.ga02.beergo.model
 
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.io.Serializable
 
+@Entity
 data class Beer(
-    val id: Int,
+    @PrimaryKey (autoGenerate = true) val beerId: Int,
     val title: String,
     val description: String,
     val year: String,
