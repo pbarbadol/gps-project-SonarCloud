@@ -1,17 +1,27 @@
 package com.unex.asee.ga02.beergo.view.home
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.unex.asee.ga02.beergo.api.APIError
 import com.unex.asee.ga02.beergo.api.getNetworkService
 import com.unex.asee.ga02.beergo.data.api.BeerApi
+import com.unex.asee.ga02.beergo.R
+import com.unex.asee.ga02.beergo.database.BeerGoDatabase
+import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.databinding.FragmentShowBeerBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.unex.asee.ga02.beergo.model.Beer
 
 
@@ -27,8 +37,12 @@ private const val ARG_PARAM2 = "param2"
  */
 class ShowBeerFragment : Fragment() {
 
+    private lateinit var db: BeerGoDatabase
+
     private val args : ShowBeerFragmentArgs by navArgs()
     private var _binding: FragmentShowBeerBinding? = null
+
+    private lateinit var userViewModel: UserViewModel
     private val binding get() = _binding!!
 
     // TODO: Rename and change types of parameters
@@ -37,6 +51,7 @@ class ShowBeerFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -52,6 +67,12 @@ class ShowBeerFragment : Fragment() {
         _binding = FragmentShowBeerBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+    //Se crea la funcion onAttach para poder inicializar correctamente la instancia de la base de datos
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        db = BeerGoDatabase.getInstance(context)!!
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // avoid memory leaks
@@ -61,7 +82,7 @@ class ShowBeerFragment : Fragment() {
         super.onViewCreated(View, savedInstanceState)
 
         val beer = args.beer
-        binding.id.text = beer.id.toString()
+        binding.id.text = beer.beerId.toString()
         binding.title.text = beer.title
         binding.anio.text = beer.year
         binding.description.text = beer.description
@@ -74,10 +95,38 @@ class ShowBeerFragment : Fragment() {
         //binding.type3.text = beer.type
         //binding.beerImage.setImageResource(beer.image)
 
+        val beerId = beer.beerId
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            val isFavourite: Boolean = isInFavourite(beerId)
+            binding.favSwitch.isChecked = isFavourite
+
+            binding.favSwitch.setOnCheckedChangeListener { _, isChecked ->
+                val user = userViewModel.getUser()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    if (isChecked) {
+                        db.beerDao().insertAndRelate(beer, user.userId!!)
+                    } else {
+                        db.beerDao().deleteAndRelate(beer, user.userId!!)
+                    }
+                }
+            }
+        }
+
+
     }
 
-    private fun beerBinding(beer: Beer){
-        binding.id.text = beer.id.toString()
+
+
+    suspend fun isInFavourite(id: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            db.beerDao().isBeerInFavorites(id) > 0
+        }
+    }
+
+
+    private fun beerBinding(beer: Beer) {
+        binding.id.text = beer.beerId.toString()
         binding.title.text = beer.title
         binding.description.text = beer.description
         binding.abv.text = beer.abv.toString()
@@ -85,17 +134,6 @@ class ShowBeerFragment : Fragment() {
             .load(beer.image)
             .into(binding.beerImage)
     }
-    /*
-    private suspend fun fetchBeerDetail(beerId: Int): BeerApi {
-        var beer = BeerApi()
-        try {
-            beer = getNetworkService().getBeerDetails(beerId).execute().body() ?: BeerApi()
-        } catch (cause: Throwable) {
-            throw APIError("Unable to fetch data from API", cause)
-        }
-        return beer
-    }
-*/
 
     companion object {
         /**

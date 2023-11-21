@@ -7,21 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.unex.asee.ga02.beergo.api.APICallback
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.api.APIError
 import com.unex.asee.ga02.beergo.api.getNetworkService
-import com.unex.asee.ga02.beergo.data.api.BeerApi
-//import com.unex.asee.ga02.beergo.data.dummyBeers
 import com.unex.asee.ga02.beergo.data.toBeer
+import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.utils.BACKGROUND
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,16 +34,18 @@ private const val ARG_PARAM2 = "param2"
  */
 class ListFragment : Fragment() {
 
+    private lateinit var db: BeerGoDatabase
+
     private var _beers: List<Beer> = emptyList()
     private lateinit var listener: OnShowClickListener
-
+    private lateinit var userViewModel: UserViewModel
     interface OnShowClickListener {
-        fun onShowClick(beer: Beer)
+        fun onShowClick(beer : Beer)
     }
 
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: ListAdapter
+    private lateinit  var adapter: ListAdapter
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -52,6 +53,7 @@ class ListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -60,6 +62,7 @@ class ListFragment : Fragment() {
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
+        db = BeerGoDatabase.getInstance(context)!!
         if (context is OnShowClickListener) {
             listener = context
         } else {
@@ -90,6 +93,9 @@ class ListFragment : Fragment() {
                     try {
                         _beers = fetchBeers()
                         adapter.updateData(_beers)
+                        for (beer in _beers) {
+                            db.beerDao().insert(beer)
+                        }
 
                     } catch (error: APIError) {
                         Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
@@ -135,12 +141,15 @@ class ListFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
+
+
         adapter = ListAdapter(beers = _beers, onClick = {
 
             listener.onShowClick(it)
         },
             onLongClick = {
-                Toast.makeText(context, "long click on: " + it.title, Toast.LENGTH_SHORT).show()
+                setFavourite(it)
+                Toast.makeText(context, "${it.title} añadida a favoritos", Toast.LENGTH_SHORT).show()
             }
         , context = context
         )
@@ -150,6 +159,18 @@ class ListFragment : Fragment() {
             rvBeerList.adapter = adapter
         }
         android.util.Log.d("DiscoverFragment", "setUpRecyclerView")
+    }
+
+    private fun setFavourite(beer: Beer) {
+        val user = userViewModel.getUser()
+        lifecycleScope.launch {
+            if (db != null){
+                db.beerDao().insertAndRelate(beer, user.userId!!)
+            } else {
+                Toast.makeText(context, "Error: Base de datos no disponible", Toast.LENGTH_SHORT).show()
+            }
+
+        }
     }
 
     override fun onDestroyView() {

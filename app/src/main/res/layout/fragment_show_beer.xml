@@ -104,15 +104,19 @@
             app:layout_constraintHorizontal_bias="0.189"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:id="@+id/star"
-            android:layout_width="65dp"
-            android:layout_height="56dp"
-            android:layout_marginEnd="76dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/baseline_star_border_24"
+        <Switch
+            android:id="@+id/favSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favorita "
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.948"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.894"
+            tools:ignore="MissingConstraints" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

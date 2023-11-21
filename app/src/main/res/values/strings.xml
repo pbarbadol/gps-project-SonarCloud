@@ -67,6 +67,7 @@
     <string name="historyFragment">Historial</string>
     <string name="settingsFragment">Ajustes</string>
     <string name="StatisticsFragment">Estadísticas</string>
+    <string name="FavsFragment">Favoritas</string>
     <string name="detailFragment">Detalles</string>
     <string name="action_search">search</string>
     <string name="action_settings">settings</string>

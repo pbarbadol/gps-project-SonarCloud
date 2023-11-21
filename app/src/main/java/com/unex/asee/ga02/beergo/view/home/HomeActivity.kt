@@ -1,14 +1,17 @@
 package com.unex.asee.ga02.beergo.view.home
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -18,7 +21,13 @@ import com.unex.asee.ga02.beergo.databinding.ActivityHomeBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 
-class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener {
+
+/**
+ * Solo un push por CU
+ * En la rama develop tienen que meterse los requisitos.
+ * Es la rama develop la que se entrega, hereda de la rama main
+ */
+ class HomeActivity : AppCompatActivity() , ListFragment.OnShowClickListener, FavsFragment.OnShowClickListener{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding //Creamos el binding
     private val navController by lazy {
@@ -31,23 +40,24 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener {
         val user = null
 
         public fun start(
-            context: Context, user: User
+            context: Context,
+            user: User
         ) {
+            //val intent = Intent(context, HomeActivity::class.java)
+            //intent.putExtra(LOGIN_USER, user)
+            //context.startActivity(intent)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) // Creamos la actividad
+        super.onCreate(savedInstanceState) //Creamos la actividad
+        binding =
+            ActivityHomeBinding.inflate(layoutInflater) //Le decimos que el layout que va a usar es el activity_home.xml
 
-        // Inflar el diseño usando DataBinding
-        binding = ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // Configuración de la barra de acción
+        setContentView(binding.root) //Le decimos que el layout que va a usar es el activity_home.xml
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        // Obtener el usuario desde la actividad anterior
-        val user = intent.getSerializableExtra(LOGIN_USER) as User
+        val user =
+            intent.getSerializableExtra(LOGIN_USER) as User //Recogemos el usuario que nos ha pasado la actividad anterior
 
         // Inicialización del ViewModel
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
@@ -60,12 +70,10 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener {
         setUpListeners()
     }
 
-
     override fun onShowClick(beer: Beer) {
         val bundle = Bundle()
         bundle.putParcelable("user", user) //Pasamos en un bundle el user
         navController.navigate(
-
             ListFragmentDirections.actionListFragmentToShowBeerFragment(
                 beer
             )
@@ -79,7 +87,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.listFragment,
-                R.id.statisticsFragment,
+                R.id.favsFragment,
                 R.id.historyFragment,
                 R.id.settingsFragment,
                 R.id.achievementsFragment
@@ -102,17 +110,18 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener {
 
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
+        override fun onSupportNavigateUp(): Boolean {
+            return navController.navigateUp(appBarConfiguration)
+                    || super.onSupportNavigateUp()
+        }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.appbar_menu, menu)
-        val searchItem = menu?.findItem(R.id.action_search)
-        val searchView =
-            searchItem?.actionView as SearchView // Configure the search info and add any event listeners.
-        return super.onCreateOptionsMenu(menu)
-    }
+        override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+            menuInflater.inflate(R.menu.appbar_menu, menu)
+            val searchItem = menu?.findItem(R.id.action_search)
+            val searchView =
+                searchItem?.actionView as SearchView // Configure the search info and add any event listeners.
+            return super.onCreateOptionsMenu(menu)
+        }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         //TODO: Comentado porque no está terminado. Ver sesión 4 de ASEE Ejers 2 y 3
@@ -123,12 +132,18 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener {
             true
         }
 
-        else -> {
-            // The user's action isn't recognized.
-            // Invoke the superclass to handle it.
-            super.onOptionsItemSelected(item)
+            else -> {
+                // The user's action isn't recognized.
+                // Invoke the superclass to handle it.
+                super.onOptionsItemSelected(item)
+            }
+        }
+
+        fun setUpListeners() {
         }
     }
-    fun setUpListeners() {
-    }
-}
+
+
+
+
+
