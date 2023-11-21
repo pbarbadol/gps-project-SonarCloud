@@ -12,7 +12,7 @@
     <item
         android:id="@+id/achievementsFragment"
         android:enabled="true"
-        android:icon="@drawable/baseline_search_24"
+        android:icon="@drawable/trofeo_removebg_preview"
         android:title="@string/achievementsFragment"
         app:showAsAction="ifRoom" />
     <item
