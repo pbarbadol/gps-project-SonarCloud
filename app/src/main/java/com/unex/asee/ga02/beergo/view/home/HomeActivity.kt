@@ -70,8 +70,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
 
 
     override fun onShowClick(beer: Beer) {
-        val bundle = Bundle()
-        bundle.putParcelable("user", user) //Pasamos en un bundle el user
+
         navController.navigate(
 
             ListFragmentDirections.actionListFragmentToShowBeerFragment()
