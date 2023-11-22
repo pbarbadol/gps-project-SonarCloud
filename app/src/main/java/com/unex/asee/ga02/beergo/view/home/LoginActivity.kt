@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.ActivityLoginBinding
 import com.unex.asee.ga02.beergo.model.User
@@ -47,8 +48,21 @@ class LoginActivity : AppCompatActivity(){
         //views initialization and listeners
         setUpUI()
         setUpListeners()
+        readSetings()
     }
+    private fun readSetings(){
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this).all
 
+        val rememberme = preferences["rememberme"] as Boolean? ?:false
+        val username = preferences["username"] as String? ?: ""
+        val passwd = preferences["password"] as String? ?: ""
+
+        if (rememberme){
+            binding.etUsername.setText(username)
+            binding.etPassword.setText(passwd)
+        }
+
+    }
     private fun setUpUI() {
         //get attributes from xml using binding
     }
