@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.view.home
 
+import History
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -23,21 +24,16 @@ import com.unex.asee.ga02.beergo.model.Beer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Date
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ListFragment : Fragment() {
 
-    private var _beers: List<Beer> = emptyList()
+    private var beers: List<Beer> = emptyList()
+    private var beersFiltered: List<Beer> = emptyList()
+    private var cachedBeers: List<Beer> = emptyList()
     private lateinit var listener: OnShowClickListener
     private lateinit var beerViewModel: BeerViewModel
 
@@ -51,7 +47,6 @@ class ListFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: ListAdapter
 
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -73,22 +68,21 @@ class ListFragment : Fragment() {
         if (context is OnShowClickListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnShowClickListener")
+            throw RuntimeException("$context must implement OnShowClickListener")
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         _binding = FragmentListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpUI()
         setUpRecyclerView()
 
         beerViewModel.setSelectedBeer(null)
@@ -96,14 +90,14 @@ class ListFragment : Fragment() {
         binding.spinner.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                _beers = fetchBeers()
+                cachedBeers = fetchBeers()
 
                 withContext(Dispatchers.Main) {
-                    adapter.updateData(_beers)
-                    for (beer in _beers) {
+                    adapter.updateData(cachedBeers)
+                    for (beer in cachedBeers) {
                         db.beerDao().insert(beer)
                     }
-                    Log.d("ListFragment", "El tamaño de _beers despues de actualizar es: ${_beers.size}")
+                    Log.d("ListFragment", "El tamaño de _beers despues de actualizar es: ${beers.size}")
                 }
             } catch (error: APIError) {
                 withContext(Dispatchers.Main) {
@@ -116,10 +110,7 @@ class ListFragment : Fragment() {
             }
         }
     }
-    override fun onResume() {
-        super.onResume()
-        adapter.updateData(_beers)
-    }
+
 
 
     private suspend fun fetchBeers(): List<Beer> = withContext(Dispatchers.IO) {
@@ -144,10 +135,11 @@ class ListFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
-        adapter = ListAdapter(beers = _beers, onClick = {
+        adapter = ListAdapter(beers = beers, onClick = {
 
             val cervezaSeleccionada = beerViewModel.getSelectedBeer()
-
+            val history = History( beer = it, date = Date())
+            History.saveHistory(history)
             if (cervezaSeleccionada == null) {
                 // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
                 beerViewModel.setSelectedBeer(it)
@@ -175,28 +167,35 @@ class ListFragment : Fragment() {
     private fun setFavourite(beer: Beer) {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
-            if (db != null){
+            if (db != null) {
                 db.beerDao().insertAndRelate(beer, user.userId!!)
             } else {
-                Toast.makeText(context, "Error: Base de datos no disponible", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error: Base de datos no disponible", Toast.LENGTH_SHORT)
+                    .show()
             }
-
         }
+    }
+
+    private fun performSearch(query: String) {
+        var beersFiltered = cachedBeers.filter { it.title.contains(query, ignoreCase = true) }
+        adapter.updateData(beersFiltered)
+        adapter.notifyDataSetChanged()
+        Log.d("ListFragment", "Filtered Beers: $beersFiltered")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // avoid memory leaks
     }
+    override fun onResume() {
+        super.onResume()
+
+        // Actualiza la lista de cervezas al volver al fragmento
+        if (cachedBeers.isNotEmpty()) {
+            adapter.updateData(cachedBeers)
+        }
+    }
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ListFragment.
-         */
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             ListFragment().apply {
