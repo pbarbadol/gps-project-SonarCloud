@@ -54,11 +54,23 @@
         android:id="@+id/showBeerFragment"
         android:name="com.unex.asee.ga02.beergo.view.home.ShowBeerFragment"
         android:label="Show Beer"
-
         tools:layout="@layout/fragment_show_beer" >
-        <argument
-            android:name="beer"
-            app:argType="com.unex.asee.ga02.beergo.model.Beer" />
+        <action
+            android:id="@+id/action_showBeerFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCommentFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.AddCommentFragment"
+        android:label="@string/AddCommentFragment" >
+    </fragment>
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.CommentsFragment"
+        android:label="@string/CommentsFragment" >
+        <action
+            android:id="@+id/action_commentsFragment_to_addCommentFragment"
+            app:destination="@id/addCommentFragment" />
     </fragment>
 </navigation> <!-- Closing tag added -->
 
