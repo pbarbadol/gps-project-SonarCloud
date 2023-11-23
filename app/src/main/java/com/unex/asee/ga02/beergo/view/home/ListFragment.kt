@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.view.home
 
+import History
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import com.unex.asee.ga02.beergo.model.Comment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Date
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -152,6 +154,8 @@ class ListFragment : Fragment() {
     private fun setUpRecyclerView() {
         adapter = ListAdapter(beers = beers, onClick = {
             val cervezaSeleccionada = beerViewModel.getSelectedBeer()
+            val history = History( beer = it, date = Date())
+            History.saveHistory(history)
             if (cervezaSeleccionada == null) {
                 beerViewModel.setSelectedBeer(it)
                 listener.onShowClick(it)
