@@ -7,11 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
-import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
-import com.unex.asee.ga02.beergo.databinding.ActivityLoginBinding
 import com.unex.asee.ga02.beergo.databinding.FragmentProfileBinding
 import com.unex.asee.ga02.beergo.model.User
 import kotlinx.coroutines.Dispatchers
@@ -70,7 +67,7 @@ class ProfileFragment : Fragment() {
             }
         }
         binding.cerrarSesion.setOnClickListener {
-            val emptyUser = User(userId = 123, name = "", password = "")
+            val emptyUser = User(userId = 0, name = "", password = "") //TODO: ARREGLAR, MUY IMPORTANTE
             userViewModel.setUser(emptyUser)
             activity?.finish()
             val intent = Intent(context, LoginActivity::class.java)

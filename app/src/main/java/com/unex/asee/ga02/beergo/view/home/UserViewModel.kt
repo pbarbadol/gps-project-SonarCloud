@@ -25,4 +25,3 @@ class UserViewModel : ViewModel() {
         return userLiveData.value!!
     }
 }
-

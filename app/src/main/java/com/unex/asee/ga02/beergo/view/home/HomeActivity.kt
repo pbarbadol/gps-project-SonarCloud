@@ -93,7 +93,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
                 R.id.listFragment,
                 R.id.favsFragment,
                 R.id.historyFragment,
-                R.id.settingsFragment,
+                R.id.profileFragment,
                 R.id.achievementsFragment
 
             )
@@ -151,8 +151,3 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         fun setUpListeners() {
         }
     }
-
-
-
-
-
