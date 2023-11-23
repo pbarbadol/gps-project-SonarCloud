@@ -7,13 +7,16 @@ import androidx.room.RoomDatabase
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
+import com.unex.asee.ga02.beergo.model.Comment
 
 //La base de datos se encuentra en versión 2 debido a que se ha hecho una actualización de los atributos de la clase Beer
-@Database(entities = [User::class, Beer::class, UserFavouriteBeerCrossRef::class], version = 2)
+@Database(entities = [User::class, Beer::class, Comment::class, UserFavouriteBeerCrossRef::class], version = 2)
 abstract class BeerGoDatabase: RoomDatabase() {
     abstract fun userDao(): UserDao
 
     abstract fun beerDao(): BeerDao
+
+    abstract fun commentDao(): CommentDao
 
     companion object {
         private var INSTANCE: BeerGoDatabase? = null
@@ -25,8 +28,7 @@ abstract class BeerGoDatabase: RoomDatabase() {
                         context,
                         BeerGoDatabase::class.java,
                         "beergo.db"
-                    )
-                        .build()
+                    ).build()
                 }
             }
             return INSTANCE

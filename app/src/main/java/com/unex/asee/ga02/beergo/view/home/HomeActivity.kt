@@ -19,20 +19,16 @@ import androidx.navigation.ui.setupWithNavController
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.databinding.ActivityHomeBinding
 import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.model.User
 
-
-/**
- * Solo un push por CU
- * En la rama develop tienen que meterse los requisitos.
- * Es la rama develop la que se entrega, hereda de la rama main
- */
- class HomeActivity : AppCompatActivity() , ListFragment.OnShowClickListener, FavsFragment.OnShowClickListener{
+class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , CommentsFragment.OnShowClickListener{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding //Creamos el binding
     private val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
+    private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
 
     companion object {
@@ -43,23 +39,25 @@ import com.unex.asee.ga02.beergo.model.User
             context: Context,
             user: User
         ) {
-            //val intent = Intent(context, HomeActivity::class.java)
-            //intent.putExtra(LOGIN_USER, user)
-            //context.startActivity(intent)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) //Creamos la actividad
-        binding =
-            ActivityHomeBinding.inflate(layoutInflater) //Le decimos que el layout que va a usar es el activity_home.xml
+        super.onCreate(savedInstanceState) // Creamos la actividad
 
-        setContentView(binding.root) //Le decimos que el layout que va a usar es el activity_home.xml
+        // Inflar el diseño usando DataBinding
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Configuración de la barra de acción
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        val user =
-            intent.getSerializableExtra(LOGIN_USER) as User //Recogemos el usuario que nos ha pasado la actividad anterior
 
-        // Inicialización del ViewModel
+        // Obtener el usuario desde la actividad anterior
+        val user = intent.getSerializableExtra(LOGIN_USER) as User
+
+        //Inicializamos el ViewModel
+        beerViewModel = ViewModelProvider(this).get(BeerViewModel::class.java)
+        beerViewModel.setSelectedBeer(null)
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         userViewModel.setUser(user)
 
@@ -70,13 +68,21 @@ import com.unex.asee.ga02.beergo.model.User
         setUpListeners()
     }
 
+
     override fun onShowClick(beer: Beer) {
         val bundle = Bundle()
         bundle.putParcelable("user", user) //Pasamos en un bundle el user
         navController.navigate(
+
             ListFragmentDirections.actionListFragmentToShowBeerFragment(
                 beer
             )
+        )
+    }
+
+    override fun onShowClick(comment: Comment) {
+        navController.navigate(
+            CommentsFragmentDirections.actionCommentsFragmentToAddCommentFragment()
         )
     }
 
@@ -101,7 +107,12 @@ import com.unex.asee.ga02.beergo.model.User
             if (destination.id == R.id.showBeerFragment) {
                 binding.toolbar.menu.clear()
                 binding.bottomNavigationView.visibility = View.GONE
-
+            } else if (destination.id == R.id.commentsFragment){
+                binding.toolbar.menu.clear()
+                binding.bottomNavigationView.visibility = View.GONE
+            } else if (destination.id == R.id.addCommentFragment){
+                binding.toolbar.menu.clear()
+                binding.bottomNavigationView.visibility = View.GONE
             } else {
                 binding.bottomNavigationView.visibility = View.VISIBLE
                 binding.toolbar.visibility = View.VISIBLE

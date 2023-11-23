@@ -2,6 +2,7 @@ package com.unex.asee.ga02.beergo.view.home
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import android.widget.Button
+import android.widget.ImageView
+import androidx.navigation.fragment.findNavController
 
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -43,6 +47,7 @@ class ShowBeerFragment : Fragment() {
     private var _binding: FragmentShowBeerBinding? = null
 
     private lateinit var userViewModel: UserViewModel
+    private lateinit var beerViewModel: BeerViewModel
     private val binding get() = _binding!!
 
     // TODO: Rename and change types of parameters
@@ -52,6 +57,7 @@ class ShowBeerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -81,8 +87,8 @@ class ShowBeerFragment : Fragment() {
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
 
-        val beer = args.beer
-        binding.id.text = beer.beerId.toString()
+        val beer = beerViewModel.getSelectedBeer()
+        binding.id.text = beer!!.beerId.toString()
         binding.title.text = beer.title
         binding.anio.text = beer.year
         binding.description.text = beer.description
@@ -95,6 +101,13 @@ class ShowBeerFragment : Fragment() {
         //binding.type3.text = beer.type
         //binding.beerImage.setImageResource(beer.image)
 
+        //Navegación a AddCommentFragment
+        val imageView7 = binding.imageView7
+        imageView7.setOnClickListener {
+            val navController = findNavController()
+            val action = ShowBeerFragmentDirections.actionShowBeerFragmentToCommentsFragment()
+            navController.navigate(action)
+        }
         val beerId = beer.beerId
 
         lifecycleScope.launch(Dispatchers.Main) {
@@ -125,7 +138,7 @@ class ShowBeerFragment : Fragment() {
     }
 
 
-    private fun beerBinding(beer: Beer) {
+    private fun beerBinding(beer: Beer){
         binding.id.text = beer.beerId.toString()
         binding.title.text = beer.title
         binding.description.text = beer.description

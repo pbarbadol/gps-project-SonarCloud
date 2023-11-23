@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.api.APIError
 import com.unex.asee.ga02.beergo.api.getNetworkService
+import com.unex.asee.ga02.beergo.data.api.BeerApi
+//import com.unex.asee.ga02.beergo.data.dummyBeers
 import com.unex.asee.ga02.beergo.data.toBeer
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
@@ -21,6 +23,7 @@ import com.unex.asee.ga02.beergo.model.Beer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,18 +37,19 @@ private const val ARG_PARAM2 = "param2"
  */
 class ListFragment : Fragment() {
 
-    private lateinit var db: BeerGoDatabase
-
     private var _beers: List<Beer> = emptyList()
     private lateinit var listener: OnShowClickListener
+    private lateinit var beerViewModel: BeerViewModel
+
+    private lateinit var db: BeerGoDatabase
     private lateinit var userViewModel: UserViewModel
     interface OnShowClickListener {
-        fun onShowClick(beer : Beer)
+        fun onShowClick(beer: Beer)
     }
 
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
-    private lateinit  var adapter: ListAdapter
+    private lateinit var adapter: ListAdapter
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -53,6 +57,7 @@ class ListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -84,53 +89,52 @@ class ListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
 
-        if (_beers.isEmpty()) {
-            binding.spinner.visibility = View.VISIBLE
+        binding.spinner.visibility = View.VISIBLE
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                _beers = fetchBeers()
 
-            lifecycleScope.launch {
-                if (_beers.isEmpty()) {
-                    binding.spinner.visibility = View.VISIBLE
-                    try {
-                        _beers = fetchBeers()
-                        adapter.updateData(_beers)
-                        for (beer in _beers) {
-                            db.beerDao().insert(beer)
-                        }
-
-                    } catch (error: APIError) {
-                        Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-                    } finally {
-                        binding.spinner.visibility = View.GONE
+                withContext(Dispatchers.Main) {
+                    adapter.updateData(_beers)
+                    for (beer in _beers) {
+                        db.beerDao().insert(beer)
                     }
+                    Log.d("ListFragment", "El tamaño de _beers despues de actualizar es: ${_beers.size}")
+                }
+            } catch (error: APIError) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
+                }
+            } finally {
+                withContext(Dispatchers.Main) {
+                    binding.spinner.visibility = View.GONE
                 }
             }
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        adapter.updateData(_beers)
     }
 
 
     private suspend fun fetchBeers(): List<Beer> {
 
-        return withContext(Dispatchers.IO) {
-            try {
-                val result = getNetworkService().getBeers(1).execute()
+    private suspend fun fetchBeers(): List<Beer> = withContext(Dispatchers.IO) {
+        try {
+            val result = getNetworkService().getBeers(1).execute()
 
-                if (result.isSuccessful) {
-                    val responseBody = result.body()
-
-                    if (responseBody != null) {
-                        return@withContext responseBody.map { it?.toBeer() ?: Beer(0,""," "," ",0.0,"") }
-                    } else {
-                        throw Exception("Response body is null")
-                    }
-                } else {
-                    throw Exception("Error: ${result.code()} ${result.message()}")
-                }
-            } catch (e: Exception) {
-                // Manejar la excepción apropiadamente, puedes imprimir el mensaje o lanzar otra excepción.
-                e.printStackTrace()
-                throw e
+            if (result.isSuccessful) {
+                result.body()?.map { it?.toBeer() ?: Beer(0, "", " ", " ", 0.0, "") }
+                    ?: throw Exception("Response body is null")
+            } else {
+                throw Exception("Error: ${result.code()} ${result.message()}")
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
         }
+    }
 
 
 
@@ -141,17 +145,25 @@ class ListFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
-
-
         adapter = ListAdapter(beers = _beers, onClick = {
 
-            listener.onShowClick(it)
+            val cervezaSeleccionada = beerViewModel.getSelectedBeer()
+
+            if (cervezaSeleccionada == null) {
+                // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
+                beerViewModel.setSelectedBeer(it)
+                listener.onShowClick(it)
+            } else {
+                // Si ya hay una cerveza seleccionada, solo mostrar los detalles
+                listener.onShowClick(it)
+            }
+
         },
             onLongClick = {
                 setFavourite(it)
                 Toast.makeText(context, "${it.title} añadida a favoritos", Toast.LENGTH_SHORT).show()
             }
-        , context = context
+            , context = context
         )
         with (binding) {
             val numberOfColumns = 2
@@ -177,22 +189,22 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null // avoid memory leaks
     }
-        companion object {
-            /**
-             * Use this factory method to create a new instance of
-             * this fragment using the provided parameters.
-             *
-             * @param param1 Parameter 1.
-             * @param param2 Parameter 2.
-             * @return A new instance of fragment ListFragment.
-             */
-            @JvmStatic
-            fun newInstance(param1: String, param2: String) =
-                ListFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment ListFragment.
+         */
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            ListFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
                 }
-        }
+            }
     }
+}
