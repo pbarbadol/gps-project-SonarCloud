@@ -5,6 +5,7 @@ import com.unex.asee.ga02.beergo.model.Beer
 
 val dummyBeers: List<Beer> = listOf(
     Beer(
+        1,  // Identificador añadido
         "Heineken",
         "Heineken es una cerveza tipo Lager, fundada en 1873 en Ámsterdam. Es conocida por su sabor suave y su carácter refrescante.",
         "1873",
@@ -15,6 +16,7 @@ val dummyBeers: List<Beer> = listOf(
         R.drawable.hnk
     ),
     Beer(
+        2,  // Identificador añadido
         "Corona",
         "Corona es una cerveza de tipo pale lager que se originó en México en 1925. Es reconocida por su sabor ligero y su característica rodaja de limón.",
         "1925",
@@ -25,6 +27,7 @@ val dummyBeers: List<Beer> = listOf(
         R.drawable.corona
     ),
     Beer(
+        3,  // Identificador añadido
         "Guinness",
         "Guinness es una cerveza negra tipo stout, con sede en Dublín, Irlanda. Es famosa por su sabor a malta tostada y su textura cremosa.",
         "1759",
@@ -35,6 +38,7 @@ val dummyBeers: List<Beer> = listOf(
         R.drawable.guinness
     ),
     Beer(
+        4,  // Identificador añadido
         "Stella Artois",
         "Stella Artois es una cerveza tipo pilsner originaria de Bélgica. Conocida por su sabor distintivo y su aroma floral.",
         "1366",
@@ -45,6 +49,7 @@ val dummyBeers: List<Beer> = listOf(
         R.drawable.stellaartois
     ),
     Beer(
+        5,  // Identificador añadido
         "Budweiser",
         "Budweiser es una cerveza tipo lager estadounidense fundada en 1876. Se destaca por su sabor suave y su popularidad a nivel internacional.",
         "1876",
@@ -55,6 +60,7 @@ val dummyBeers: List<Beer> = listOf(
         R.drawable.budweiser
     ),
     Beer(
+        6,  // Identificador añadido
         "Estrella Galicia",
         "Estrella Galicia es una cerveza tipo Lager, producida en Galicia, España. Es conocida por su sabor equilibrado y su arraigo a la tradición gallega.",
         "1906",
@@ -65,6 +71,7 @@ val dummyBeers: List<Beer> = listOf(
         R.drawable.estrellagalicia
     ),
     Beer(
+        7,  // Identificador añadido
         "Amstel lata",
         "Amstel es una cerveza tipo pilsner originaria de los Países Bajos. Es conocida por su sabor fresco y su suavidad.",
         "1870",
@@ -73,6 +80,5 @@ val dummyBeers: List<Beer> = listOf(
         "Países Bajos",
         R.drawable.amstel_lata,
         R.drawable.amstel_lata
-    ),
-    // Agrega más cervezas famosas aquí
+    )
 )

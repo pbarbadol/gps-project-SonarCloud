@@ -44,6 +44,11 @@ class CredentialCheck {
             else if (password!=repassword) checks[3]
             else checks[0]
         }
+
+        fun passwordOk(password1: String, password2: String): CredentialCheck {
+            return if (password1!=password2) checks[3]
+            else checks[0]
+        }
     }
 
     enum class CredentialError {
