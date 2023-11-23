@@ -20,10 +20,14 @@
         tools:layout="@layout/fragment_history" />
 
     <fragment
-        android:id="@+id/statisticsFragment"
-        android:name="com.unex.asee.ga02.beergo.view.home.StatisticsFragment"
-        android:label="@string/StatisticsFragment"
-        tools:layout="@layout/fragment_statistics" />
+        android:id="@+id/favsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.FavsFragment"
+        android:label="@string/FavsFragment"
+        tools:layout="@layout/fragment_favs" >
+        <action
+            android:id="@+id/action_favsFragment_to_showBeerFragment"
+            app:destination="@id/showBeerFragment" />
+    </fragment>
 
 
 

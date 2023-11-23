@@ -10,14 +10,18 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.api.APIError
 import com.unex.asee.ga02.beergo.api.getNetworkService
+import com.unex.asee.ga02.beergo.data.api.BeerApi
+//import com.unex.asee.ga02.beergo.data.dummyBeers
 import com.unex.asee.ga02.beergo.data.toBeer
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
@@ -38,13 +42,14 @@ class ListFragment : Fragment() {
     private lateinit var beerViewModel: BeerViewModel
 
     private lateinit var db: BeerGoDatabase
+    private lateinit var userViewModel: UserViewModel
     interface OnShowClickListener {
-        fun onShowClick(beer : Beer)
+        fun onShowClick(beer: Beer)
     }
 
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
-    private lateinit  var adapter: ListAdapter
+    private lateinit var adapter: ListAdapter
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -53,6 +58,9 @@ class ListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+
+
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -81,8 +89,9 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        beerViewModel.setSelectedBeer(null)
         setUpRecyclerView()
+
+        beerViewModel.setSelectedBeer(null)
 
         binding.spinner.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
@@ -113,7 +122,6 @@ class ListFragment : Fragment() {
     }
 
 
-
     private suspend fun fetchBeers(): List<Beer> = withContext(Dispatchers.IO) {
         try {
             val result = getNetworkService().getBeers(1).execute()
@@ -129,6 +137,7 @@ class ListFragment : Fragment() {
             throw e
         }
     }
+
 
 
     fun setUpUI() {
@@ -150,7 +159,8 @@ class ListFragment : Fragment() {
 
         },
             onLongClick = {
-                Toast.makeText(context, "long click on: " + it.title, Toast.LENGTH_SHORT).show()
+                setFavourite(it)
+                Toast.makeText(context, "${it.title} añadida a favoritos", Toast.LENGTH_SHORT).show()
             }
             , context = context
         )
@@ -160,6 +170,18 @@ class ListFragment : Fragment() {
             rvBeerList.adapter = adapter
         }
         android.util.Log.d("DiscoverFragment", "setUpRecyclerView")
+    }
+
+    private fun setFavourite(beer: Beer) {
+        val user = userViewModel.getUser()
+        lifecycleScope.launch {
+            if (db != null){
+                db.beerDao().insertAndRelate(beer, user.userId!!)
+            } else {
+                Toast.makeText(context, "Error: Base de datos no disponible", Toast.LENGTH_SHORT).show()
+            }
+
+        }
     }
 
     override fun onDestroyView() {

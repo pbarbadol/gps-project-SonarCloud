@@ -7,20 +7,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import android.widget.Button
 import android.widget.ImageView
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.unex.asee.ga02.beergo.model.Beer
 
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.unex.asee.ga02.beergo.api.APIError
 import com.unex.asee.ga02.beergo.api.getNetworkService
 import com.unex.asee.ga02.beergo.data.api.BeerApi
+import com.unex.asee.ga02.beergo.R
+import com.unex.asee.ga02.beergo.database.BeerGoDatabase
+import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.databinding.FragmentShowBeerBinding
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.unex.asee.ga02.beergo.model.Beer
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,6 +44,8 @@ class ShowBeerFragment : Fragment() {
     private lateinit var db: BeerGoDatabase
 
     private var _binding: FragmentShowBeerBinding? = null
+
+    private lateinit var userViewModel: UserViewModel
     private lateinit var beerViewModel: BeerViewModel
     private val binding get() = _binding!!
 
@@ -47,6 +55,7 @@ class ShowBeerFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -63,14 +72,15 @@ class ShowBeerFragment : Fragment() {
         _binding = FragmentShowBeerBinding.inflate(inflater, container, false)
         return binding.root
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null // avoid memory leaks
-    }
 
+    //Se crea la funcion onAttach para poder inicializar correctamente la instancia de la base de datos
     override fun onAttach(context: Context) {
         super.onAttach(context)
         db = BeerGoDatabase.getInstance(context)!!
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null // avoid memory leaks
     }
 
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
@@ -97,9 +107,34 @@ class ShowBeerFragment : Fragment() {
             val action = ShowBeerFragmentDirections.actionShowBeerFragmentToCommentsFragment()
             navController.navigate(action)
         }
+        val beerId = beer.beerId
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            val isFavourite: Boolean = isInFavourite(beerId)
+            binding.favSwitch.isChecked = isFavourite
+
+            binding.favSwitch.setOnCheckedChangeListener { _, isChecked ->
+                val user = userViewModel.getUser()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    if (isChecked) {
+                        db.beerDao().insertAndRelate(beer, user.userId!!)
+                    } else {
+                        db.beerDao().deleteAndRelate(beer, user.userId!!)
+                    }
+                }
+            }
+        }
+
+
     }
 
 
+
+    suspend fun isInFavourite(id: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            db.beerDao().isBeerInFavorites(id) > 0
+        }
+    }
 
 
     private fun beerBinding(beer: Beer){

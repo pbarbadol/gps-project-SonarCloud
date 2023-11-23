@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/statisticsFragment"
+        android:id="@+id/favsFragment"
         android:enabled="true"
-        android:icon="@drawable/baseline_query_stats_24"
-        android:title="@string/StatisticsFragment"
+        android:icon="@drawable/baseline_star_24"
+        android:title="@string/FavsFragment"
         app:showAsAction="ifRoom" />
-
 
     <item
         android:id="@+id/achievementsFragment"

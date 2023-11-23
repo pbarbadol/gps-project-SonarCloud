@@ -22,13 +22,7 @@ import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.model.User
 
-
-/**
- * Solo un push por CU
- * En la rama develop tienen que meterse los requisitos.
- * Es la rama develop la que se entrega, hereda de la rama main
- */
-class HomeActivity : AppCompatActivity() , ListFragment.OnShowClickListener, CommentsFragment.OnShowClickListener {
+class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , CommentsFragment.OnShowClickListener, FavsFragment.OnShowClickListener{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding //Creamos el binding
     private val navController by lazy {
@@ -39,22 +33,17 @@ class HomeActivity : AppCompatActivity() , ListFragment.OnShowClickListener, Com
 
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
-
+        val user = null
 
         public fun start(
             context: Context,
             user: User
         ) {
-            /*
-             val intent = Intent(context, HomeActivity::class.java)
-             intent.putExtra(LOGIN_USER, user)
-             context.startActivity(intent)*/
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) //Creamos la actividad
-
+        super.onCreate(savedInstanceState) // Creamos la actividad
 
         // Inflar el diseño usando DataBinding
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -80,6 +69,14 @@ class HomeActivity : AppCompatActivity() , ListFragment.OnShowClickListener, Com
     }
 
 
+    override fun onShowClick(beer: Beer) {
+        val bundle = Bundle()
+        bundle.putParcelable("user", user) //Pasamos en un bundle el user
+        navController.navigate(
+
+            ListFragmentDirections.actionListFragmentToShowBeerFragment()
+        )
+    }
 
     override fun onShowClick(comment: Comment) {
         navController.navigate(
@@ -94,7 +91,7 @@ class HomeActivity : AppCompatActivity() , ListFragment.OnShowClickListener, Com
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.listFragment,
-                R.id.statisticsFragment,
+                R.id.favsFragment,
                 R.id.historyFragment,
                 R.id.settingsFragment,
                 R.id.achievementsFragment
@@ -122,58 +119,40 @@ class HomeActivity : AppCompatActivity() , ListFragment.OnShowClickListener, Com
 
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
+        override fun onSupportNavigateUp(): Boolean {
+            return navController.navigateUp(appBarConfiguration)
+                    || super.onSupportNavigateUp()
+        }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.appbar_menu, menu)
-        val searchItem = menu?.findItem(R.id.action_search)
-        val searchView =
-            searchItem?.actionView as SearchView // Configure the search info and add any event listeners.
-        return super.onCreateOptionsMenu(menu)
-    }
+        override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+            menuInflater.inflate(R.menu.appbar_menu, menu)
+            val searchItem = menu?.findItem(R.id.action_search)
+            val searchView =
+                searchItem?.actionView as SearchView // Configure the search info and add any event listeners.
+            return super.onCreateOptionsMenu(menu)
+        }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when
-                                                                 (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         //TODO: Comentado porque no está terminado. Ver sesión 4 de ASEE Ejers 2 y 3
-//        R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
-//            val action =
-//                ListFragmentDirections.actionHomeToSettingsFragment()
-//            navController.navigate(action)
-//            true
-//        }
-//            R.id.action_profile -> {
-//        // User chooses the "Settings" item. Show the app settings UI.
-//        Toast.makeText(this, "Perfil", Toast.LENGTH_SHORT).show()
-//            true
-//
-//        Toast.makeText(this, "Idioma", Toast.LENGTH_SHORT).show()
-//            true
-//
-//        Toast.makeText(this, "Cerrar sesión", Toast.LENGTH_SHORT).show()
-//            true
-//        }
-        /*
-                R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
-                    val action = ListFragmentDirections.actionHomeToSettingsFragment()
-                    navController.navigate(action)
-                    true
-                }
-        */
-        else -> {
-            // The user's action isn't recognized.
-            // Invoke the superclass to handle it.
-            super.onOptionsItemSelected(item)
+
+        R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
+            val action = ListFragmentDirections.actionHomeToSettingsFragment()
+            navController.navigate(action)
+            true
+        }
+
+            else -> {
+                // The user's action isn't recognized.
+                // Invoke the superclass to handle it.
+                super.onOptionsItemSelected(item)
+            }
+        }
+
+        fun setUpListeners() {
         }
     }
-    fun setUpListeners() {
-    }
 
-    override fun onShowClick(beer: Beer) {
-        navController.navigate(
-            ListFragmentDirections.actionListFragmentToShowBeerFragment()
-        )
-    }
-}
+
+
+
+
