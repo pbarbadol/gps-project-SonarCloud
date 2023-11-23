@@ -22,7 +22,7 @@ import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.model.User
 
-class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , CommentsFragment.OnShowClickListener{
+class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , CommentsFragment.OnShowClickListener, FavsFragment.OnShowClickListener{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding //Creamos el binding
     private val navController by lazy {
@@ -74,9 +74,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         bundle.putParcelable("user", user) //Pasamos en un bundle el user
         navController.navigate(
 
-            ListFragmentDirections.actionListFragmentToShowBeerFragment(
-                beer
-            )
+            ListFragmentDirections.actionListFragmentToShowBeerFragment()
         )
     }
 

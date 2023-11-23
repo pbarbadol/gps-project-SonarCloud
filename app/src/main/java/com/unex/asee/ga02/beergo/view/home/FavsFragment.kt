@@ -33,6 +33,7 @@ class FavsFragment : Fragment() {
     private lateinit var db: BeerGoDatabase
 
     private lateinit var listener: OnShowClickListener
+    private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
     interface OnShowClickListener {
         fun onShowClick(beer : Beer)
@@ -51,6 +52,7 @@ class FavsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -80,6 +82,7 @@ class FavsFragment : Fragment() {
 
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
+        beerViewModel.setSelectedBeer(null)
         setUpRecyclerView()
         loadFavourites()
     }
@@ -90,7 +93,18 @@ class FavsFragment : Fragment() {
     private fun setUpRecyclerView()  {
         adapter = FavsAdapter(beers = favBeers, onClick = {
 
-            navigateToShowBeerFragment(it)
+            val cervezaSeleccionada = beerViewModel.getSelectedBeer()
+
+            if (cervezaSeleccionada == null) {
+                // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
+                beerViewModel.setSelectedBeer(it)
+                navigateToShowBeerFragment(it)
+            } else {
+                // Si ya hay una cerveza seleccionada, solo mostrar los detalles
+                navigateToShowBeerFragment(it)
+            }
+
+
         },
             onLongClick = {
                 deleteBeer(it)
@@ -124,7 +138,7 @@ class FavsFragment : Fragment() {
     }
 
     private fun navigateToShowBeerFragment(beer: Beer) {
-        val action = FavsFragmentDirections.actionFavsFragmentToShowBeerFragment(beer)
+        val action = FavsFragmentDirections.actionFavsFragmentToShowBeerFragment()
         findNavController().navigate(action)
     }
 

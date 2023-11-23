@@ -43,7 +43,6 @@ class ShowBeerFragment : Fragment() {
 
     private lateinit var db: BeerGoDatabase
 
-    private val args : ShowBeerFragmentArgs by navArgs()
     private var _binding: FragmentShowBeerBinding? = null
 
     private lateinit var userViewModel: UserViewModel

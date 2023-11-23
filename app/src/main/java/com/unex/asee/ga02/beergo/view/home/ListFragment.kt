@@ -59,6 +59,8 @@ class ListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+
+
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -89,6 +91,8 @@ class ListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
 
+        beerViewModel.setSelectedBeer(null)
+
         binding.spinner.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -118,8 +122,6 @@ class ListFragment : Fragment() {
     }
 
 
-    private suspend fun fetchBeers(): List<Beer> {
-
     private suspend fun fetchBeers(): List<Beer> = withContext(Dispatchers.IO) {
         try {
             val result = getNetworkService().getBeers(1).execute()
@@ -136,9 +138,6 @@ class ListFragment : Fragment() {
         }
     }
 
-
-
-    }
 
 
     fun setUpUI() {
