@@ -9,7 +9,7 @@ import com.unex.asee.ga02.beergo.model.User
 @Dao
 interface UserDao {
     @Query("SELECT * FROM user WHERE name LIKE :first LIMIT 1")
-    suspend fun findByName(first: String): User
+    suspend fun findByName(first: String): User?
     @Insert
     suspend fun insert(user: User): Long
 
