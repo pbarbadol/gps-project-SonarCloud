@@ -57,7 +57,8 @@
     <fragment
         android:id="@+id/showBeerFragment"
         android:name="com.unex.asee.ga02.beergo.view.home.ShowBeerFragment"
-        android:label="Show Beer"
+        android:label="Cerveza"
+
         tools:layout="@layout/fragment_show_beer" >
         <action
             android:id="@+id/action_showBeerFragment_to_commentsFragment"
@@ -76,5 +77,10 @@
             android:id="@+id/action_commentsFragment_to_addCommentFragment"
             app:destination="@id/addCommentFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.ProfileFragment"
+        android:label="Perfil"
+        tools:layout="@layout/fragment_profile" />
 </navigation> <!-- Closing tag added -->
 
