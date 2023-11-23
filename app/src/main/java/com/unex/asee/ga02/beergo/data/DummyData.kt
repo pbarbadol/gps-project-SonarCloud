@@ -2,16 +2,20 @@ package com.unex.asee.ga02.beergo.data
 
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.model.Beer
-
+/*
 val dummyBeers: List<Beer> = listOf(
     Beer(
+<<<<<<< HEAD
         1,  // Identificador añadido
+=======
+        0,
+>>>>>>> apiNueva
         "Heineken",
         "Heineken es una cerveza tipo Lager, fundada en 1873 en Ámsterdam. Es conocida por su sabor suave y su carácter refrescante.",
         "1873",
         "42",
         "Lager",
-        "Holanda",
+
         R.drawable.hnk,
         R.drawable.hnk
     ),
@@ -80,5 +84,9 @@ val dummyBeers: List<Beer> = listOf(
         "Países Bajos",
         R.drawable.amstel_lata,
         R.drawable.amstel_lata
-    )
+
+    ),
+    // Agrega más cervezas famosas aquí
 )
+*/
+

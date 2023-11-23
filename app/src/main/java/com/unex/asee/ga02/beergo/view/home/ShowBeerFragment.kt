@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 
 import androidx.navigation.fragment.navArgs
-import com.unex.asee.ga02.beergo.R
-import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
+import com.bumptech.glide.Glide
+import com.unex.asee.ga02.beergo.api.APIError
+import com.unex.asee.ga02.beergo.api.getNetworkService
+import com.unex.asee.ga02.beergo.data.api.BeerApi
 import com.unex.asee.ga02.beergo.databinding.FragmentShowBeerBinding
+import com.unex.asee.ga02.beergo.model.Beer
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -58,15 +61,41 @@ class ShowBeerFragment : Fragment() {
         super.onViewCreated(View, savedInstanceState)
 
         val beer = args.beer
-        binding.title.text = "${beer.title} details"
+        binding.id.text = beer.id.toString()
+        binding.title.text = beer.title
+        binding.anio.text = beer.year
         binding.description.text = beer.description
-        binding.kcal.text = beer.kcal
-        binding.type.text = beer.type
-        binding.type2.text = beer.type
-        binding.type3.text = beer.type
-        binding.beerImage.setImageResource(beer.image)
+        binding.abv.text = beer.abv.toString() + "%"
+        Glide.with(this)
+            .load(beer.image)
+            .into(binding.beerImage)
+        //binding.type.text = beer.type
+        //binding.type2.text = beer.type
+        //binding.type3.text = beer.type
+        //binding.beerImage.setImageResource(beer.image)
 
     }
+
+    private fun beerBinding(beer: Beer){
+        binding.id.text = beer.id.toString()
+        binding.title.text = beer.title
+        binding.description.text = beer.description
+        binding.abv.text = beer.abv.toString()
+        Glide.with(this)
+            .load(beer.image)
+            .into(binding.beerImage)
+    }
+    /*
+    private suspend fun fetchBeerDetail(beerId: Int): BeerApi {
+        var beer = BeerApi()
+        try {
+            beer = getNetworkService().getBeerDetails(beerId).execute().body() ?: BeerApi()
+        } catch (cause: Throwable) {
+            throw APIError("Unable to fetch data from API", cause)
+        }
+        return beer
+    }
+*/
 
     companion object {
         /**
