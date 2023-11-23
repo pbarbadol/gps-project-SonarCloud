@@ -22,7 +22,7 @@ import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.model.User
 
-class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , CommentsFragment.OnShowClickListener, FavsFragment.OnShowClickListener {
+class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , CommentsFragment.OnShowClickListener, FavsFragment.OnShowClickListener{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding //Creamos el binding
     private val navController by lazy {
@@ -35,14 +35,10 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         const val LOGIN_USER = "LOGIN_USER"
         val user = null
 
-
         public fun start(
             context: Context,
             user: User
         ) {
-            //val intent = Intent(context, HomeActivity::class.java)
-            //intent.putExtra(LOGIN_USER, user)
-            //context.startActivity(intent)
         }
     }
 
@@ -82,9 +78,8 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         )
     }
 
-    override fun onShowClick(comment : Comment) {
+    override fun onShowClick(comment: Comment) {
         navController.navigate(
-
             CommentsFragmentDirections.actionCommentsFragmentToAddCommentFragment()
         )
     }
@@ -98,7 +93,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
                 R.id.listFragment,
                 R.id.favsFragment,
                 R.id.historyFragment,
-                R.id.settingsFragment,
+                R.id.profileFragment,
                 R.id.achievementsFragment
 
             )
@@ -156,9 +151,3 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         fun setUpListeners() {
         }
     }
-
-
-
-
-
-
