@@ -6,26 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".view.home.ListFragment">
 
+
     <Spinner
         android:id="@+id/spinnerOpciones"
         android:layout_width="99dp"
         android:layout_height="30dp"
-        android:layout_marginStart="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/rv_beer_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.578"
         app:layout_constraintStart_toEndOf="@+id/searchView"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.022" />
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_width="274dp"
+        android:layout_height="45dp"
         android:queryHint="Search"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.195"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023"
         app:layout_constraintWidth_default="wrap"
         app:layout_constraintWidth_max="500dp"
         app:layout_constraintWidth_percent="0.8" />
@@ -36,9 +39,10 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ProgressBar
         android:id="@+id/spinner"
@@ -56,14 +60,12 @@
         android:layout_height="45dp"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_add_beer"
-        app:layout_constraintBottom_toTopOf="@+id/rv_beer_list"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.857"
-        app:layout_constraintStart_toEndOf="@+id/searchView"
+        app:layout_constraintHorizontal_bias="0.926"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.842" />
-
-    <!-- Removed the extra RecyclerView closing tag -->
-
+        app:layout_constraintVertical_bias="0.95"
+        android:elevation="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

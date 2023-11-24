@@ -10,7 +10,8 @@ fun BeerApi.toBeer(): Beer {
         year = firstBrewed?.substring(3, 7) ?: "",
         description = description ?: "",
         abv = abv ?: 0.0,
-        image = imageUrl ?: ""
+        image = imageUrl ?: "",
+        insertedBy = null
     )
 }
 

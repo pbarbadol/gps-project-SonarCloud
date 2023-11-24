@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
 import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -25,6 +27,11 @@ class InsertBeerFragment : Fragment() {
     // Database
     private lateinit var db: BeerGoDatabase
 
+    // ViewModel
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var currentUser: User
+
+
     /**
      * Método llamado cuando se crea la instancia del fragmento.
      *
@@ -34,6 +41,9 @@ class InsertBeerFragment : Fragment() {
         super.onCreate(savedInstanceState)
         // Obtener instancia de la base de datos
         db = BeerGoDatabase.getInstance(requireContext())!!
+        // Obtener el ViewModel
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        currentUser = userViewModel.getUser()
     }
 
     /**
@@ -60,7 +70,7 @@ class InsertBeerFragment : Fragment() {
     private fun setupInsertButton() {
         binding.buttonInsertBeer.setOnClickListener {
             val title = binding.editTextBeerName.text.toString()
-            val description = binding.editTextBeerType.text.toString()
+            val description = binding.editTextBeerDescription.text.toString()
             val year = binding.editTextYear.text.toString()
             val abvString = binding.editTextAlcoholPercentage.text.toString()
 
@@ -125,6 +135,8 @@ class InsertBeerFragment : Fragment() {
      * @param description Descripción de la cerveza.
      * @param year Año de la cerveza.
      * @param abv Porcentaje de alcohol.
+     * @param image URL de la imagen de la cerveza.
+     * @param insertedBy ID del usuario que insertó la cerveza.
      * @return Una instancia de la clase [Beer].
      */
     private fun createBeer(
@@ -139,7 +151,8 @@ class InsertBeerFragment : Fragment() {
             description = description,
             year = year,
             abv = abv,
-            image = "url_imagen" //TODO: no se que poners
+            image = "url_imagen", //TODO: no se que poner
+            insertedBy = currentUser.userId
         )
     }
 
