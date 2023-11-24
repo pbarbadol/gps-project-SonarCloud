@@ -92,8 +92,9 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
                 R.id.listFragment,
                 R.id.favsFragment,
                 R.id.historyFragment,
-
+                R.id.profileFragment,
                 R.id.achievementsFragment
+
             )
         )
 
@@ -115,9 +116,10 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
                     binding.toolbar.menu.findItem(R.id.action_settings).setVisible(true)
                 }
                 binding.bottomNavigationView.visibility = View.VISIBLE
+                binding.toolbar.visibility = View.VISIBLE
             }
-
         }
+
     }
 
         override fun onSupportNavigateUp(): Boolean {
