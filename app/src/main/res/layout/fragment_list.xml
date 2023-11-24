@@ -15,23 +15,7 @@
         app:layout_constraintStart_toEndOf="@+id/searchView"
         tools:layout_editor_absoluteY="3dp" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchView"
-        android:layout_width="190dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:queryHint="Search"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.116"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_default="wrap"
-        app:layout_constraintWidth_max="500dp"
-        app:layout_constraintWidth_percent="0.8">
 
-    </androidx.appcompat.widget.SearchView>
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"

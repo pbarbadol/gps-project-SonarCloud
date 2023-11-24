@@ -129,6 +129,7 @@ class ListFragment : Fragment() {
 
                     withContext(Dispatchers.Main) {
                         adapter.updateData(cachedBeers)
+                        adapter.sortByAbv()
                         for (beer in cachedBeers) {
                             db.beerDao().insert(beer)
                         }
@@ -145,8 +146,35 @@ class ListFragment : Fragment() {
                 }
             }
         }
-    }
 
+    var spinnerOpciones = binding.spinnerOpciones
+    val listaOpciones = arrayOf("Abv", "Titulo", "Año")
+
+    var adapterSpinner: ArrayAdapter<String> =
+        ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaOpciones)
+    spinnerOpciones.adapter = adapterSpinner
+
+    spinnerOpciones.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            when (position) {
+                0 -> {
+                    adapter.sortByAbv()
+                }
+                1 -> {
+                    adapter.sortByTitle()
+                }
+                2 -> {
+                    adapter.sortByYear()
+                }
+            }
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+            // Handle nothing selected if needed
+            adapter.sortByAbv()
+        }
+    }
+}
     private suspend fun fetchBeers(): List<Beer> = withContext(Dispatchers.IO) {
         try {
             val result = getNetworkService().getBeers(1).execute()
@@ -192,7 +220,7 @@ class ListFragment : Fragment() {
         }
         Log.d("DiscoverFragment", "setUpRecyclerView")
     }
-
+/*
     private fun performSearch(query: String) {
         beersFiltered = cachedBeers.filter { it.title.contains(query, ignoreCase = true) }
         adapter.updateData(beersFiltered)
@@ -200,7 +228,7 @@ class ListFragment : Fragment() {
         beers = beersFiltered  // Actualiza la lista original
         Log.d("ListFragment", "Filtered Beers: $beersFiltered")
     }
-
+*/
 
     private fun setFavourite(beer: Beer) {
         val user = userViewModel.getUser()
@@ -230,7 +258,7 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
+/*
     override fun onResume() {
         super.onResume()
 
@@ -240,7 +268,7 @@ class ListFragment : Fragment() {
         }
     }
 
-
+*/
     override fun onResume() {
         super.onResume()
 
