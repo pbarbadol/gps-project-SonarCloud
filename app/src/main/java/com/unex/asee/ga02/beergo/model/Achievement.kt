@@ -7,10 +7,10 @@ import java.io.Serializable
 
 @Entity
 data class Achievement(
-    @PrimaryKey var achievementId: Long?,
+    @PrimaryKey var achievementId: Long,
     val title: String,
     val description: String,
+    val expPoint: Int,
     val category: String,
-    val expPoints: Int,
 
     ): Serializable

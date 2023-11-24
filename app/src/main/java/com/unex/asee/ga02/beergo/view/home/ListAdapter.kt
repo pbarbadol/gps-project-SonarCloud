@@ -12,7 +12,7 @@ import com.unex.asee.ga02.beergo.model.Beer
 
 
 class ListAdapter(
-    private var beers: List<Beer>,
+    var beers: List<Beer>,
     private val onClick: (beer: Beer) -> Unit,
     private val onLongClick: (beer: Beer) -> Unit,
     private val context: Context?

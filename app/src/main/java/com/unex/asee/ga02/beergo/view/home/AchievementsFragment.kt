@@ -1,60 +1,127 @@
 package com.unex.asee.ga02.beergo.view.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.unex.asee.ga02.beergo.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.unex.asee.ga02.beergo.data.beerAchievements
+import com.unex.asee.ga02.beergo.database.BeerGoDatabase
+import com.unex.asee.ga02.beergo.databinding.FragmentAchievementsBinding
+import com.unex.asee.ga02.beergo.model.Achievement
+import com.unex.asee.ga02.beergo.model.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
- * A simple [Fragment] subclass.
- * Use the [AchievementsFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * Fragmento que muestra la lista de logros.
  */
 class AchievementsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private lateinit var db: BeerGoDatabase
+
+    // View Binding
+    private var _binding: FragmentAchievementsBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var adapter: AchievementsAdapter
+    private var achievements: List<Achievement> = emptyList()
+    private var userAchievements: List<Achievement> = emptyList()
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var currentUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
+        // Obtener el ViewModel
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+
+        // Obtener el usuario actual
+        currentUser = userViewModel.getUser()
+
+        // Obtener instancia de la db
+        db = BeerGoDatabase.getInstance(this.requireContext())!!
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_achievements, container, false)
+        // Inflar el diseño del fragmento
+        _binding = FragmentAchievementsBinding.inflate(inflater, container, false)
+        return _binding?.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AchievementsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AchievementsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            // Muestra el ProgressBar
+            binding.loadingProgressBar.visibility = View.VISIBLE
+            almacenarBD()
+            consultaLogros()
+
+            withContext(Dispatchers.Main) {
+                // Ocultar el ProgressBar
+                binding.loadingProgressBar.visibility = View.GONE
+
+                // Crear y configurar el adaptador
+                adapter = AchievementsAdapter(achievements = achievements,
+                    userAchievements = userAchievements,
+                    onClick = { achievement ->
+                        // Manejar clic en el logro
+                        Toast.makeText(
+                            context, "Click on: ${achievement.description}", Toast.LENGTH_SHORT
+                        ).show()
+                    },
+                    onLongClick = { achievement ->
+                        // Manejar clic largo en el logro
+                        Toast.makeText(
+                            context, "Long click on: ${achievement.title}", Toast.LENGTH_SHORT
+                        ).show()
+                    })
+
+                // Configurar el RecyclerView con el adaptador
+                with(binding) {
+                    rvAchievementList.layoutManager =
+                        androidx.recyclerview.widget.LinearLayoutManager(context)
+                    rvAchievementList.adapter = adapter
                 }
             }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null // Evitar fugas de memoria
+    }
+
+    /**
+     * Realiza una consulta de logros en la base de datos.
+     */
+    private suspend fun consultaLogros() {
+        // Obtener la lista de logros
+        achievements = db.achievementDao().getAll()
+
+        // Obtener la lista de logros del usuario
+        val userWithAchievements = db.achievementDao().getUserWithAchievements(currentUser.userId)
+        userAchievements = userWithAchievements.achievements
+    }
+
+    /**
+     * Almacena logros en la base de datos.
+     */
+    private suspend fun almacenarBD() {
+        // Insertar un logro
+        for (achievement in beerAchievements) {
+            db.achievementDao().insert(achievement)
+        }
+
+        // Insertar un logro y relacionarlo con un usuario
+        db.achievementDao().insertAndRelate(beerAchievements[2], currentUser.userId)
+        db.achievementDao().insertAndRelate(beerAchievements[5], currentUser.userId)
     }
 }

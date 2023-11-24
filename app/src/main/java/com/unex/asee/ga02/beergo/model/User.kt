@@ -5,7 +5,7 @@ import java.io.Serializable
 
 @Entity
 data class User(
-    @PrimaryKey(autoGenerate = true) var userId: Long?,
+    @PrimaryKey(autoGenerate = true) var userId: Long,
     val name: String = "",
     val password: String = ""
 ) : Serializable

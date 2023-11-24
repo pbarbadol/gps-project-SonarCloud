@@ -1,8 +1,8 @@
 package com.unex.asee.ga02.beergo.view.home
 
+import History
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,20 +10,17 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.api.APIError
 import com.unex.asee.ga02.beergo.api.getNetworkService
-import com.unex.asee.ga02.beergo.data.api.BeerApi
-//import com.unex.asee.ga02.beergo.data.dummyBeers
 import com.unex.asee.ga02.beergo.data.toBeer
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.model.History
+import com.unex.asee.ga02.beergo.model.Comment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,9 +47,6 @@ class ListFragment : Fragment() {
 
     private lateinit var db: BeerGoDatabase
     private lateinit var userViewModel: UserViewModel
-    interface OnShowClickListener {
-        fun onShowClick(beer: Beer)
-    }
 
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
@@ -62,6 +56,9 @@ class ListFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    interface OnShowClickListener {
+        fun onShowClick(beer: Beer)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
@@ -80,7 +77,7 @@ class ListFragment : Fragment() {
         if (context is OnShowClickListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnShowClickListener")
+            throw RuntimeException("$context must implement OnShowClickListener")
         }
     }
 
@@ -97,39 +94,13 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpUI()
+        beerViewModel.setSelectedBeer(null)
         setUpRecyclerView()
 
-        beerViewModel.setSelectedBeer(null)
-
-        binding.spinner.visibility = View.VISIBLE
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                cachedBeers = fetchBeers()
-
-                withContext(Dispatchers.Main) {
-                    adapter.updateData(cachedBeers)
-                    for (beer in cachedBeers) {
-                        db.beerDao().insert(beer)
-                    }
-                    Log.d("ListFragment", "El tamaño de cachedBeers después de actualizar es: ${cachedBeers.size}")
-                }
-            } catch (error: APIError) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-                }
-            } finally {
-                withContext(Dispatchers.Main) {
-                    binding.spinner.visibility = View.GONE
-                }
-            }
-        }
-
-        // Resto del código...
-
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        beersFiltered = beers
+        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                // No es necesario realizar ninguna acción aquí, ya que estamos manejando cambios.
-                return true
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -139,60 +110,39 @@ class ListFragment : Fragment() {
                 return true
             }
         })
-
         binding.searchView.setOnCloseListener {
-            // Restaurar la lista original cuando se cierra la búsqueda
-            adapter.updateData(cachedBeers)
+            // Restaura la lista original al cerrar el buscador
+            beersFiltered = beers
+            adapter.updateData(beersFiltered)
             adapter.notifyDataSetChanged()
-            binding.searchView.clearFocus()
             true
         }
 
+
         if (cachedBeers.isEmpty()) {
             binding.spinner.visibility = View.VISIBLE
+            beerViewModel.setSelectedBeer(null)
 
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     cachedBeers = fetchBeers()
-                    adapter.updateData(cachedBeers)
-                    adapter.sortByAbv()
+
+                    withContext(Dispatchers.Main) {
+                        adapter.updateData(cachedBeers)
+                        for (beer in cachedBeers) {
+                            db.beerDao().insert(beer)
+                        }
+                        Log.d("ListFragment", "El tamaño de beers después de actualizar es: ${beers.size}")
+                    }
                 } catch (error: APIError) {
-                    Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-                    Log.e("ListFragment", "Error fetching data", error)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
+                    }
                 } finally {
-                    binding.spinner.visibility = View.GONE
-                }
-            }
-        }
-
-
-
-    // Spinner setup
-        var spinnerOpciones = binding.spinnerOpciones
-        val listaOpciones = arrayOf("Abv", "Titulo", "Año")
-
-        var adapterSpinner: ArrayAdapter<String> =
-            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaOpciones)
-        spinnerOpciones.adapter = adapterSpinner
-
-        spinnerOpciones.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                when (position) {
-                    0 -> {
-                        adapter.sortByAbv()
-                    }
-                    1 -> {
-                        adapter.sortByTitle()
-                    }
-                    2 -> {
-                        adapter.sortByYear()
+                    withContext(Dispatchers.Main) {
+                        binding.spinner.visibility = View.GONE
                     }
                 }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Handle nothing selected if needed
-                adapter.sortByAbv()
             }
         }
     }
@@ -213,15 +163,11 @@ class ListFragment : Fragment() {
         }
     }
 
-
-
-    fun setUpUI() {
+    private fun setUpUI() {
     }
 
     private fun setUpRecyclerView() {
-
-        adapter = ListAdapter(beers = cachedBeers, onClick = {
-
+        adapter = ListAdapter(beers = beers, onClick = {
             val cervezaSeleccionada = beerViewModel.getSelectedBeer()
             val history = History(beer = it, date = Date())
             History.saveHistory(history)
@@ -233,14 +179,12 @@ class ListFragment : Fragment() {
                 // Si ya hay una cerveza seleccionada, solo mostrar los detalles
                 listener.onShowClick(it)
             }
-
-        },
-            onLongClick = {
-                setFavourite(it)
-                Toast.makeText(context, "${it.title} añadida a favoritos", Toast.LENGTH_SHORT).show()
-            }
-            , context = context
+        }, onLongClick = {
+            setFavourite(it)
+            Toast.makeText(context, "${it.title} añadida a favoritos", Toast.LENGTH_SHORT).show()
+        }, context = context
         )
+
         with(binding) {
             val numberOfColumns = 2
             rvBeerList.layoutManager = GridLayoutManager(context, numberOfColumns)
@@ -248,6 +192,15 @@ class ListFragment : Fragment() {
         }
         Log.d("DiscoverFragment", "setUpRecyclerView")
     }
+
+    private fun performSearch(query: String) {
+        beersFiltered = cachedBeers.filter { it.title.contains(query, ignoreCase = true) }
+        adapter.updateData(beersFiltered)
+        adapter.notifyDataSetChanged()
+        beers = beersFiltered  // Actualiza la lista original
+        Log.d("ListFragment", "Filtered Beers: $beersFiltered")
+    }
+
 
     private fun setFavourite(beer: Beer) {
         val user = userViewModel.getUser()
@@ -258,6 +211,7 @@ class ListFragment : Fragment() {
                 Toast.makeText(context, "Error: Base de datos no disponible", Toast.LENGTH_SHORT)
                     .show()
             }
+
         }
     }
 
@@ -274,7 +228,7 @@ class ListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // avoid memory leaks
+        _binding = null
     }
 
     override fun onResume() {
@@ -286,6 +240,15 @@ class ListFragment : Fragment() {
         }
     }
 
+
+    override fun onResume() {
+        super.onResume()
+
+        // Actualiza la lista de cervezas al volver al fragmento
+        adapter.updateData(beersFiltered) // O usa beers si deseas mostrar todas las cervezas
+    }
+
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -296,13 +259,11 @@ class ListFragment : Fragment() {
          * @return A new instance of fragment ListFragment.
          */
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+        fun newInstance(param1: String, param2: String) = ListFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_PARAM1, param1)
+                putString(ARG_PARAM2, param2)
             }
+        }
     }
-
-
+}

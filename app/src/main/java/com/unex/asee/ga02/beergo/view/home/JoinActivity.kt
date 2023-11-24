@@ -28,8 +28,6 @@ class JoinActivity : AppCompatActivity() {
             responseLauncher: ActivityResultLauncher<Intent>
         ) {
             val intent = Intent(context, JoinActivity::class.java)
-//            intent.putExtra(USERNAME, user)
-//            intent.putExtra(PASS, password)
             responseLauncher.launch(intent)
 
 
@@ -72,11 +70,12 @@ class JoinActivity : AppCompatActivity() {
             else {
                 lifecycleScope.launch{
                     val user = User(
-                        null,
+                        12, //TODO: hablar con pablo antes de hacer esto
                         etUsername.text.toString(),
                         etPassword.text.toString()
                     )
-                    val id = db?.userDao()?.insert(user)
+                    val id = db?.userDao()!!.insert(user) //Antes: val id = db?.userDao()?.insert(user)
+
 
                     navigateBackWithResult( User(
                         id,
