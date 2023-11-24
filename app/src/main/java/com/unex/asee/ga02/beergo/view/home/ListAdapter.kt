@@ -26,10 +26,14 @@ class ListAdapter(
 
         fun bind(beer: Beer, totalItems: Int) {
             with(binding) {
-                /*
-                beerTitle.text = beer.title
-                beerNationality.text = beer.nationality
-                beerType.text = "${beer.type} types"*/
+
+
+                title.text = beer.title
+                abv.text = beer.abv.toString()
+                year.text = beer.year.toString()
+
+
+
                 context
                 context?.let {
                     Glide.with(context)
@@ -54,6 +58,23 @@ class ListAdapter(
                 parent, false)
         return ShowBeerHolder(binding, onClick, onLongClick,context)
     }
+
+    fun sortByAbv() {
+        beers = beers.sortedBy { it.abv }
+        notifyDataSetChanged()
+
+    }
+    fun sortByTitle() {
+        beers = beers.sortedBy { it.title }
+        notifyDataSetChanged()
+
+    }
+    fun sortByYear() {
+        beers = beers.sortedBy { it.year }
+        notifyDataSetChanged()
+
+    }
+
     fun updateData(beers: List<Beer>) {
         this.beers = beers
         notifyDataSetChanged()
