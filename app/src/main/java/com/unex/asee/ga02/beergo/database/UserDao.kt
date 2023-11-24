@@ -37,4 +37,41 @@ interface UserDao {
      */
     @Delete
     suspend fun delete(user: User)
+
+    /**
+     * Obtiene el número de cervezas insertadas por un usuario específico.
+     *
+     * @param userId El ID del usuario.
+     * @return El número de cervezas insertadas por el usuario.
+     */
+    @Query("SELECT COUNT(*) FROM Beer WHERE insertedBy = :userId")
+    suspend fun countBeersInsertedByUser(userId: Long): Int
+
+    /**
+     * Obtiene el número de cervezas favoritas de un usuario específico.
+     *
+     * @param userId El ID del usuario.
+     * @return El número de cervezas favoritas del usuario.
+     */
+    @Query("SELECT COUNT(*) FROM UserFavouriteBeerCrossRef WHERE userId = :userId")
+    suspend fun countUserFavouriteBeers(userId: Long): Int
+
+    /**
+     * Obtiene el número de comentarios realizados por un usuario específico.
+     *
+     * @param userId El ID del usuario.
+     * @return El número de comentarios realizados por el usuario.
+     */
+    @Query("SELECT COUNT(*) FROM Comment WHERE userId = :userId")
+    suspend fun countCommentsByUser(userId: Long): Int
+
+    /**
+     * Obtiene el número de logros obtenidos por un usuario específico.
+     *
+     * @param userId El ID del usuario.
+     * @return El número de logros obtenidos por el usuario.
+     */
+    @Query("SELECT COUNT(*) FROM UserAchievementCrossRef WHERE userId = :userId")
+    suspend fun countUserAchievements(userId: Long): Int
+
 }
