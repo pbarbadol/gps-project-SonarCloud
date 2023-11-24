@@ -1,15 +1,19 @@
 package com.unex.asee.ga02.beergo.view.home
 
+import CheckAchievement
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentProfileBinding
+import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,19 +30,19 @@ private const val ARG_PARAM2 = "param2"
  */
 class ProfileFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private  var nivel : Int = 0
+    private  var exp : Int = 0
     private lateinit var binding: FragmentProfileBinding
     private lateinit var userViewModel: UserViewModel
+    private var achievements: List<Achievement> = emptyList()
+    private var userAchievements: List<Achievement> = emptyList()
+    private lateinit var currentUser: User
     private lateinit var db: BeerGoDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        currentUser = userViewModel.getUser()
         db = BeerGoDatabase.getInstance(this.requireContext())!!
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -53,7 +57,29 @@ class ProfileFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.idUser.text = userViewModel.getUser()?.name
+        binding.idUser.text = currentUser.name
+        // Agrega estas variables a tu clase
+        lifecycleScope.launch(Dispatchers.IO) {
+
+
+            // Después de obtener la información de logros, puedes actualizar la interfaz de usuario
+            // Esto debe hacerse en el hilo principal, por lo que utilizamos launch(Dispatchers.Main)
+            launch(Dispatchers.Main) {
+                // Agrega el código aquí para actualizar la interfaz de usuario según los logros obtenidos
+                // Puedes mostrar la información de logros en tu diseño (por ejemplo, el número de logros, etc.).
+
+                // Ahora puedes iniciar la verificación de logros
+                val checkAchievement = CheckAchievement(requireContext(), requireActivity())
+                checkAchievement.checkAchievements()
+            }
+            consultaLogros()
+            obtenerNivel()
+
+            binding.progressBar.progress= exp.toInt()
+            binding.levelTextView.text = "Nivel $nivel"
+            binding.expTextView.text = "${exp}%"
+        }
+
         binding.eliminarUsuario.setOnClickListener {
             val user = userViewModel.getUser()
 
@@ -77,6 +103,28 @@ class ProfileFragment : Fragment() {
                 // Esto dependerá de cómo estés manejando las operaciones de la base de datos en tu aplicación.
 
         }
+
+    private suspend fun consultaLogros() {
+        // Obtener la lista de logros
+        achievements = db.achievementDao().getAll()
+
+        // Obtener la lista de logros del usuario
+        val userWithAchievements = db.achievementDao().getUserWithAchievements(currentUser.userId)
+        userAchievements = userWithAchievements.achievements
+    }
+
+    private  fun obtenerNivel() {
+
+        for (achievement in userAchievements){
+            exp += achievement.expPoint
+        }
+        while (exp >= 100){
+            nivel++
+            exp -= 100
+        }
+
+    }
+
 
     companion object {
         /**

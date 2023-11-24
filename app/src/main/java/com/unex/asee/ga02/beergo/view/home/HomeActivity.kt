@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.view.home
 
+import CheckAchievement
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -30,6 +31,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
     }
     private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
+    private lateinit var checkAchievement: CheckAchievement
 
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
@@ -66,6 +68,9 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
 
         // Inicialización de los listeners
         setUpListeners()
+        /*
+        checkAchievement = CheckAchievement(this, this)
+        checkAchievement.startCheckingAchievements()*/
     }
 
 

@@ -111,6 +111,7 @@ class AchievementsFragment : Fragment() {
         userAchievements = userWithAchievements.achievements
     }
 
+
     /**
      * Almacena logros en la base de datos.
      */
@@ -120,8 +121,11 @@ class AchievementsFragment : Fragment() {
             db.achievementDao().insert(achievement)
         }
 
+        /*
         // Insertar un logro y relacionarlo con un usuario
         db.achievementDao().insertAndRelate(beerAchievements[2], currentUser.userId)
-        db.achievementDao().insertAndRelate(beerAchievements[5], currentUser.userId)
+        db.achievementDao().insertAndRelate(beerAchievements[5], currentUser.userId)*/
     }
+
+
 }

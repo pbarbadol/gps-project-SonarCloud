@@ -57,6 +57,8 @@ interface BeerDao {
     @Query("SELECT * FROM user WHERE userId = :userId")
     suspend fun getUserWithFavourites(userId: Long): UserWithFavourites
 
+
+
     /**
      * Verifica si una cerveza está en favoritos.
      *
@@ -66,6 +68,19 @@ interface BeerDao {
     @Query("SELECT COUNT(*) FROM userfavouritebeercrossref WHERE beerId = :beerId")
     suspend fun isBeerInFavorites(beerId: Int): Int
 
+
+    /**
+     * Obtiene todas las cervezas favoritas de un usuario.
+     *
+     * @param userId El ID del usuario.
+     * @return Lista con las cervezas favoritas del usuario.
+     */
+    @Query("SELECT COUNT(*) FROM userfavouritebeercrossref WHERE userId = :userId ")
+    suspend fun BeerInFavorites(userId: Long): Int
+
+
+    @Query("SELECT COUNT(*) FROM comment WHERE userId = :userId ")
+    suspend fun getNumberComments(userId: Long): Int
     /**
      * Obtiene todas las cervezas insertadas por los usuarios
      *
@@ -75,6 +90,14 @@ interface BeerDao {
     @Query("SELECT * FROM beer WHERE insertedBy IS NOT NULL ")
     suspend fun getBeersFromAllUser(): List<Beer>
 
+    /**
+     * Obtiene el número de cervezas insertadas por los usuarios
+     *
+     * @param beerId El ID de la cerveza.
+     * @return Número de cervezas de los usuarios.
+     */
+    @Query("SELECT COUNT(*) FROM beer WHERE insertedBy IS NOT NULL ")
+    suspend fun getNumberBeersFromAllUser(): Int
     /**
      * Inserta una relación de usuario y cerveza favorita.
      *
