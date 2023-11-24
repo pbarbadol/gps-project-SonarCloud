@@ -13,7 +13,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.api.APIError
 import com.unex.asee.ga02.beergo.api.getNetworkService
 import com.unex.asee.ga02.beergo.data.toBeer
@@ -26,36 +29,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ListFragment : Fragment() {
-
     private var beers: List<Beer> = emptyList()
     private var beersFiltered: List<Beer> = emptyList()
     private var cachedBeers: List<Beer> = emptyList()
     private lateinit var listener: OnShowClickListener
     private lateinit var beerViewModel: BeerViewModel
-
     private lateinit var db: BeerGoDatabase
     private lateinit var userViewModel: UserViewModel
-
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ListAdapter
-
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
     interface OnShowClickListener {
         fun onShowClick(beer: Beer)
     }
@@ -66,8 +50,6 @@ class ListFragment : Fragment() {
 
 
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
@@ -192,6 +174,11 @@ class ListFragment : Fragment() {
     }
 
     private fun setUpUI() {
+        val navController = findNavController()
+
+        binding.btnAddBeer.setOnClickListener {
+            navController.navigate(R.id.action_listFragment_to_insertBeerFragment)
+        }
     }
 
     private fun setUpRecyclerView() {
@@ -220,16 +207,6 @@ class ListFragment : Fragment() {
         }
         Log.d("DiscoverFragment", "setUpRecyclerView")
     }
-/*
-    private fun performSearch(query: String) {
-        beersFiltered = cachedBeers.filter { it.title.contains(query, ignoreCase = true) }
-        adapter.updateData(beersFiltered)
-        adapter.notifyDataSetChanged()
-        beers = beersFiltered  // Actualiza la lista original
-        Log.d("ListFragment", "Filtered Beers: $beersFiltered")
-    }
-*/
-
     private fun setFavourite(beer: Beer) {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
@@ -281,16 +258,12 @@ class ListFragment : Fragment() {
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+
          * @return A new instance of fragment ListFragment.
          */
         @JvmStatic
         fun newInstance(param1: String, param2: String) = ListFragment().apply {
             arguments = Bundle().apply {
-                putString(ARG_PARAM1, param1)
-                putString(ARG_PARAM2, param2)
             }
         }
     }

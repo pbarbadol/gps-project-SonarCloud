@@ -11,8 +11,6 @@
         android:label="@string/achievementsFragment"
         tools:layout="@layout/fragment_achievements" />
 
-
-
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.unex.asee.ga02.beergo.view.home.HistoryFragment"
@@ -39,6 +37,9 @@
         <action
             android:id="@+id/action_listFragment_to_showBeerFragment"
             app:destination="@id/showBeerFragment" />
+        <action
+            android:id="@+id/action_listFragment_to_insertBeerFragment"
+            app:destination="@id/insertBeerFragment" />
     </fragment>
 
 
@@ -82,5 +83,13 @@
         android:name="com.unex.asee.ga02.beergo.view.home.ProfileFragment"
         android:label="Perfil"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/insertBeerFragment"
+        android:name="com.unex.asee.ga02.beergo.view.home.InsertBeerFragment"
+        android:label="Añadir cerveza"
+        tools:layout="@layout/fragment_insert_beer" />
+    <action
+        android:id="@+id/action_insertBeerFragment_to_listFragment"
+        app:destination="@id/listFragment" />
 </navigation> <!-- Closing tag added -->
 
