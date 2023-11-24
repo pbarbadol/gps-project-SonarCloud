@@ -70,8 +70,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
 
 
     override fun onShowClick(beer: Beer) {
-        val bundle = Bundle()
-        bundle.putParcelable("user", user) //Pasamos en un bundle el user
+
         navController.navigate(
 
             ListFragmentDirections.actionListFragmentToShowBeerFragment()
@@ -102,16 +101,20 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.showBeerFragment) {
-                binding.toolbar.menu.clear()
+            if ((destination.id == R.id.showBeerFragment) ||
+                (destination.id == R.id.settingsFragment) || (destination.id == R.id.commentsFragment) ||
+                (destination.id == R.id.addCommentFragment)
+            ) {
+                binding.toolbar.menu.findItem(R.id.action_search).setVisible(false)
+                binding.toolbar.menu.findItem(R.id.action_settings).setVisible(false)
                 binding.bottomNavigationView.visibility = View.GONE
-            } else if (destination.id == R.id.commentsFragment){
-                binding.toolbar.menu.clear()
-                binding.bottomNavigationView.visibility = View.GONE
-            } else if (destination.id == R.id.addCommentFragment){
-                binding.toolbar.menu.clear()
-                binding.bottomNavigationView.visibility = View.GONE
+
             } else {
+                val search = binding.toolbar.menu.findItem(R.id.action_search)
+                if (search != null) {
+                    binding.toolbar.menu.findItem(R.id.action_search).setVisible(true)
+                    binding.toolbar.menu.findItem(R.id.action_settings).setVisible(true)
+                }
                 binding.bottomNavigationView.visibility = View.VISIBLE
                 binding.toolbar.visibility = View.VISIBLE
             }
@@ -151,3 +154,8 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         fun setUpListeners() {
         }
     }
+
+
+
+
+
