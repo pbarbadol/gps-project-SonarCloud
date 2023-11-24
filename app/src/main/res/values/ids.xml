@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="cl_item" type="id" />
+    <item name="cervezasAnadidas" type="id" />
+    <item name="cervezasFavoritas" type="id" />
 </resources>

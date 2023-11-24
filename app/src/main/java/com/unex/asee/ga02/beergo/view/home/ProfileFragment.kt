@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
@@ -13,32 +14,16 @@ import com.unex.asee.ga02.beergo.databinding.FragmentProfileBinding
 import com.unex.asee.ga02.beergo.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
     private lateinit var binding: FragmentProfileBinding
     private lateinit var userViewModel: UserViewModel
     private lateinit var db: BeerGoDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-        db = BeerGoDatabase.getInstance(this.requireContext())!!
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        db = BeerGoDatabase.getInstance(requireContext())!!
     }
 
     override fun onCreateView(
@@ -46,55 +31,45 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding= FragmentProfileBinding.inflate(inflater, container, false)
-
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
-
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Accede a las vistas a través del binding
         binding.idUser.text = userViewModel.getUser()?.name
+        lifecycleScope.launch(Dispatchers.Main) {
+            setUpStadistics()
+        }
         binding.eliminarUsuario.setOnClickListener {
             val user = userViewModel.getUser()
 
             if (user != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    db?.userDao()?.delete(user)
+                    db.userDao().delete(user)
                     activity?.finish()
                     val intent = Intent(context, LoginActivity::class.java)
                     startActivity(intent)
                 }
             }
         }
+
         binding.cerrarSesion.setOnClickListener {
-            val emptyUser = User(userId = 0, name = "", password = "") //TODO: ARREGLAR, MUY IMPORTANTE
-            userViewModel.setUser(emptyUser)
+            userViewModel.setUser(User(0, "", ""))
             activity?.finish()
             val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
         }
-            // Aquí es donde realizarías la operación de eliminación en la base de datos.
-                // Esto dependerá de cómo estés manejando las operaciones de la base de datos en tu aplicación.
+    }
 
-        }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private suspend fun setUpStadistics() {
+        binding.cervezasAnadidas.text = "Cervezas Añadidas: ${db.userDao().countBeersInsertedByUser(userViewModel.getUser().userId)}"
+        binding.cervezasFavoritas.text = "Cervezas Favoritas: ${db.userDao().countUserFavouriteBeers(userViewModel.getUser().userId)}"
+        binding.comentariosAnadidos.text = "Comentarios Añadidos: ${db.userDao().countCommentsByUser(userViewModel.getUser().userId)}"
+        binding.logrosConseguidos.text = "Logros Conseguidos: ${db.userDao().countUserAchievements(userViewModel.getUser().userId)}"
+        //binding.iniciosSesion.text = "Inicios de Sesión: ${0}"
+        //binding.fechaCreacion.text = "Fecha de Creación: ${0}"
     }
 }

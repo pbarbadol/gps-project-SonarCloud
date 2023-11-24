@@ -16,8 +16,8 @@ class UserViewModel : ViewModel() {
         get() = userLiveData
 
     // Método para cambiar el valor del LiveData del usuario.
-    fun setUser(user: User) {
-        userLiveData.value = user
+    fun setUser(user: User?) {
+        userLiveData.value = user!!
     }
 
     // Función para obtener el usuario.
