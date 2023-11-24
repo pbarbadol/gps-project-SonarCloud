@@ -23,10 +23,10 @@
 
     <!-- EditText para el tipo de cerveza -->
     <EditText
-        android:id="@+id/editTextBeerType"
+        android:id="@+id/editTextBeerDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Tipo de cerveza"
+        android:hint="Descripción"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextBeerName"
@@ -42,7 +42,7 @@
         android:hint="Año"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextBeerType"
+        app:layout_constraintTop_toBottomOf="@id/editTextBeerDescription"
         android:layout_marginTop="16dp"
         android:inputType="number"
         />

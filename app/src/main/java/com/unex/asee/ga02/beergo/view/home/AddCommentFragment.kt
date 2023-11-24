@@ -79,7 +79,7 @@ class AddCommentFragment: Fragment() {
                 val idCerv = beer!!.beerId
                 val idUser = user.userId
                 val userName = user.name
-                val comment = Comment(null, idCerv, idUser, comentario, userName)
+                val comment = Comment(0, idCerv, idUser, comentario, userName)
                 addComment(comment)
             }
             findNavController().popBackStack()

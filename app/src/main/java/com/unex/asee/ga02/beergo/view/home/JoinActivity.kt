@@ -24,8 +24,7 @@ class JoinActivity : AppCompatActivity() {
         const val USERNAME = "JOIN_USERNAME"
         const val PASS = "JOIN_PASS"
         fun start(
-            context: Context,
-            responseLauncher: ActivityResultLauncher<Intent>
+            context: Context, responseLauncher: ActivityResultLauncher<Intent>
         ) {
             val intent = Intent(context, JoinActivity::class.java)
             responseLauncher.launch(intent)
@@ -62,26 +61,22 @@ class JoinActivity : AppCompatActivity() {
     private fun join() {
         with(binding) {
             val check = CredentialCheck.join(
-                etUsername.text.toString(),
-                etPassword.text.toString(),
-                etRepassword.text.toString()
+                etUsername.text.toString(), etPassword.text.toString(), etRepassword.text.toString()
             )
             if (check.fail) notifyInvalidCredentials(check.msg)
             else {
-                lifecycleScope.launch{
+                lifecycleScope.launch {
                     val user = User(
-                        12, //TODO: hablar con pablo antes de hacer esto
-                        etUsername.text.toString(),
-                        etPassword.text.toString()
+                        0, etUsername.text.toString(), etPassword.text.toString()
                     )
-                    val id = db?.userDao()!!.insert(user) //Antes: val id = db?.userDao()?.insert(user)
+                    val id =
+                        db?.userDao()!!.insert(user) //Antes: val id = db?.userDao()?.insert(user)
 
 
-                    navigateBackWithResult( User(
-                        id,
-                        etUsername.text.toString(),
-                        etPassword.text.toString()
-                    )
+                    navigateBackWithResult(
+                        User(
+                            id, etUsername.text.toString(), etPassword.text.toString()
+                        )
                     )
                 }
             }

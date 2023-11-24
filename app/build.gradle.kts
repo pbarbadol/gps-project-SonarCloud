@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.dokka")
 }
 
 android {
@@ -45,6 +46,8 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+
 }
 
 dependencies{
@@ -77,6 +80,7 @@ dependencies{
         // Jetpack Compose Integration
         implementation("androidx.navigation:navigation-compose:$nav_version")
     }
+
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

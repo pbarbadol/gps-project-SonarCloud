@@ -8,26 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.api.APIError
-import com.unex.asee.ga02.beergo.api.getNetworkService
-import com.unex.asee.ga02.beergo.data.toBeer
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.model.Comment
+import com.unex.asee.ga02.beergo.utils.ApiUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
+import kotlin.collections.*
 
 class ListFragment : Fragment() {
     private var beers: List<Beer> = emptyList()
@@ -40,22 +37,23 @@ class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ListAdapter
+
     interface OnShowClickListener {
         fun onShowClick(beer: Beer)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Obtenemos el ViewModel de cervecitas
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
+        //Obtenemos el ViewModel de usuario
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-
-
-        arguments?.let {
-        }
+        //Obtenemos la base de datos
+        db = BeerGoDatabase.getInstance(this.requireContext())!!
     }
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
-        db = BeerGoDatabase.getInstance(context)!!
         if (context is OnShowClickListener) {
             listener = context
         } else {
@@ -63,6 +61,24 @@ class ListFragment : Fragment() {
         }
     }
 
+    private suspend fun mostrarCervezas() {
+        try {
+            //Obtener cervezas de la bd
+            cachedBeers = db.beerDao().getAll()
+
+            //Actualiza la lista de cervezas
+            adapter.updateData(cachedBeers)
+            //Ordena la lista de cervezas por abv
+            adapter.sortByAbv()
+
+        } catch (error: APIError) {
+            Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
+        } finally {
+            withContext(Dispatchers.Main) {
+                binding.spinner.visibility = View.GONE
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,14 +89,34 @@ class ListFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setUpUI()
         beerViewModel.setSelectedBeer(null)
         setUpRecyclerView()
 
-        beersFiltered = beers
-        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        if (cachedBeers.isEmpty()) {
+            binding.spinner.visibility = View.VISIBLE
+            beerViewModel.setSelectedBeer(null)
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                ApiUtils().beersFromApiToBd(db)
+                withContext(Dispatchers.Main) {
+                    mostrarCervezas()
+                }
+            }
+        }
+
+        setUpSortingSpinner()
+    }
+
+    private fun setUpUI() {
+
+        // Filtrar las cervezas al cambiar el texto de búsqueda
+        binding.searchView.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -92,92 +128,46 @@ class ListFragment : Fragment() {
                 return true
             }
         })
+
+        // Restaurar la lista original al cerrar el buscador
         binding.searchView.setOnCloseListener {
-            // Restaura la lista original al cerrar el buscador
-            beersFiltered = beers
-            adapter.updateData(beersFiltered)
+            adapter.updateData(cachedBeers)
             adapter.notifyDataSetChanged()
             true
         }
 
-
-        if (cachedBeers.isEmpty()) {
-            binding.spinner.visibility = View.VISIBLE
-            beerViewModel.setSelectedBeer(null)
-
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    cachedBeers = fetchBeers()
-
-                    withContext(Dispatchers.Main) {
-                        adapter.updateData(cachedBeers)
-                        adapter.sortByAbv()
-                        for (beer in cachedBeers) {
-                            db.beerDao().insert(beer)
-                        }
-                        Log.d("ListFragment", "El tamaño de beers después de actualizar es: ${beers.size}")
-                    }
-                } catch (error: APIError) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-                    }
-                } finally {
-                    withContext(Dispatchers.Main) {
-                        binding.spinner.visibility = View.GONE
-                    }
-                }
-            }
-        }
-
-    var spinnerOpciones = binding.spinnerOpciones
-    val listaOpciones = arrayOf("Abv", "Titulo", "Año")
-
-    var adapterSpinner: ArrayAdapter<String> =
-        ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaOpciones)
-    spinnerOpciones.adapter = adapterSpinner
-
-    spinnerOpciones.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-            when (position) {
-                0 -> {
-                    adapter.sortByAbv()
-                }
-                1 -> {
-                    adapter.sortByTitle()
-                }
-                2 -> {
-                    adapter.sortByYear()
-                }
-            }
-        }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-            // Handle nothing selected if needed
-            adapter.sortByAbv()
-        }
-    }
-}
-    private suspend fun fetchBeers(): List<Beer> = withContext(Dispatchers.IO) {
-        try {
-            val result = getNetworkService().getBeers(1).execute()
-
-            if (result.isSuccessful) {
-                result.body()?.map { it?.toBeer() ?: Beer(0, "", " ", " ", 0.0, "") }
-                    ?: throw Exception("Response body is null")
-            } else {
-                throw Exception("Error: ${result.code()} ${result.message()}")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
-        }
-    }
-
-    private fun setUpUI() {
         val navController = findNavController()
-
         binding.btnAddBeer.setOnClickListener {
             navController.navigate(R.id.action_listFragment_to_insertBeerFragment)
+        }
+    }
+
+
+    private fun setUpSortingSpinner() {
+        val spinnerOpciones = binding.spinnerOpciones
+        val listaOpciones = arrayOf("Abv", "Titulo", "Año")
+
+        val adapterSpinner: ArrayAdapter<String> =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaOpciones)
+        spinnerOpciones.adapter = adapterSpinner
+
+        spinnerOpciones.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+                    0 -> adapter.sortByAbv()
+                    1 -> adapter.sortByTitle()
+                    2 -> adapter.sortByYear()
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                adapter.sortByAbv()
+            }
         }
     }
 
@@ -207,6 +197,7 @@ class ListFragment : Fragment() {
         }
         Log.d("DiscoverFragment", "setUpRecyclerView")
     }
+
     private fun setFavourite(beer: Beer) {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
@@ -235,36 +226,16 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-/*
+
     override fun onResume() {
         super.onResume()
 
-        // Actualiza la lista de cervezas al volver al fragmento
-        if (cachedBeers.isNotEmpty()) {
-            adapter.updateData(cachedBeers)
-        }
-    }
-
-*/
-    override fun onResume() {
-        super.onResume()
-
-        // Actualiza la lista de cervezas al volver al fragmento
-        adapter.updateData(beersFiltered) // O usa beers si deseas mostrar todas las cervezas
-    }
-
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-
-         * @return A new instance of fragment ListFragment.
-         */
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) = ListFragment().apply {
-            arguments = Bundle().apply {
+        lifecycleScope.launch(Dispatchers.IO) {
+            ApiUtils().beersFromApiToBd(db)
+            withContext(Dispatchers.Main) {
+                mostrarCervezas()
             }
         }
+        adapter.updateData(beersFiltered) // O usa beers si deseas mostrar todas las cervezas
     }
 }

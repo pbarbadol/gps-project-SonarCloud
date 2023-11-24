@@ -72,13 +72,13 @@ class ListAdapter(
     fun sortByYear() {
         beers = beers.sortedBy { it.year }
         notifyDataSetChanged()
-
     }
 
     fun updateData(beers: List<Beer>) {
         this.beers = beers
         notifyDataSetChanged()
     }
+
     override fun getItemCount() = beers.size
     override fun onBindViewHolder(holder: ShowBeerHolder, position: Int) {
             holder.bind(beers[position], beers.size)

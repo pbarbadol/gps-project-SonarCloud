@@ -4,7 +4,12 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 
-// Definimos una data class llamada UserWithAchievements para representar la relación entre un usuario y sus logros.
+/**
+ * La clase `UserWithAchievements` representa la relación entre un usuario y sus logros en la aplicación BeerGo.
+ *
+ * @property user Objeto User incrustado que contiene la información del usuario.
+ * @property achievements Lista de logros asociados al usuario.
+ */
 data class UserWithAchievements(
     // @Embedded se utiliza para indicar que el objeto User debe ser "incrustado" en esta clase.
     @Embedded val user: User,
