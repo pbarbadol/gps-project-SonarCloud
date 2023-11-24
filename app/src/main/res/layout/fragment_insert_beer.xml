@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".view.home.InsertBeerFragment">
+
+    <!-- EditText para el nombre de la cerveza -->
+    <EditText
+        android:id="@+id/editTextBeerName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Nombre de la cerveza"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:inputType="text"
+        />
+
+    <!-- EditText para el tipo de cerveza -->
+    <EditText
+        android:id="@+id/editTextBeerType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Tipo de cerveza"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextBeerName"
+        android:layout_marginTop="16dp"
+        android:inputType="text"
+        />
+
+    <!-- EditText para el año -->
+    <EditText
+        android:id="@+id/editTextYear"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Año"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextBeerType"
+        android:layout_marginTop="16dp"
+        android:inputType="number"
+        />
+
+    <!-- EditText para el porcentaje de alcohol -->
+    <EditText
+        android:id="@+id/editTextAlcoholPercentage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Porcentaje de alcohol"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextYear"
+        android:layout_marginTop="16dp"
+        android:inputType="numberDecimal"
+        />
+
+    <!-- Botón para insertar la cerveza -->
+    <Button
+        android:id="@+id/buttonInsertBeer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Insertar cerveza"
+        app:layout_constraintTop_toBottomOf="@id/editTextAlcoholPercentage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="16dp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
