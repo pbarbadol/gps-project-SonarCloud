@@ -39,10 +39,8 @@ class AchievementsFragment : Fragment() {
 
         // Obtener el ViewModel
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-
         // Obtener el usuario actual
         currentUser = userViewModel.getUser()
-
         // Obtener instancia de la db
         db = BeerGoDatabase.getInstance(this.requireContext())!!
     }
@@ -57,7 +55,6 @@ class AchievementsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         lifecycleScope.launch(Dispatchers.IO) {
             // Muestra el ProgressBar
             binding.loadingProgressBar.visibility = View.VISIBLE
@@ -120,12 +117,9 @@ class AchievementsFragment : Fragment() {
         for (achievement in beerAchievements) {
             db.achievementDao().insert(achievement)
         }
-
         /*
         // Insertar un logro y relacionarlo con un usuario
         db.achievementDao().insertAndRelate(beerAchievements[2], currentUser.userId)
         db.achievementDao().insertAndRelate(beerAchievements[5], currentUser.userId)*/
     }
-
-
 }

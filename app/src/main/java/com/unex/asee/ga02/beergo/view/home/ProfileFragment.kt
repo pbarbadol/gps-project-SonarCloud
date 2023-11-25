@@ -1,14 +1,11 @@
 package com.unex.asee.ga02.beergo.view.home
 
-import CheckAchievement
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
@@ -29,7 +26,6 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private  var nivel : Int = 0
     private  var exp : Int = 0
     private lateinit var binding: FragmentProfileBinding
@@ -69,8 +65,6 @@ class ProfileFragment : Fragment() {
                 // Puedes mostrar la información de logros en tu diseño (por ejemplo, el número de logros, etc.).
 
                 // Ahora puedes iniciar la verificación de logros
-                val checkAchievement = CheckAchievement(requireContext(), requireActivity())
-                checkAchievement.checkAchievements()
             }
             consultaLogros()
             obtenerNivel()
@@ -93,7 +87,7 @@ class ProfileFragment : Fragment() {
             }
         }
         binding.cerrarSesion.setOnClickListener {
-            val emptyUser = User(userId = 0, name = "", password = "") //TODO: ARREGLAR, MUY IMPORTANTE
+            val emptyUser = User(userId = 0, name = "", password = "")
             userViewModel.setUser(emptyUser)
             activity?.finish()
             val intent = Intent(context, LoginActivity::class.java)

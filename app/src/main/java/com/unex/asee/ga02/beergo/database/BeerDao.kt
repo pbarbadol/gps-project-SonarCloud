@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
 import com.unex.asee.ga02.beergo.model.UserWithFavourites
+
 /**
  * Data Access Object (DAO) for Beer entity.
  */
@@ -22,6 +23,7 @@ interface BeerDao {
      */
     @Query("SELECT * FROM beer")
     suspend fun getAll(): List<Beer>
+
     /**
      * Encuentra una cerveza por su ID.
      *
@@ -58,7 +60,6 @@ interface BeerDao {
     suspend fun getUserWithFavourites(userId: Long): UserWithFavourites
 
 
-
     /**
      * Verifica si una cerveza está en favoritos.
      *
@@ -81,6 +82,7 @@ interface BeerDao {
 
     @Query("SELECT COUNT(*) FROM comment WHERE userId = :userId ")
     suspend fun getNumberComments(userId: Long): Int
+
     /**
      * Obtiene todas las cervezas insertadas por los usuarios
      *
@@ -103,6 +105,27 @@ interface BeerDao {
      *
      * @param crossRef La relación a insertar.
      */
+
+    /**
+     * Obtiene todas las cervezas insertadas por un usuario específico.
+     *
+     * @param userId El ID del usuario.
+     * @return Lista con las cervezas del usuario.
+     */
+    @Query("SELECT * FROM beer WHERE insertedBy = :userId")
+    suspend fun getBeersByUserId(userId: Long): List<Beer>
+
+
+    /**
+     * Obtiene la cantidad de cervezas insertadas por un usuario específico.
+     *
+     * @param userId El ID del usuario.
+     * @return Cantidad de cervezas del usuario.
+     */
+    @Query("SELECT COUNT(*) FROM beer WHERE insertedBy = :userId")
+    suspend fun getBeerCountByUserId(userId: Long): Int
+
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUserFavourite(crossRef: UserFavouriteBeerCrossRef)
 

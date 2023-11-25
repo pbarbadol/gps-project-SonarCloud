@@ -3,6 +3,7 @@ package com.unex.asee.ga02.beergo.view.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import com.unex.asee.ga02.beergo.model.User
 
 // Definición de la clase UserModel que extiende de ViewModel.

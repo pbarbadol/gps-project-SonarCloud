@@ -16,6 +16,7 @@ import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentAddcommentBinding
 import com.unex.asee.ga02.beergo.model.Comment
 import androidx.navigation.fragment.navArgs
+import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import kotlinx.coroutines.launch
 
 
@@ -37,12 +38,16 @@ class AddCommentFragment: Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var challengeObserverForCommentTable : ChallengeAchievementObserver
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+
+        challengeObserverForCommentTable = ChallengeAchievementObserver(userViewModel.getUser(), requireContext(), db)
+        db.addDatabaseObserver("Comment", challengeObserverForCommentTable)
     }
 
     override fun onAttach(context: Context) {
@@ -60,8 +65,6 @@ class AddCommentFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
         val beer = beerViewModel.getSelectedBeer()
         val user = userViewModel.getUser()
@@ -98,6 +101,7 @@ class AddCommentFragment: Fragment() {
         lifecycleScope.launch {
             db.commentDao().insert(comment)
         }
+        db.notifyDatabaseObservers("Comment")
     }
 
     override fun onDestroyView() {

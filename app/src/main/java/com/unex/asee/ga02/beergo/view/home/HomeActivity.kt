@@ -1,18 +1,14 @@
 package com.unex.asee.ga02.beergo.view.home
 
-import CheckAchievement
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -31,7 +27,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
     }
     private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
-    private lateinit var checkAchievement: CheckAchievement
+    //private lateinit var checkAchievement: CheckAchievement
 
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
@@ -69,7 +65,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         // Inicialización de los listeners
         setUpListeners()
         /*
-        checkAchievement = CheckAchievement(this, this)
+        checkAchievement = com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.CheckAchievement(this, this)
         checkAchievement.startCheckingAchievements()*/
     }
 
@@ -141,7 +137,6 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        //TODO: Comentado porque no está terminado. Ver sesión 4 de ASEE Ejers 2 y 3
 
         R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
             val action = ListFragmentDirections.actionHomeToSettingsFragment()

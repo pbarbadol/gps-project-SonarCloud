@@ -43,7 +43,19 @@ class AchievementsAdapter(
                 val isAchievementUnlocked = userAchievements.contains(achievement)
 
                 // Establecer la imagen del barril según si el logro está desbloqueado o no, y si está desbloqueado, según la categoria
-                imgConseguido.setImageResource(if (isAchievementUnlocked) R.drawable.barril else R.drawable.barril_vacio)
+                imgConseguido.setImageResource(
+                    if (isAchievementUnlocked) {
+                        when (achievement.category) {
+                            "Barril de madera" -> R.drawable.barril
+                            "Barril de plata" -> R.drawable.barril_plata
+                            "Barril de oro" -> R.drawable.barril_oro
+                            "Barril de diamante" -> R.drawable.barril_diamante
+                            else -> R.drawable.barril
+                        }
+                    } else {
+                        R.drawable.barril_vacio
+                    }
+                )
 
                 // Establecer el título del logro
                 nameAchievement.text = if (isAchievementUnlocked) achievement.title else "Logro Desconocido"
