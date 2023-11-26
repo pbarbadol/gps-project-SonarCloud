@@ -23,10 +23,13 @@ class FavsAdapter (
 
         fun bind(beer: Beer, totalItems: Int) {
             with(binding) {
-                /*
-                beerTitle.text = beer.title
-                beerNationality.text = beer.nationality
-                beerType.text = "${beer.type} types"*/
+
+
+                title.text = beer.title
+                abv.text = beer.abv.toString()
+                year.text = beer.year.toString()
+
+
                 context
                 context?.let {
                     Glide.with(context)

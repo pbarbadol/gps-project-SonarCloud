@@ -22,6 +22,15 @@ interface UserDao {
     suspend fun findByName(first: String): User?
 
     /**
+     * Busca un usuario por su identificador.
+     *
+     * @param userId El identificador del usuario a buscar.
+     * @return El usuario encontrado o null si no se encuentra.
+     */
+    @Query("SELECT * FROM user WHERE userId = :userId")
+    suspend fun findByID(userId: Long): User?
+
+    /**
      * Inserta un usuario en la base de datos.
      *
      * @param user El usuario a insertar.

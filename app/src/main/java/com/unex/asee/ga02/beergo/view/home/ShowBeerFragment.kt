@@ -74,6 +74,18 @@ class ShowBeerFragment : Fragment() {
         super.onViewCreated(View, savedInstanceState)
 
         val beer = beerViewModel.getSelectedBeer()
+
+        val inserted = beer!!.insertedBy
+
+        if(inserted != null){
+            lifecycleScope.launch(Dispatchers.Main) {
+                val userId = beer!!.insertedBy
+                val user = db.userDao().findByID(userId!!)
+                val userName = user!!.name
+                binding.nombreUsuario.text = "Insertada por " + userName
+            }
+        }
+
         binding.id.text = beer!!.beerId.toString()
         binding.title.text = beer.title
         binding.anio.text = beer.year

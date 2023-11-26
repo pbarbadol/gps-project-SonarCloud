@@ -1,5 +1,8 @@
 package com.unex.asee.ga02.beergo.view.home
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
 import com.unex.asee.ga02.beergo.model.Beer
@@ -24,6 +28,7 @@ class InsertBeerFragment : Fragment() {
     // View Binding
     private var _binding: FragmentInsertBeerBinding? = null
     private val binding get() = _binding!!
+    private var selectedImageUri: Uri? = null
 
     // Database
     private lateinit var db: BeerGoDatabase
@@ -74,6 +79,14 @@ class InsertBeerFragment : Fragment() {
      * Configura el botón de inserción para manejar la lógica de inserción de cervezas.
      */
     private fun setupInsertButton() {
+
+        /*
+         * Define la acción del botón de seleccionar imagen
+         */
+        binding.buttonSelectImage.setOnClickListener {
+            openGalleryForImage()
+        }
+
         binding.buttonInsertBeer.setOnClickListener {
             val title = binding.editTextBeerName.text.toString()
             val description = binding.editTextBeerDescription.text.toString()
@@ -84,7 +97,12 @@ class InsertBeerFragment : Fragment() {
                 val abv = abvString.toDoubleOrNull()
 
                 if (abv != null) {
-                    val beer = createBeer(title, description, year, abv)
+                    val beer: Beer
+                    if (selectedImageUri != null) {
+                        beer = createBeer(title, description, year, abv, selectedImageUri)
+                    } else {
+                        beer = createBeer(title, description, year, abv, null) // Pasa null si no hay imagen seleccionada
+                    }
                     lifecycleScope.launch(Dispatchers.IO) {
                         insertarCerveza(beer)
                         showNotification("Cerveza insertada")
@@ -99,6 +117,16 @@ class InsertBeerFragment : Fragment() {
                 handleIncompleteFields()
             }
         }
+    }
+
+
+    /*
+     * Lanza un Intent para abrir la galería de imágenes para poder seleccionar una imagen
+     */
+    private fun openGalleryForImage() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, GALLERY_REQUEST_CODE)
     }
 
     /**
@@ -150,15 +178,18 @@ class InsertBeerFragment : Fragment() {
         title: String,
         description: String,
         year: String,
-        abv: Double
+        abv: Double,
+        imageUri: Uri?
     ): Beer {
+        val defaultImageUri = "android.resource://${requireActivity().packageName}/${R.drawable.default_image}"
+        val image = imageUri?.toString() ?: defaultImageUri
         return Beer(
             beerId = 0,
             title = title,
             description = description,
             year = year,
             abv = abv,
-            image = "url_imagen",
+            image = image,
             insertedBy = currentUser.userId
         )
     }
@@ -184,5 +215,26 @@ class InsertBeerFragment : Fragment() {
 
     private fun showNotification(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    /*
+     * Se encarga de manejar la respuesta del Intent lanzado a la galería para poder obtener la URI de
+     * la imagen seleccionada
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { uri ->
+                binding.imageViewSelected.setImageURI(uri)
+                selectedImageUri = uri // Asignar la URI seleccionada a la variable de clase
+            }
+        }
+    }
+
+    /*
+     * Proporciona un identificador para manejar la solicitud a la galería
+     */
+    companion object {
+        private const val GALLERY_REQUEST_CODE = 100
     }
 }
