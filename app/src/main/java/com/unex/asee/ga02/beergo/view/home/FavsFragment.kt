@@ -17,17 +17,6 @@ import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
 import kotlinx.coroutines.launch
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class FavsFragment : Fragment() {
 
     private lateinit var db: BeerGoDatabase
@@ -45,18 +34,13 @@ class FavsFragment : Fragment() {
 
     private var favBeers = emptyList<Beer>() //dummyBeers.filter {it.isFavourite}
 
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onAttach(context: android.content.Context) {
@@ -103,8 +87,6 @@ class FavsFragment : Fragment() {
                 // Si ya hay una cerveza seleccionada, solo mostrar los detalles
                 navigateToShowBeerFragment(it)
             }
-
-
         },
             onLongClick = {
                 deleteBeer(it)
@@ -136,7 +118,6 @@ class FavsFragment : Fragment() {
             db.beerDao().deleteAndRelate(beer, user.userId!!)
         }
     }
-
     private fun navigateToShowBeerFragment(beer: Beer) {
         val action = FavsFragmentDirections.actionFavsFragmentToShowBeerFragment()
         findNavController().navigate(action)
@@ -145,23 +126,5 @@ class FavsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // avoid memory leaks
-    }
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ListFragment.
-         */
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FavsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

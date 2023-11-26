@@ -27,18 +27,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
+import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ShowBeerFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ShowBeerFragment : Fragment() {
 
     private lateinit var db: BeerGoDatabase
@@ -49,18 +40,14 @@ class ShowBeerFragment : Fragment() {
     private lateinit var beerViewModel: BeerViewModel
     private val binding get() = _binding!!
 
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var challengeObserverForUserFavouriteBeerCrossRefTable : ChallengeAchievementObserver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        challengeObserverForUserFavouriteBeerCrossRefTable = ChallengeAchievementObserver(userViewModel.getUser(), requireContext(), db)
+        db.addDatabaseObserver("UserFavouriteBeerCrossRef", challengeObserverForUserFavouriteBeerCrossRefTable)
     }
 
     override fun onCreateView(
@@ -130,6 +117,7 @@ class ShowBeerFragment : Fragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     if (isChecked) {
                         db.beerDao().insertAndRelate(beer, user.userId!!)
+                        db.notifyDatabaseObservers("UserFavouriteBeerCrossRef")
                     } else {
                         db.beerDao().deleteAndRelate(beer, user.userId!!)
                     }
@@ -140,15 +128,11 @@ class ShowBeerFragment : Fragment() {
 
     }
 
-
-
     suspend fun isInFavourite(id: Int): Boolean {
         return withContext(Dispatchers.IO) {
             db.beerDao().isBeerInFavorites(id) > 0
         }
     }
-
-
     private fun beerBinding(beer: Beer){
         binding.id.text = beer.beerId.toString()
         binding.title.text = beer.title
@@ -159,23 +143,8 @@ class ShowBeerFragment : Fragment() {
             .into(binding.beerImage)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ShowBeerFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ShowBeerFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        db.removeDatabaseObserver("UserFavouriteBeerCrossRef", challengeObserverForUserFavouriteBeerCrossRefTable)
+//    }
 }

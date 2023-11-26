@@ -38,8 +38,18 @@ interface AchievementDao {
      *
      * @param achievement El logro a insertar o reemplazar.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(achievement: Achievement)
+
+    /**
+     * Comprueba si un usuario tiene un logro.
+     *
+     * @param userId El ID del usuario.
+     * @param achievementId El ID del logro.
+     * @return El número de logros encontrados.
+     */
+    @Query("SELECT COUNT(*) FROM UserAchievementCrossRef WHERE userId = :userId AND achievementId = :achievementId")
+    suspend fun checkAchievement(userId: Long, achievementId: Long): Int
 
     /**
      * Elimina un logro.
@@ -80,4 +90,6 @@ interface AchievementDao {
         // Inserta la relación entre usuario y logro
         insertUserAchievement(UserAchievementCrossRef(userId, achievement.achievementId))
     }
+
+
 }

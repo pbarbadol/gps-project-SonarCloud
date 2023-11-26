@@ -20,6 +20,7 @@ import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.utils.ApiUtils
+import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,6 +38,7 @@ class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ListAdapter
+
 
     interface OnShowClickListener {
         fun onShowClick(beer: Beer)
@@ -108,12 +110,10 @@ class ListFragment : Fragment() {
                 }
             }
         }
-
         setUpSortingSpinner()
     }
 
     private fun setUpUI() {
-
         // Filtrar las cervezas al cambiar el texto de búsqueda
         binding.searchView.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
@@ -238,4 +238,6 @@ class ListFragment : Fragment() {
         }
         adapter.updateData(beersFiltered) // O usa beers si deseas mostrar todas las cervezas
     }
+
+
 }
