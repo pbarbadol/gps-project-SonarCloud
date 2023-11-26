@@ -15,10 +15,11 @@ import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 class ProfileFragment : Fragment() {
 
-    private  var nivel : Int = 0
-    private  var exp : Int = 0
+    private var nivel: Int = 0
+    private var exp: Int = 0
     private lateinit var binding: FragmentProfileBinding
     private lateinit var userViewModel: UserViewModel
     private var achievements: List<Achievement> = emptyList()
@@ -35,8 +36,7 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -62,7 +62,7 @@ class ProfileFragment : Fragment() {
             consultaLogros()
             obtenerNivel()
 
-            binding.progressBar.progress= exp.toInt()
+            binding.progressBar.progress = exp.toInt()
             binding.levelTextView.text = "Nivel $nivel"
             binding.expTextView.text = "${exp}%"
         }
@@ -97,12 +97,23 @@ class ProfileFragment : Fragment() {
     }
 
     private suspend fun setUpStadistics() {
-        binding.cervezasAnadidas.text = "Cervezas Añadidas: ${db.userDao().countBeersInsertedByUser(userViewModel.getUser().userId)}"
-        binding.cervezasFavoritas.text = "Cervezas Favoritas: ${db.userDao().countUserFavouriteBeers(userViewModel.getUser().userId)}"
-        binding.comentariosAnadidos.text = "Comentarios Añadidos: ${db.userDao().countCommentsByUser(userViewModel.getUser().userId)}"
-        binding.logrosConseguidos.text = "Logros Conseguidos: ${db.userDao().countUserAchievements(userViewModel.getUser().userId)}"
+        binding.cervezasAnadidas.text = "Cervezas Añadidas: ${
+            db.userDao().countBeersInsertedByUser(userViewModel.getUser().userId)
+        }"
+        binding.cervezasFavoritas.text = "Cervezas Favoritas: ${
+            db.userDao().countUserFavouriteBeers(userViewModel.getUser().userId)
+        }"
+        binding.comentariosAnadidos.text = "Comentarios Añadidos: ${
+            db.userDao().countCommentsByUser(userViewModel.getUser().userId)
+        }"
+        binding.logrosConseguidos.text = "Logros Conseguidos: ${
+            db.userDao().countUserAchievements(userViewModel.getUser().userId)
+        }"
         //binding.iniciosSesion.text = "Inicios de Sesión: ${0}"
         //binding.fechaCreacion.text = "Fecha de Creación: ${0}"
+
+    }
+
     private suspend fun consultaLogros() {
         // Obtener la lista de logros
         achievements = db.achievementDao().getAll()
@@ -112,12 +123,12 @@ class ProfileFragment : Fragment() {
         userAchievements = userWithAchievements.achievements
     }
 
-    private  fun obtenerNivel() {
+    private fun obtenerNivel() {
 
-        for (achievement in userAchievements){
+        for (achievement in userAchievements) {
             exp += achievement.expPoint
         }
-        while (exp >= 100){
+        while (exp >= 100) {
             nivel++
             exp -= 100
         }

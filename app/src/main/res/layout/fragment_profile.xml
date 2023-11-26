@@ -52,7 +52,7 @@
             android:layout_height="26dp"
             android:layout_below="@id/levelTextView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:text="exp"
             android:textAlignment="center"
             android:textSize="20sp"
@@ -91,23 +91,22 @@
             app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/eliminarUsuario"
-            app:layout_constraintVertical_bias="0.309" />
+            app:layout_constraintVertical_bias="0.279" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="365dp"
             android:layout_height="72dp"
-            android:layout_marginTop="124dp"
+            android:layout_marginTop="112dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView4" />
-            app:layout_constraintVertical_bias="0.015" />
 
         <LinearLayout
-            android:layout_width="408dp"
-            android:layout_height="328dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="411dp"
+            android:layout_height="312dp"
+            android:layout_marginTop="6dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cerrarSesion"
@@ -153,22 +152,6 @@
                 android:layout_gravity="center"
                 android:text="Comentarios Añadidos: 20"
                 android:textSize="20sp" />
-
-            <!--            <TextView-->
-            <!--                android:id="@+id/iniciosSesion"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:text="Inicios de Sesión: 50"-->
-            <!--                android:layout_gravity="center"
-                    android:textSize="20sp"/>-->
-
-            <!--            <TextView-->
-            <!--                android:id="@+id/fechaCreacion"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:text="Fecha de Creación: 01/01/2022"-->
-            <!--                android:layout_gravity="center"
-                    android:textSize="20sp"/>-->
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
