@@ -113,12 +113,7 @@ class LoginActivity : AppCompatActivity(){
         JoinActivity.start(this, responseLauncher)
     }
 
-    private fun navigateToWebsite() {
-        val webIntent = Uri.parse("https://trakt.tv/").let { webpage ->
-            Intent(Intent.ACTION_VIEW, webpage)
-        }
-        startActivity(webIntent)
-    }
+
 
     private fun notifyInvalidCredentials(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()

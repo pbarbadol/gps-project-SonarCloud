@@ -27,6 +27,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
     }
     private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
+    //private lateinit var checkAchievement: CheckAchievement
 
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
@@ -63,6 +64,9 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
 
         // Inicialización de los listeners
         setUpListeners()
+        /*
+        checkAchievement = com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.CheckAchievement(this, this)
+        checkAchievement.startCheckingAchievements()*/
     }
 
 
@@ -133,7 +137,6 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        //TODO: Comentado porque no está terminado. Ver sesión 4 de ASEE Ejers 2 y 3
 
         R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
             val action = ListFragmentDirections.actionHomeToSettingsFragment()

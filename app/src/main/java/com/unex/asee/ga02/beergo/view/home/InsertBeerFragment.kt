@@ -12,6 +12,7 @@ import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -31,6 +32,8 @@ class InsertBeerFragment : Fragment() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var currentUser: User
 
+    private lateinit var challengeObserverForBeerTable : ChallengeAchievementObserver
+
 
     /**
      * Método llamado cuando se crea la instancia del fragmento.
@@ -44,6 +47,9 @@ class InsertBeerFragment : Fragment() {
         // Obtener el ViewModel
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         currentUser = userViewModel.getUser()
+        // Añadir el observador de desafíos para la tabla de cervezas
+        challengeObserverForBeerTable = ChallengeAchievementObserver(userViewModel.getUser(), requireContext(), db)
+        db.addDatabaseObserver("UserBeerCrossRef", challengeObserverForBeerTable)
     }
 
     /**
@@ -82,6 +88,7 @@ class InsertBeerFragment : Fragment() {
                     lifecycleScope.launch(Dispatchers.IO) {
                         insertarCerveza(beer)
                         showNotification("Cerveza insertada")
+
                     }
                 } else {
                     // Manejar el caso donde el campo de porcentaje de alcohol no es un número válido
@@ -151,7 +158,7 @@ class InsertBeerFragment : Fragment() {
             description = description,
             year = year,
             abv = abv,
-            image = "url_imagen", //TODO: no se que poner
+            image = "url_imagen",
             insertedBy = currentUser.userId
         )
     }
@@ -163,6 +170,8 @@ class InsertBeerFragment : Fragment() {
      */
     private suspend fun insertarCerveza(beer: Beer) {
         db.beerDao().insert(beer)
+        // Notificar a los observadores de desafíos
+        db.notifyDatabaseObservers("UserBeerCrossRef")
     }
 
     /**
