@@ -65,7 +65,6 @@
             android:id="@+id/eliminarUsuario"
             android:layout_width="203dp"
             android:layout_height="62dp"
-            android:layout_marginTop="256dp"
             android:backgroundTint="#E91E63"
             android:text="Eliminar Usuario"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,6 +75,7 @@
             android:id="@+id/imageView4"
             android:layout_width="163dp"
             android:layout_height="102dp"
+            android:layout_marginTop="16dp"
             android:src="@drawable/baseline_person_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -102,8 +102,74 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+            app:layout_constraintVertical_bias="0.015" />
+
+        <LinearLayout
+            android:layout_width="408dp"
+            android:layout_height="328dp"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cerrarSesion"
+            tools:layout_editor_absoluteX="-1dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Datos Estadísticos"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/cervezasAnadidas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Cervezas Añadidas: 10"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/cervezasFavoritas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Cervezas Favoritas: 5"
+                android:textSize="20sp" />
 
 
+            <TextView
+                android:id="@+id/comentariosAnadidos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Comentarios Añadidos: 20"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/logrosConseguidos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Comentarios Añadidos: 20"
+                android:textSize="20sp" />
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/iniciosSesion"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Inicios de Sesión: 50"-->
+            <!--                android:layout_gravity="center"
+                    android:textSize="20sp"/>-->
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/fechaCreacion"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Fecha de Creación: 01/01/2022"-->
+            <!--                android:layout_gravity="center"
+                    android:textSize="20sp"/>-->
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
