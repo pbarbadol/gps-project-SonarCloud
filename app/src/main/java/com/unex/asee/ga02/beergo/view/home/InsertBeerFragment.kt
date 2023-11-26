@@ -181,6 +181,8 @@ class InsertBeerFragment : Fragment() {
         abv: Double,
         imageUri: Uri?
     ): Beer {
+        val defaultImageUri = "android.resource://${requireActivity().packageName}/${R.drawable.default_image}"
+        val image = imageUri?.toString() ?: defaultImageUri
         return Beer(
             beerId = 0,
             title = title,

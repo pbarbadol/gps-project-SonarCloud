@@ -57,6 +57,7 @@
             android:textAlignment="center"
             android:textSize="20sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/cerrarSesion"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progressBar" />
@@ -91,7 +92,7 @@
             app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/eliminarUsuario"
-            app:layout_constraintVertical_bias="0.279" />
+            app:layout_constraintVertical_bias="0.339" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -103,56 +104,77 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
-        <LinearLayout
-            android:layout_width="411dp"
-            android:layout_height="312dp"
-            android:layout_marginTop="6dp"
-            android:orientation="vertical"
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Datos Estadísticos"
+            android:textSize="24sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.478"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cerrarSesion"
-            tools:layout_editor_absoluteX="-1dp">
+            app:layout_constraintVertical_bias="0.144" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Datos Estadísticos"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/cervezasAnadidas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Cervezas Añadidas: 10"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            app:layout_constraintVertical_bias="0.0" />
 
-            <TextView
-                android:id="@+id/cervezasAnadidas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Cervezas Añadidas: 10"
-                android:textSize="20sp" />
+        <TextView
+            android:id="@+id/cervezasFavoritas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Cervezas Favoritas: 5"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cervezasAnadidas"
+            app:layout_constraintVertical_bias="0.0" />
 
-            <TextView
-                android:id="@+id/cervezasFavoritas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Cervezas Favoritas: 5"
-                android:textSize="20sp" />
+        <TextView
+            android:id="@+id/comentariosAnadidos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Comentarios Añadidos: 20"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cervezasFavoritas"
+            app:layout_constraintVertical_bias="0.0" />
 
-
-            <TextView
-                android:id="@+id/comentariosAnadidos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Comentarios Añadidos: 20"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/logrosConseguidos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Comentarios Añadidos: 20"
-                android:textSize="20sp" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/logrosConseguidos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Comentarios Añadidos: 20"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/comentariosAnadidos"
+            app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
