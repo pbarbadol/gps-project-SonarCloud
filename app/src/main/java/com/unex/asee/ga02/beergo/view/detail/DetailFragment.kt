@@ -1,4 +1,4 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.detail
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

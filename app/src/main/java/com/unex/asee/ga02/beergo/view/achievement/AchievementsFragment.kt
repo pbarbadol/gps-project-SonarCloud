@@ -1,4 +1,4 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.achievement
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,11 +8,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.unex.asee.ga02.beergo.data.beerAchievements
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentAchievementsBinding
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,7 +58,6 @@ class AchievementsFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             // Muestra el ProgressBar
             binding.loadingProgressBar.visibility = View.VISIBLE
-            almacenarBD()
             consultaLogros()
 
             withContext(Dispatchers.Main) {
@@ -108,18 +107,4 @@ class AchievementsFragment : Fragment() {
         userAchievements = userWithAchievements.achievements
     }
 
-
-    /**
-     * Almacena logros en la base de datos.
-     */
-    private suspend fun almacenarBD() {
-        // Insertar un logro
-        for (achievement in beerAchievements) {
-            db.achievementDao().insert(achievement)
-        }
-        /*
-        // Insertar un logro y relacionarlo con un usuario
-        db.achievementDao().insertAndRelate(beerAchievements[2], currentUser.userId)
-        db.achievementDao().insertAndRelate(beerAchievements[5], currentUser.userId)*/
-    }
 }

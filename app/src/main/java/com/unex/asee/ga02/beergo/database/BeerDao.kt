@@ -8,7 +8,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
-import com.unex.asee.ga02.beergo.model.UserWithFavourites
 
 /**
  * Data Access Object (DAO) for Beer entity.
@@ -50,15 +49,14 @@ interface BeerDao {
     suspend fun delete(beer: Beer)
 
     /**
-     * Obtiene un usuario con sus cervezas favoritas.
+     * Obtiene todas las cervezas favoritas de un usuario.
      *
      * @param userId El ID del usuario.
-     * @return [UserWithFavourites] que contiene el usuario y sus cervezas favoritas.
+     * @return Lista con las cervezas favoritas del usuario.
      */
     @Transaction
-    @Query("SELECT * FROM user WHERE userId = :userId")
-    suspend fun getUserWithFavourites(userId: Long): UserWithFavourites
-
+    @Query("SELECT * FROM Beer WHERE beerId IN (SELECT beerId FROM userfavouritebeercrossref WHERE userId = :userId)")
+    suspend fun getFavouritesBeersByUserId(userId: Long): List<Beer>
 
     /**
      * Verifica si una cerveza está en favoritos.
@@ -71,13 +69,13 @@ interface BeerDao {
 
 
     /**
-     * Obtiene todas las cervezas favoritas de un usuario.
+     * Obtiene cuantas cervezas favoritas tiene un usuario.
      *
      * @param userId El ID del usuario.
      * @return Lista con las cervezas favoritas del usuario.
      */
     @Query("SELECT COUNT(*) FROM userfavouritebeercrossref WHERE userId = :userId ")
-    suspend fun BeerInFavorites(userId: Long): Int
+    suspend fun countBeerInFavorites(userId: Long): Int
 
 
     @Query("SELECT COUNT(*) FROM comment WHERE userId = :userId ")

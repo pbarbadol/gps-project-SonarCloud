@@ -1,7 +1,9 @@
 package com.unex.asee.ga02.beergo.model
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
+import androidx.room.util.TableInfo
 import java.io.Serializable
 
 /**
@@ -11,10 +13,12 @@ import java.io.Serializable
  * @property name El nombre del usuario.
  * @property password La contraseña del usuario.
  */
-@Entity
+@Entity(indices = [Index(value = ["name"], unique = true)]) // Para que no se puedan repetir nombres de usuario.
 data class User(
     @PrimaryKey(autoGenerate = true)
-    var userId: Long,
+    var userId: Long = 0,
     val name: String = "",
     val password: String = ""
+
+
 ) : Serializable

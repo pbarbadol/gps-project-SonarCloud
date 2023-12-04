@@ -3,6 +3,7 @@ package com.unex.asee.ga02.beergo.database
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.unex.asee.ga02.beergo.model.User
 
@@ -36,7 +37,7 @@ interface UserDao {
      * @param user El usuario a insertar.
      * @return El ID del usuario insertado.
      */
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(user: User): Long
 
     /**

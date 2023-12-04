@@ -1,4 +1,4 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.comment
 
 import android.content.Context
 import android.os.Bundle
@@ -15,15 +15,10 @@ import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentAddcommentBinding
 import com.unex.asee.ga02.beergo.model.Comment
-import androidx.navigation.fragment.navArgs
 import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
+import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
-
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class AddCommentFragment: Fragment() {
 
@@ -34,10 +29,6 @@ class AddCommentFragment: Fragment() {
 
     private var _binding: FragmentAddcommentBinding? = null
     private val binding get() = _binding!!
-
-    private var param1: String? = null
-    private var param2: String? = null
-
     private lateinit var challengeObserverForCommentTable : ChallengeAchievementObserver
 
 
@@ -93,8 +84,6 @@ class AddCommentFragment: Fragment() {
             findNavController().popBackStack()
         }
 
-
-
     }
 
     private fun addComment(comment: Comment){
@@ -109,24 +98,5 @@ class AddCommentFragment: Fragment() {
         _binding = null
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AchievementsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddCommentFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 
 }
