@@ -1,21 +1,22 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.list
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.unex.asee.ga02.beergo.databinding.FavsItemListBinding
+import com.unex.asee.ga02.beergo.databinding.ListItemListBinding
 import com.unex.asee.ga02.beergo.model.Beer
 
-class FavsAdapter (
-    private var beers: List<Beer>,
+
+class ListAdapter(
+    var beers: List<Beer>,
     private val onClick: (beer: Beer) -> Unit,
     private val onLongClick: (beer: Beer) -> Unit,
     private val context: Context?
-) : RecyclerView.Adapter<FavsAdapter.ShowFavsBeerHolder>() {
-    class ShowFavsBeerHolder(
-        private val binding: FavsItemListBinding,
+) : RecyclerView.Adapter<ListAdapter.ShowBeerHolder>() {
+    class ShowBeerHolder(
+        private val binding: ListItemListBinding,
         private val onClick: (beer: Beer) -> Unit,
         private val onLongClick: (beer: Beer) -> Unit,
         private val context: Context?
@@ -30,14 +31,16 @@ class FavsAdapter (
                 year.text = beer.year.toString()
 
 
+
                 context
                 context?.let {
                     Glide.with(context)
                         .load(beer.image)
-                        .into(item2Img)
+                        .into(itemImg)
                 }
+
                 clItem.setOnClickListener {
-                    onClick(beer)
+                        onClick(beer)
                 }
                 clItem.setOnLongClickListener {
                     onLongClick(beer)
@@ -46,22 +49,36 @@ class FavsAdapter (
             }
         }
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavsAdapter.ShowFavsBeerHolder {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowBeerHolder {
         val binding =
-            FavsItemListBinding.inflate(LayoutInflater.from(parent.context),
+            ListItemListBinding.inflate(LayoutInflater.from(parent.context),
                 parent, false)
-        return ShowFavsBeerHolder(binding, onClick, onLongClick,context)
+        return ShowBeerHolder(binding, onClick, onLongClick,context)
     }
 
-    override fun getItemCount() = beers.size
+    fun sortByAbv() {
+        beers = beers.sortedBy { it.abv }
+        notifyDataSetChanged()
 
-    override fun onBindViewHolder(holder: FavsAdapter.ShowFavsBeerHolder, position: Int) {
-        holder.bind(beers[position], beers.size)
     }
+    fun sortByTitle() {
+        beers = beers.sortedBy { it.title }
+        notifyDataSetChanged()
 
-    fun updateData(newBeers: List<Beer>) {
-        beers = newBeers
+    }
+    fun sortByYear() {
+        beers = beers.sortedBy { it.year }
         notifyDataSetChanged()
     }
 
+    fun updateData(beers: List<Beer>) {
+        this.beers = beers
+        notifyDataSetChanged()
+    }
+
+    override fun getItemCount() = beers.size
+    override fun onBindViewHolder(holder: ShowBeerHolder, position: Int) {
+            holder.bind(beers[position], beers.size)
+        }
 }

@@ -1,4 +1,4 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.profile
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,13 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentProfileBinding
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.view.home.LoginActivity
+import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

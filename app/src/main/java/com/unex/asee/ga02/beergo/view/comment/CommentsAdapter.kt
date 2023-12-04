@@ -1,8 +1,7 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.comment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.unex.asee.ga02.beergo.databinding.CommentItemListBinding
 import com.unex.asee.ga02.beergo.model.Comment

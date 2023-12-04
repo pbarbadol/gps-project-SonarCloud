@@ -1,12 +1,10 @@
 package com.unex.asee.ga02.beergo.view.home
-
 import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,7 +16,13 @@ import com.unex.asee.ga02.beergo.databinding.ActivityHomeBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.model.User
-
+import com.unex.asee.ga02.beergo.view.comment.CommentsFragment
+import com.unex.asee.ga02.beergo.view.comment.CommentsFragmentDirections
+import com.unex.asee.ga02.beergo.view.favs.FavsFragment
+import com.unex.asee.ga02.beergo.view.list.ListFragment
+import com.unex.asee.ga02.beergo.view.list.ListFragmentDirections
+import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , CommentsFragment.OnShowClickListener, FavsFragment.OnShowClickListener{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding //Creamos el binding
@@ -27,67 +31,46 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
     }
     private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
-    //private lateinit var checkAchievement: CheckAchievement
-
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
         val user = null
-
         public fun start(
             context: Context,
             user: User
         ) {
         }
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) // Creamos la actividad
-
         // Inflar el diseño usando DataBinding
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         // Configuración de la barra de acción
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
         // Obtener el usuario desde la actividad anterior
         val user = intent.getSerializableExtra(LOGIN_USER) as User
-
         //Inicializamos el ViewModel
         beerViewModel = ViewModelProvider(this).get(BeerViewModel::class.java)
         beerViewModel.setSelectedBeer(null)
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         userViewModel.setUser(user)
-
         // Inicialización de la interfaz de usuario
         setUpUI(user)
-
         // Inicialización de los listeners
         setUpListeners()
-        /*
-        checkAchievement = com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.CheckAchievement(this, this)
-        checkAchievement.startCheckingAchievements()*/
     }
-
-
     override fun onShowClick(beer: Beer) {
-
         navController.navigate(
-
             ListFragmentDirections.actionListFragmentToShowBeerFragment()
         )
     }
-
     override fun onShowClick(comment: Comment) {
         navController.navigate(
             CommentsFragmentDirections.actionCommentsFragmentToAddCommentFragment()
         )
     }
-
     fun setUpUI(user: User) {
-
         binding.bottomNavigationView.setupWithNavController(navController) //Le decimos que el navController que va a usar es el del navHostFragment
-
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.listFragment,
@@ -98,7 +81,6 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
 
             )
         )
-
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -106,56 +88,38 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
                 (destination.id == R.id.settingsFragment) || (destination.id == R.id.commentsFragment) ||
                 (destination.id == R.id.addCommentFragment)
             ) {
-                binding.toolbar.menu.findItem(R.id.action_search).setVisible(false)
                 binding.toolbar.menu.findItem(R.id.action_settings).setVisible(false)
                 binding.bottomNavigationView.visibility = View.GONE
 
             } else {
-                val search = binding.toolbar.menu.findItem(R.id.action_search)
-                if (search != null) {
-                    binding.toolbar.menu.findItem(R.id.action_search).setVisible(true)
-                    binding.toolbar.menu.findItem(R.id.action_settings).setVisible(true)
-                }
                 binding.bottomNavigationView.visibility = View.VISIBLE
                 binding.toolbar.visibility = View.VISIBLE
+                val actionSettingsItem = binding.toolbar.menu?.findItem(R.id.action_settings)
+
+                if (actionSettingsItem != null) {
+                    actionSettingsItem.setVisible(true)
+                }
             }
         }
-
     }
-
         override fun onSupportNavigateUp(): Boolean {
             return navController.navigateUp(appBarConfiguration)
                     || super.onSupportNavigateUp()
         }
-
         override fun onCreateOptionsMenu(menu: Menu?): Boolean {
             menuInflater.inflate(R.menu.appbar_menu, menu)
-            val searchItem = menu?.findItem(R.id.action_search)
-            val searchView =
-                searchItem?.actionView as SearchView // Configure the search info and add any event listeners.
             return super.onCreateOptionsMenu(menu)
         }
-
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-
         R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
             val action = ListFragmentDirections.actionHomeToSettingsFragment()
             navController.navigate(action)
             true
         }
-
             else -> {
-                // The user's action isn't recognized.
-                // Invoke the superclass to handle it.
                 super.onOptionsItemSelected(item)
             }
         }
-
         fun setUpListeners() {
         }
     }
-
-
-
-
-

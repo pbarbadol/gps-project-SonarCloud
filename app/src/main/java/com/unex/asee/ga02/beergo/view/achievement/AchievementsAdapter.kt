@@ -1,4 +1,4 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.achievement
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.databinding.FragmentListAchievementBinding
 import com.unex.asee.ga02.beergo.model.Achievement
-import com.unex.asee.ga02.beergo.model.User
 
 /**
  * Adaptador para la lista de logros.

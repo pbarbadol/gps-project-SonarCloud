@@ -1,4 +1,4 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.favs
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,9 +12,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentFavsBinding
-import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
+import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 class FavsFragment : Fragment() {
@@ -48,7 +48,7 @@ class FavsFragment : Fragment() {
 
         db = BeerGoDatabase.getInstance(context)!!
 
-        if (context is FavsFragment.OnShowClickListener) {
+        if (context is OnShowClickListener) {
             listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnShowClickListener")
@@ -106,7 +106,7 @@ class FavsFragment : Fragment() {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
             binding.spinner.visibility = View.VISIBLE
-            favBeers = db.beerDao().getUserWithFavourites(user.userId!!).beers
+            favBeers = db.beerDao().getFavouritesBeersByUserId(user.userId)
             adapter.updateData(favBeers)
             binding.spinner.visibility = View.GONE
         }

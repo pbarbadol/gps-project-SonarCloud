@@ -29,7 +29,7 @@ class CheckAchievement(private val context: Context, private val user: User) {
      * Verifica y otorga el logro "Eclectic Taste" si el usuario ha añadido al menos 1 cerveza a favoritos.
      */
     suspend fun checkEclecticTasteAchievement() {
-        val cont = db.beerDao().BeerInFavorites(user.userId)
+        val cont = db.beerDao().countBeerInFavorites(user.userId)
         if (cont > 0) {
             insertAchievementAndShowToast(1)
         }
@@ -49,7 +49,7 @@ class CheckAchievement(private val context: Context, private val user: User) {
      * Verifica y otorga el logro "Global Flavor Explorer" si el usuario ha añadido al menos 3 cervezas a favoritos.
      */
     suspend fun checkGlobalFlavorExplorerAchievement() {
-        val cont = db.beerDao().BeerInFavorites(user.userId)
+        val cont = db.beerDao().countBeerInFavorites(user.userId)
         if (cont >= 3) {
             insertAchievementAndShowToast(3)
         }

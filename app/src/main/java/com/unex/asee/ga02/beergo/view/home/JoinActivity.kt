@@ -72,12 +72,20 @@ class JoinActivity : AppCompatActivity() {
                     val id =
                         db?.userDao()!!.insert(user) //Antes: val id = db?.userDao()?.insert(user)
 
-
-                    navigateBackWithResult(
-                        User(
-                            id, etUsername.text.toString(), etPassword.text.toString()
+                    if(id == (-1).toLong()){
+                        notifyInvalidCredentials("El usuario ya existe")
+                        return@launch
+                    }
+                    else{
+                        Toast.makeText(this@JoinActivity, "Usuario creado", Toast.LENGTH_SHORT).show()
+                        navigateBackWithResult(
+                            User(
+                                id, etUsername.text.toString(), etPassword.text.toString()
+                            )
                         )
-                    )
+                    }
+
+
                 }
             }
         }

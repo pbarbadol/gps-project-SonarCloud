@@ -1,4 +1,4 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData

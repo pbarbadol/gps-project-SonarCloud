@@ -1,5 +1,5 @@
 //TODO: Implementar SettingsFragment
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.settings
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat

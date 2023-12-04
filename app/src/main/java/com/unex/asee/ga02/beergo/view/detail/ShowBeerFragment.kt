@@ -1,34 +1,25 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.detail
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import android.widget.Button
-import android.widget.ImageView
 import androidx.navigation.fragment.findNavController
 
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.unex.asee.ga02.beergo.api.APIError
-import com.unex.asee.ga02.beergo.api.getNetworkService
-import com.unex.asee.ga02.beergo.data.api.BeerApi
-import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
-import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.databinding.FragmentShowBeerBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
 import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
+import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 
 class ShowBeerFragment : Fragment() {
 

@@ -1,4 +1,4 @@
-package com.unex.asee.ga02.beergo.view.home
+package com.unex.asee.ga02.beergo.view.comment
 
 import android.os.Bundle
 import android.util.Log
@@ -10,19 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentCommentsBinding
-import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Comment
-import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
+import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -48,17 +42,11 @@ class CommentsFragment: Fragment() {
 
     private var beerComments = emptyList<Comment>()
 
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
 
     }
 
@@ -84,10 +72,10 @@ class CommentsFragment: Fragment() {
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
         val cerveza = beerViewModel.getSelectedBeer()
-        Log.d("ShowBeerFragment","El id de la cerveza en Comments es ${cerveza?.beerId}")
+        Log.d("ShowBeerFragment", "El id de la cerveza en Comments es ${cerveza?.beerId}")
 
         val user = userViewModel.getUser()
-        Log.d("ShowBeerFragment","El id del usuario en Comments es ${user.userId}")
+        Log.d("ShowBeerFragment", "El id del usuario en Comments es ${user.userId}")
         setUpRecyclerView()
         loadComments()
 
@@ -115,7 +103,7 @@ class CommentsFragment: Fragment() {
             rvCommentsList.layoutManager = GridLayoutManager(context, numberOfColumns)
             rvCommentsList.adapter = adapter
         }
-        android.util.Log.d("DiscoverFragment", "setUpRecyclerView")
+        Log.d("DiscoverFragment", "setUpRecyclerView")
     }
 
     private fun deleteComment(comment: Comment) {
@@ -125,10 +113,18 @@ class CommentsFragment: Fragment() {
         if(userId == userCommentId){
             lifecycleScope.launch {
                 db.commentDao().delete(comment)
-                Toast.makeText(requireContext(), "Se ha borrado el comentario con ID: ${comment.commentId}",Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Se ha borrado el comentario con ID: ${comment.commentId}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } else {
-            Toast.makeText(requireContext(), "No eres el creador de este comentario",Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "No eres el creador de este comentario",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
     }
@@ -150,22 +146,5 @@ class CommentsFragment: Fragment() {
         super.onDestroyView()
         _binding = null // avoid memory leaks
     }
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ListFragment.
-         */
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CommentsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }
