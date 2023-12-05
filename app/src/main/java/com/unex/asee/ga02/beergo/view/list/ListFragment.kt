@@ -16,15 +16,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.api.APIError
+import com.unex.asee.ga02.beergo.api.getNetworkService
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.utils.ApiUtils
+import com.unex.asee.ga02.beergo.repository.BeerRepository
 import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Date
 import kotlin.collections.*
 
@@ -39,6 +39,7 @@ class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ListAdapter
+    private lateinit var beerRepository : BeerRepository
 
 
     interface OnShowClickListener {
@@ -51,12 +52,14 @@ class ListFragment : Fragment() {
         beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
         //Obtenemos el ViewModel de usuario
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-        //Obtenemos la base de datos
-        db = BeerGoDatabase.getInstance(this.requireContext())!!
+
     }
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
+        //Obtenemos la base de datos
+        db = BeerGoDatabase.getInstance(this.requireContext())!!
+        beerRepository = BeerRepository.getInstance(db.beerDao(), getNetworkService())
         if (context is OnShowClickListener) {
             listener = context
         } else {
@@ -64,24 +67,43 @@ class ListFragment : Fragment() {
         }
     }
 
-    private suspend fun mostrarCervezas() {
-        try {
-            //Obtener cervezas de la bd
-            cachedBeers = db.beerDao().getAll()
+    private fun subscribeUi (adapter: ListAdapter){
+        beerRepository.beers.observe(viewLifecycleOwner) { beers ->
+            adapter.updateData(beers)
+        }
+    }
 
-            //Actualiza la lista de cervezas
-            adapter.updateData(cachedBeers)
-            //Ordena la lista de cervezas por abv
-            adapter.sortByAbv()
-
-        } catch (error: APIError) {
-            Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-        } finally {
-            withContext(Dispatchers.Main) {
+    private fun launchDataLoad(block: suspend () -> Unit) : Job {
+        return lifecycleScope.launch {
+            try {
+                binding.spinner.visibility = View.VISIBLE
+                block()
+            } catch (error: APIError) {
+                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+            } finally {
                 binding.spinner.visibility = View.GONE
             }
         }
     }
+
+//    private suspend fun mostrarCervezas() {
+//        try {
+//            //Obtener cervezas de la bd
+//            cachedBeers = db.beerDao().getAll()
+//
+//            //Actualiza la lista de cervezas
+//            adapter.updateData(cachedBeers)
+//            //Ordena la lista de cervezas por abv
+//            adapter.sortByAbv()
+//
+//        } catch (error: APIError) {
+//            Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
+//        } finally {
+//            withContext(Dispatchers.Main) {
+//                binding.spinner.visibility = View.GONE
+//            }
+//        }
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -100,18 +122,8 @@ class ListFragment : Fragment() {
         beerViewModel.setSelectedBeer(null)
         setUpRecyclerView()
 
-        if (cachedBeers.isEmpty()) {
-            binding.spinner.visibility = View.VISIBLE
-            beerViewModel.setSelectedBeer(null)
-
-            lifecycleScope.launch(Dispatchers.IO) {
-                ApiUtils().beersFromApiToBd(db)
-                withContext(Dispatchers.Main) {
-                    mostrarCervezas()
-                }
-            }
-        }
-        setUpSortingSpinner()
+        subscribeUi(adapter)
+        launchDataLoad { beerRepository.tryUpdateRecentBeersCache() }
     }
 
     private fun setUpUI() {
@@ -228,17 +240,17 @@ class ListFragment : Fragment() {
         _binding = null
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            ApiUtils().beersFromApiToBd(db)
-            withContext(Dispatchers.Main) {
-                mostrarCervezas()
-            }
-        }
-        adapter.updateData(beersFiltered) // O usa beers si deseas mostrar todas las cervezas
-    }
+//    override fun onResume() {
+//        super.onResume()
+//
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            ApiUtils().beersFromApiToBd(db)
+//            withContext(Dispatchers.Main) {
+//                //mostrarCervezas()
+//            }
+//        }
+//        adapter.updateData(beersFiltered) // O usa beers si deseas mostrar todas las cervezas
+//    }
 
 
 }

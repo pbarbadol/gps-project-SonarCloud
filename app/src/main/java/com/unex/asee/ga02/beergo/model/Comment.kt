@@ -40,7 +40,7 @@ data class Comment(
     // Identificador único autoincremental del comentario.
     @PrimaryKey(autoGenerate = true) var commentId: Long,
     // Referencia a la cerveza asociada al comentario.
-    val beerId: Int,
+    val beerId: Long,
     // Usuario que realizó el comentario.
     val userId: Long,
     // El comentario en sí.

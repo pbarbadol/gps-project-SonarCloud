@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.ActivityJoinBinding
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.repository.UserRepository
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
 import kotlinx.coroutines.launch
 
@@ -63,33 +64,31 @@ class JoinActivity : AppCompatActivity() {
             val check = CredentialCheck.join(
                 etUsername.text.toString(), etPassword.text.toString(), etRepassword.text.toString()
             )
-            if (check.fail) notifyInvalidCredentials(check.msg)
-            else {
+            if (check.fail) {
+                notifyInvalidCredentials(check.msg)
+            } else {
                 lifecycleScope.launch {
-                    val user = User(
-                        0, etUsername.text.toString(), etPassword.text.toString()
-                    )
-                    val id =
-                        db?.userDao()!!.insert(user) //Antes: val id = db?.userDao()?.insert(user)
-
-                    if(id == (-1).toLong()){
-                        notifyInvalidCredentials("El usuario ya existe")
-                        return@launch
-                    }
-                    else{
-                        Toast.makeText(this@JoinActivity, "Usuario creado", Toast.LENGTH_SHORT).show()
-                        navigateBackWithResult(
-                            User(
-                                id, etUsername.text.toString(), etPassword.text.toString()
-                            )
+                    try {
+                        val registeredUser = UserRepository.getInstance(db.userDao()).registerUser(
+                            etUsername.text.toString(), etPassword.text.toString()
                         )
+
+                        if (registeredUser != null) {
+                            Toast.makeText(
+                                this@JoinActivity, "Usuario creado", Toast.LENGTH_SHORT
+                            ).show()
+                            navigateBackWithResult(registeredUser)
+                        } else {
+                            notifyInvalidCredentials("El usuario ya existe")
+                        }
+                    } catch (e: Exception) {
+                        notifyInvalidCredentials(e.message ?: "Error al registrar usuario")
                     }
-
-
                 }
             }
         }
     }
+
 
     private fun navigateBackWithResult(user: User) {
         //Creación del intent

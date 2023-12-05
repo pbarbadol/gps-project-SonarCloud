@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -21,7 +22,14 @@ interface BeerDao {
      * @return Lista con todas las cervezas.
      */
     @Query("SELECT * FROM beer")
-    suspend fun getAll(): List<Beer>
+    fun getAll(): LiveData<List<Beer>> //TODO: refactor
+
+    /**
+     * Obtiene el numero de cervezas
+     * @return Número de cervezas
+     */
+    @Query("SELECT COUNT(*) FROM beer")
+    suspend fun getNumberBeers(): Long //TODO: refactor
 
     /**
      * Encuentra una cerveza por su ID.
@@ -38,7 +46,15 @@ interface BeerDao {
      * @param beer La cerveza a insertar.
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(beer: Beer)
+    suspend fun insert(beer: Beer) //TODO: refactor
+
+    /**
+     * Inserta una lista de cervezas en la base de datos.
+     *
+     * @param beers La lista de cervezas a insertar.
+     */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(beers: List<Beer>) //TODO: refactor
 
     /**
      * Elimina una cerveza de la base de datos.
@@ -65,7 +81,7 @@ interface BeerDao {
      * @return El número de ocurrencias en la tabla de favoritos (0 o 1).
      */
     @Query("SELECT COUNT(*) FROM userfavouritebeercrossref WHERE beerId = :beerId")
-    suspend fun isBeerInFavorites(beerId: Int): Int
+    suspend fun isBeerInFavorites(beerId: kotlin.Long): Int
 
 
     /**
@@ -130,22 +146,11 @@ interface BeerDao {
     /**
      * Elimina una relación de usuario y cerveza favorita.
      *
-     * @param crossRef La relación a eliminar.
+     * @param userId El ID del usuario.
+     * @param beerId El ID de la cerveza.
      */
     @Delete
-    suspend fun deleteUserFavourite(crossRef: UserFavouriteBeerCrossRef)
-
-    /**
-     * Elimina una cerveza de los favoritos de un usuario.
-     *
-     * @param beer La cerveza a eliminar.
-     * @param userId El ID del usuario.
-     */
-    @Transaction
-    suspend fun deleteAndRelate(beer: Beer, userId: Long) {
-        deleteUserFavourite(UserFavouriteBeerCrossRef(userId, beer.beerId))
-    }
-
+    suspend fun deleteUserFavouriteBeer(crossRef: UserFavouriteBeerCrossRef)
     /**
      * Inserta una cerveza en los favoritos de un usuario.
      *

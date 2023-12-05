@@ -15,6 +15,7 @@ import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentAddcommentBinding
 import com.unex.asee.ga02.beergo.model.Comment
+import com.unex.asee.ga02.beergo.repository.CommentRepository
 import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
@@ -23,10 +24,8 @@ import kotlinx.coroutines.launch
 class AddCommentFragment: Fragment() {
 
     private lateinit var db: BeerGoDatabase
-
     private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
-
     private var _binding: FragmentAddcommentBinding? = null
     private val binding get() = _binding!!
     private lateinit var challengeObserverForCommentTable : ChallengeAchievementObserver
@@ -83,16 +82,13 @@ class AddCommentFragment: Fragment() {
         btCancel.setOnClickListener {
             findNavController().popBackStack()
         }
-
     }
-
     private fun addComment(comment: Comment){
         lifecycleScope.launch {
-            db.commentDao().insert(comment)
+            CommentRepository.getInstance(db.commentDao()).addComment(comment)
         }
         db.notifyDatabaseObservers("Comment")
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

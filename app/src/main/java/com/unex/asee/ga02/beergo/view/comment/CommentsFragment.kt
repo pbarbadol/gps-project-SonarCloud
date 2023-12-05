@@ -14,15 +14,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentCommentsBinding
 import com.unex.asee.ga02.beergo.model.Comment
+import com.unex.asee.ga02.beergo.repository.CommentRepository
 import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 
 class CommentsFragment: Fragment() {
 
@@ -129,13 +125,13 @@ class CommentsFragment: Fragment() {
 
     }
 
-    private fun loadComments() {
+    private fun loadComments() { //TODO: Aqui deberá usarse viewModel ¿?
         val beer = beerViewModel.getSelectedBeer()
         beer?.let {
             val idCerveza = it.beerId
             lifecycleScope.launch {
                 binding.spinner.visibility = View.VISIBLE
-                beerComments = db.commentDao().findByBeer(idCerveza)
+                beerComments = CommentRepository.getInstance(db.commentDao()).loadComments(idCerveza)
                 adapter.updateData(beerComments)
                 binding.spinner.visibility = View.GONE
             }

@@ -9,14 +9,13 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-
 import com.bumptech.glide.Glide
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentShowBeerBinding
+import com.unex.asee.ga02.beergo.repository.FavRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
@@ -61,7 +60,7 @@ class ShowBeerFragment : Fragment() {
         _binding = null // avoid memory leaks
     }
 
-    override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(View: View, savedInstanceState: Bundle?) { //TODO: reparar visualización de la imagen
         super.onViewCreated(View, savedInstanceState)
 
         val beer = beerViewModel.getSelectedBeer()
@@ -85,10 +84,7 @@ class ShowBeerFragment : Fragment() {
         Glide.with(this)
             .load(beer.image)
             .into(binding.beerImage)
-        //binding.type.text = beer.type
-        //binding.type2.text = beer.type
-        //binding.type3.text = beer.type
-        //binding.beerImage.setImageResource(beer.image)
+
 
         //Navegación a AddCommentFragment
         val imageView7 = binding.imageView7
@@ -107,35 +103,21 @@ class ShowBeerFragment : Fragment() {
                 val user = userViewModel.getUser()
                 lifecycleScope.launch(Dispatchers.IO) {
                     if (isChecked) {
+
                         db.beerDao().insertAndRelate(beer, user.userId!!)
                         db.notifyDatabaseObservers("UserFavouriteBeerCrossRef")
                     } else {
-                        db.beerDao().deleteAndRelate(beer, user.userId!!)
+                        FavRepository.getInstance(db.beerDao()).deleteFav(user.userId!!, beerId)
                     }
                 }
             }
         }
-
-
     }
 
-    suspend fun isInFavourite(id: Int): Boolean {
+    suspend fun isInFavourite(id: Long): Boolean {
         return withContext(Dispatchers.IO) {
             db.beerDao().isBeerInFavorites(id) > 0
         }
     }
-    private fun beerBinding(beer: Beer){
-        binding.id.text = beer.beerId.toString()
-        binding.title.text = beer.title
-        binding.description.text = beer.description
-        binding.abv.text = beer.abv.toString()
-        Glide.with(this)
-            .load(beer.image)
-            .into(binding.beerImage)
-    }
 
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        db.removeDatabaseObserver("UserFavouriteBeerCrossRef", challengeObserverForUserFavouriteBeerCrossRefTable)
-//    }
 }

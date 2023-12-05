@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentFavsBinding
 import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.repository.FavRepository
 import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -63,14 +64,12 @@ class FavsFragment : Fragment() {
         _binding = FragmentFavsBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
         beerViewModel.setSelectedBeer(null)
         setUpRecyclerView()
         loadFavourites()
     }
-
     fun setUpUI() {
     }
 
@@ -101,28 +100,25 @@ class FavsFragment : Fragment() {
         }
         android.util.Log.d("DiscoverFragment", "setUpRecyclerView")
     }
-
     private fun loadFavourites(){
         val user = userViewModel.getUser()
         lifecycleScope.launch {
             binding.spinner.visibility = View.VISIBLE
-            favBeers = db.beerDao().getFavouritesBeersByUserId(user.userId)
+            favBeers = FavRepository.getInstance(db.beerDao()).loadFavs(user.userId)
             adapter.updateData(favBeers)
             binding.spinner.visibility = View.GONE
         }
     }
-
     private fun deleteBeer(beer: Beer) {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
-            db.beerDao().deleteAndRelate(beer, user.userId!!)
+            FavRepository.getInstance(db.beerDao()).deleteFav(user.userId, beer.beerId)
         }
     }
     private fun navigateToShowBeerFragment(beer: Beer) {
         val action = FavsFragmentDirections.actionFavsFragmentToShowBeerFragment()
         findNavController().navigate(action)
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // avoid memory leaks

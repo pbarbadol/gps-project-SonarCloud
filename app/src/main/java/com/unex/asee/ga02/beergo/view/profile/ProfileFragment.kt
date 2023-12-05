@@ -12,6 +12,7 @@ import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentProfileBinding
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.repository.UserRepository
 import com.unex.asee.ga02.beergo.view.home.LoginActivity
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
@@ -48,15 +49,10 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.idUser.text = currentUser.name
-        // Agrega estas variables a tu clase
         lifecycleScope.launch(Dispatchers.IO) {
 
 
-            // Después de obtener la información de logros, puedes actualizar la interfaz de usuario
-            // Esto debe hacerse en el hilo principal, por lo que utilizamos launch(Dispatchers.Main)
             launch(Dispatchers.Main) {
-                // Agrega el código aquí para actualizar la interfaz de usuario según los logros obtenidos
-                // Puedes mostrar la información de logros en tu diseño (por ejemplo, el número de logros, etc.).
 
                 // Ahora puedes iniciar la verificación de logros
             }
@@ -79,7 +75,7 @@ class ProfileFragment : Fragment() {
 
             if (user != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    db.userDao().delete(user)
+                    UserRepository.getInstance(db.userDao()).deleteUser(user)
                     activity?.finish()
                     val intent = Intent(context, LoginActivity::class.java)
                     startActivity(intent)
@@ -99,20 +95,17 @@ class ProfileFragment : Fragment() {
 
     private suspend fun setUpStadistics() {
         binding.cervezasAnadidas.text = "Cervezas Añadidas: ${
-            db.userDao().countBeersInsertedByUser(userViewModel.getUser().userId)
+            UserRepository.getInstance(db.userDao()).countBeersInsertedByUser(userViewModel.getUser().userId)
         }"
         binding.cervezasFavoritas.text = "Cervezas Favoritas: ${
-            db.userDao().countUserFavouriteBeers(userViewModel.getUser().userId)
+            UserRepository.getInstance(db.userDao()).countFavouritesByUser(userViewModel.getUser().userId)
         }"
         binding.comentariosAnadidos.text = "Comentarios Añadidos: ${
-            db.userDao().countCommentsByUser(userViewModel.getUser().userId)
+            UserRepository.getInstance(db.userDao()).countCommentsByUser(userViewModel.getUser().userId)
         }"
         binding.logrosConseguidos.text = "Logros Conseguidos: ${
-            db.userDao().countUserAchievements(userViewModel.getUser().userId)
+            UserRepository.getInstance(db.userDao()).countUserAchievements(userViewModel.getUser().userId)
         }"
-        //binding.iniciosSesion.text = "Inicios de Sesión: ${0}"
-        //binding.fechaCreacion.text = "Fecha de Creación: ${0}"
-
     }
 
     private suspend fun consultaLogros() {

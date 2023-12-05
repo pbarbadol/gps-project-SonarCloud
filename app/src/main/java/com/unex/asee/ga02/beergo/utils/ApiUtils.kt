@@ -1,9 +1,5 @@
 package com.unex.asee.ga02.beergo.utils
 
-import android.util.Log
-import android.view.View
-import android.widget.Toast
-import com.unex.asee.ga02.beergo.api.APIError
 import com.unex.asee.ga02.beergo.api.getNetworkService
 import com.unex.asee.ga02.beergo.data.toBeer
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
@@ -29,7 +25,7 @@ class ApiUtils {
     }
 
      suspend fun beersFromApiToBd(bd: BeerGoDatabase){
-            val apiBeers = ApiUtils().fetchBeers()
+            val apiBeers = fetchBeers()
             apiBeers.forEach { beer -> bd.beerDao().insert(beer) }
     }
 }
