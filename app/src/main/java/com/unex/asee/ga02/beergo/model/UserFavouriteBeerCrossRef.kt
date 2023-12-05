@@ -31,5 +31,5 @@ import androidx.room.ForeignKey
 )
 data class UserFavouriteBeerCrossRef(
     val userId: Long,
-    val beerId: Int
+    val beerId: Long
 )

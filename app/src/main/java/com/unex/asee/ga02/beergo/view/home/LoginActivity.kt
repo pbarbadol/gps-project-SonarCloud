@@ -10,22 +10,29 @@ import androidx.preference.PreferenceManager
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.ActivityLoginBinding
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.repository.UserRepository
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
 import kotlinx.coroutines.launch
 
+/**
+ * Actividad que maneja la pantalla de inicio de sesión.
+ */
 class LoginActivity : AppCompatActivity(){
     private lateinit var db: BeerGoDatabase
     private lateinit var binding: ActivityLoginBinding
+    // Resultado lanzador para la actividad de registro
     private val responseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val name = result.data?.getStringExtra(JoinActivity.USERNAME).orEmpty() //La interrogación es una manera de comprobar componentes nulos en la activity
                 val password = result.data?.getStringExtra(JoinActivity.PASS).orEmpty()
 
+                // Actualiza los campos de usuario y contraseña con los valores obtenidos
                 with(binding) {
                     etUsername.setText(name)
                     etPassword.setText(password)
                 }
+                // Muestra un mensaje indicando que se ha creado un nuevo usuario
                 Toast.makeText(
                     this@LoginActivity,
                     "New user ($name/$password) created",
@@ -37,18 +44,22 @@ class LoginActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //view binding and set content view
+        // Configuración del view binding y establecimiento del contenido de la vista
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Inicialización de la base de datos
+        // Inicialización de la base de datos
         db = BeerGoDatabase.getInstance(applicationContext)!!
 
-        //views initialization and listeners
+        // Inicialización de las vistas y los listeners
         setUpUI()
         setUpListeners()
+        // Lee las preferencias de la configuración
         readSetings()
     }
+    /**
+     * Lee las preferencias de configuración para recordar el nombre de usuario y la contraseña.
+     */
     private fun readSetings(){
         val preferences = PreferenceManager.getDefaultSharedPreferences(this).all
 
@@ -56,16 +67,21 @@ class LoginActivity : AppCompatActivity(){
         val username = preferences["username"] as String? ?: ""
         val passwd = preferences["password"] as String? ?: ""
 
+        // Si se recuerda al usuario, establece los campos de usuario y contraseña
         if (rememberme){
             binding.etUsername.setText(username)
             binding.etPassword.setText(passwd)
         }
 
     }
-    private fun setUpUI() {
-        //get attributes from xml using binding
-    }
+    /**
+     * Inicializa las vistas utilizando el view binding.
+     */
+    private fun setUpUI() {}
 
+    /**
+     * Configura los listeners para los botones.
+     */
     private fun setUpListeners() {
         with(binding) {
 
@@ -80,26 +96,31 @@ class LoginActivity : AppCompatActivity(){
         }
     }
 
-    private fun checkLogin(){
-        val check = CredentialCheck.login(binding.etUsername.text.toString(),
-            binding.etPassword.text.toString())
-        if (!check.fail){
-            lifecycleScope.launch{
-                val user =
-                    db?.userDao()?.findByName(binding.etUsername.text.toString())
-                if (user != null) {
-                    val check =
-                        CredentialCheck.passwordOk(binding.etPassword.text.toString(),
-                            user.password)
-                    if (check.fail) notifyInvalidCredentials(check.msg)
-                    else navigateToHomeActivity(user!!, check.msg)
+    /**
+     * Realiza la validación del inicio de sesión.
+     */
+    private fun checkLogin() {
+        val check = CredentialCheck.login(binding.etUsername.text.toString(), binding.etPassword.text.toString())
+        if (!check.fail) {
+            lifecycleScope.launch {
+                try {
+                    // Intenta autenticar al usuario utilizando el UserRepository
+                    val user = UserRepository.getInstance(db.userDao()).loginUser(binding.etUsername.text.toString(), binding.etPassword.text.toString())
+                    navigateToHomeActivity(user, "Login successful")
+                } catch (e: Exception) {
+                    // Maneja excepciones relacionadas con la autenticación
+                    notifyInvalidCredentials(e.message ?: "Authentication failed")
                 }
-                else notifyInvalidCredentials("Invalid username")
             }
+        } else {
+            // Notifica si hay un problema con las credenciales
+            notifyInvalidCredentials(check.msg)
         }
-        else notifyInvalidCredentials(check.msg)
     }
 
+    /**
+     * Navega a la actividad principal después de un inicio de sesión exitoso.
+     */
     private fun navigateToHomeActivity(user: User, msg: String) {
         //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         val intent = Intent(this, HomeActivity::class.java) //Crea un intent explícito para lanzar la actividad objetivo
@@ -108,12 +129,16 @@ class LoginActivity : AppCompatActivity(){
         HomeActivity.start(this, user) //Usa el método start de la clase HomeActivity
     }
 
+    /**
+     * Navega a la actividad de registro.
+     */
     private fun navigateToJoin() {
         JoinActivity.start(this, responseLauncher)
     }
 
-
-
+    /**
+     * Muestra un mensaje de error al usuario.
+     */
     private fun notifyInvalidCredentials(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }

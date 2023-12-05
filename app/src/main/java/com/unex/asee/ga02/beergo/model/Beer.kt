@@ -29,7 +29,7 @@ import androidx.room.ForeignKey
     ]
 )
 data class Beer(
-    @PrimaryKey(autoGenerate = true) val beerId: Int,
+    @PrimaryKey(autoGenerate = true) val beerId: Long,
     val title: String,
     val description: String,
     val year: String,

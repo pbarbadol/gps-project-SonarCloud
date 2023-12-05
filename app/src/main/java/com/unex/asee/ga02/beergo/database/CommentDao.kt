@@ -46,5 +46,5 @@ interface CommentDao {
      * @return Una lista de comentarios para la cerveza especificada.
      */
     @Query("SELECT * FROM comment WHERE beerId = :beerId")
-    suspend fun findByBeer(beerId: Int): List<Comment>
+    suspend fun findByBeer(beerId: Long): List<Comment>
 }
