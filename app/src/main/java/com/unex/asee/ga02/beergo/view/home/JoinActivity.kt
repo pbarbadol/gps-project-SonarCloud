@@ -20,6 +20,9 @@ class JoinActivity : AppCompatActivity() {
     private lateinit var db: BeerGoDatabase
     private lateinit var binding: ActivityJoinBinding
 
+    //Repositorio
+    private lateinit var userRepository: UserRepository
+
     companion object {
 
         const val USERNAME = "JOIN_USERNAME"
@@ -41,6 +44,7 @@ class JoinActivity : AppCompatActivity() {
 
         //Inicialización de la base de datos
         db = BeerGoDatabase.getInstance(applicationContext)!!
+        userRepository = UserRepository.getInstance(db.userDao())
 
         //views initialization and listeners
         setUpUI()
@@ -69,9 +73,7 @@ class JoinActivity : AppCompatActivity() {
             } else {
                 lifecycleScope.launch {
                     try {
-                        val registeredUser = UserRepository.getInstance(db.userDao()).registerUser(
-                            etUsername.text.toString(), etPassword.text.toString()
-                        )
+                        val registeredUser = userRepository.registerUser(etUsername.text.toString(), etPassword.text.toString())
 
                         if (registeredUser != null) {
                             Toast.makeText(

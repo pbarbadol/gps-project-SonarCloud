@@ -1,6 +1,7 @@
 package com.unex.asee.ga02.beergo.view.list
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,10 +13,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.unex.asee.ga02.beergo.R
+import com.unex.asee.ga02.beergo.api.BeerApiInterface
+import com.unex.asee.ga02.beergo.api.getNetworkService
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.repository.BeerRepository
 import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
@@ -30,15 +34,15 @@ class InsertBeerFragment : Fragment() {
     private var _binding: FragmentInsertBeerBinding? = null
     private val binding get() = _binding!!
     private var selectedImageUri: Uri? = null
-
     // Database
     private lateinit var db: BeerGoDatabase
-
     // ViewModel
     private lateinit var userViewModel: UserViewModel
     private lateinit var currentUser: User
-
     private lateinit var challengeObserverForBeerTable : ChallengeAchievementObserver
+
+    //Repositorios
+    private lateinit var beerRepository: BeerRepository
 
 
     /**
@@ -49,7 +53,6 @@ class InsertBeerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Obtener instancia de la base de datos
-        db = BeerGoDatabase.getInstance(requireContext())!!
         // Obtener el ViewModel
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         currentUser = userViewModel.getUser()
@@ -74,6 +77,13 @@ class InsertBeerFragment : Fragment() {
         setupInsertButton()
 
         return binding.root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        db = BeerGoDatabase.getInstance(requireContext())!!
+        beerRepository = BeerRepository.getInstance(db.beerDao(), getNetworkService())
     }
 
     /**
@@ -201,9 +211,9 @@ class InsertBeerFragment : Fragment() {
      * @param beer La cerveza que se va a insertar en la base de datos.
      */
     private suspend fun insertarCerveza(beer: Beer) {
-        db.beerDao().insert(beer)
+        beerRepository.addBeer(beer)
         // Notificar a los observadores de desafíos
-        db.notifyDatabaseObservers("UserBeerCrossRef")
+        //db.notifyDatabaseObservers("UserBeerCrossRef") TODO: observer
     }
 
     /**

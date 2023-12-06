@@ -41,7 +41,6 @@ class AchievementsFragment : Fragment() {
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         // Obtener el usuario actual
         currentUser = userViewModel.getUser()
-        // Obtener instancia de la db
     }
 
     override fun onCreateView(
@@ -54,7 +53,9 @@ class AchievementsFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        // Obtener la instancia de la base de datos
         db = BeerGoDatabase.getInstance(this.requireContext())!!
+        // Obtener la instancia del repositorio
         achievementRepository = AchievementRepository.getInstance(db.userDao(), db.achievementDao())
     }
 

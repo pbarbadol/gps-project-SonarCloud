@@ -24,6 +24,13 @@ private constructor(private val beerDao: BeerDao) {
     val beers = beerDao.getAll()
 
     /**
+     *  Añade una cerveza a la base de datos local.
+     */
+    suspend fun addBeer(beer: Beer) {
+        beerDao.insert(beer)
+    }
+
+    /**
      * Intenta actualizar la caché de cervezas recientes si es necesario.
      */
     suspend fun tryUpdateRecentBeersCache() {

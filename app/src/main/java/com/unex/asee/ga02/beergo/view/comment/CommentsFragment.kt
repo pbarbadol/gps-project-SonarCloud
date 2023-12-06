@@ -106,7 +106,7 @@ class CommentsFragment: Fragment() {
         val userId = user.userId
         if(userId == userCommentId){
             lifecycleScope.launch {
-                db.commentDao().delete(comment)
+                commentRepository.deleteComment(comment)
                 Toast.makeText(
                     requireContext(),
                     "Se ha borrado el comentario con ID: ${comment.commentId}",

@@ -90,7 +90,7 @@ class AddCommentFragment: Fragment() {
         lifecycleScope.launch {
             commentRepository.addComment(comment)
         }
-        db.notifyDatabaseObservers("Comment")
+        //db.notifyDatabaseObservers("Comment")
     }
     override fun onDestroyView() {
         super.onDestroyView()

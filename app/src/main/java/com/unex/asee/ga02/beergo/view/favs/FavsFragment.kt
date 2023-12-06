@@ -104,7 +104,7 @@ class FavsFragment : Fragment() {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
             binding.spinner.visibility = View.VISIBLE
-            favRepository.loadFavs(user.userId)
+            favBeers = favRepository.loadFavs(user.userId)
             adapter.updateData(favBeers)
             binding.spinner.visibility = View.GONE
         }

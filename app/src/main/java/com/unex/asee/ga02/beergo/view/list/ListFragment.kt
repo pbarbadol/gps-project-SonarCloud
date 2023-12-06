@@ -123,6 +123,7 @@ class ListFragment : Fragment() {
 
         setUpUI()
         beerViewModel.setSelectedBeer(null)
+        beerViewModel.setSelectedBeer(null)
         setUpRecyclerView()
 
         subscribeUi(adapter)
