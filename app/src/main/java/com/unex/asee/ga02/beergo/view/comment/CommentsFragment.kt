@@ -21,21 +21,18 @@ import kotlinx.coroutines.launch
 
 
 class CommentsFragment: Fragment() {
-
     private lateinit var db: BeerGoDatabase
-
     private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
+    //repository
+    private lateinit var commentRepository: CommentRepository
     private lateinit var listener: OnShowClickListener
-
     interface OnShowClickListener {
         fun onShowClick(comment: Comment)
     }
-
     private var _binding: FragmentCommentsBinding? = null
     private val binding get() = _binding!!
     private lateinit  var adapter: CommentsAdapter
-
     private var beerComments = emptyList<Comment>()
 
 
@@ -49,6 +46,7 @@ class CommentsFragment: Fragment() {
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
         db = BeerGoDatabase.getInstance(context)!!
+        commentRepository = CommentRepository.getInstance(db.commentDao())
         if (context is CommentsFragment.OnShowClickListener) {
             listener = context
         } else {
@@ -131,7 +129,7 @@ class CommentsFragment: Fragment() {
             val idCerveza = it.beerId
             lifecycleScope.launch {
                 binding.spinner.visibility = View.VISIBLE
-                beerComments = CommentRepository.getInstance(db.commentDao()).loadComments(idCerveza)
+                beerComments = commentRepository.loadComments(idCerveza)
                 adapter.updateData(beerComments)
                 binding.spinner.visibility = View.GONE
             }

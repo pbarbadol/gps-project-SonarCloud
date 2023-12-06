@@ -62,7 +62,9 @@ class UserRepository private constructor(private val userDao: UserDao) {
         }
         return user
     }
-
+    suspend fun getUser(userId: Long): User? {
+        return userDao.findByID(userId)
+    }
     suspend fun deleteUser(user: User) {
         userDao.delete(user)
     }

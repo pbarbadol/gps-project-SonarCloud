@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.view.profile
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -28,13 +29,13 @@ class ProfileFragment : Fragment() {
     private var userAchievements: List<Achievement> = emptyList()
     private lateinit var currentUser: User
     private lateinit var db: BeerGoDatabase
+    //Repositorios
+    private lateinit var userRepository: UserRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-        db = BeerGoDatabase.getInstance(requireContext())!!
         currentUser = userViewModel.getUser()
-        db = BeerGoDatabase.getInstance(this.requireContext())!!
     }
 
     override fun onCreateView(
@@ -43,9 +44,12 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
-
     }
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        db = BeerGoDatabase.getInstance(this.requireContext())!!
+        userRepository = UserRepository.getInstance(db.userDao())
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.idUser.text = currentUser.name
@@ -75,7 +79,7 @@ class ProfileFragment : Fragment() {
 
             if (user != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    UserRepository.getInstance(db.userDao()).deleteUser(user)
+                    userRepository.deleteUser(user)
                     activity?.finish()
                     val intent = Intent(context, LoginActivity::class.java)
                     startActivity(intent)
@@ -95,16 +99,16 @@ class ProfileFragment : Fragment() {
 
     private suspend fun setUpStadistics() {
         binding.cervezasAnadidas.text = "Cervezas Añadidas: ${
-            UserRepository.getInstance(db.userDao()).countBeersInsertedByUser(userViewModel.getUser().userId)
+            userRepository.countBeersInsertedByUser(userViewModel.getUser().userId)
         }"
         binding.cervezasFavoritas.text = "Cervezas Favoritas: ${
-            UserRepository.getInstance(db.userDao()).countFavouritesByUser(userViewModel.getUser().userId)
+            userRepository.countFavouritesByUser(userViewModel.getUser().userId)
         }"
         binding.comentariosAnadidos.text = "Comentarios Añadidos: ${
-            UserRepository.getInstance(db.userDao()).countCommentsByUser(userViewModel.getUser().userId)
+            userRepository.countCommentsByUser(userViewModel.getUser().userId)
         }"
         binding.logrosConseguidos.text = "Logros Conseguidos: ${
-            UserRepository.getInstance(db.userDao()).countUserAchievements(userViewModel.getUser().userId)
+            userRepository.countUserAchievements(userViewModel.getUser().userId)
         }"
     }
 
@@ -113,7 +117,7 @@ class ProfileFragment : Fragment() {
         achievements = db.achievementDao().getAll()
 
         // Obtener la lista de logros del usuario
-        val userWithAchievements = db.achievementDao().getUserWithAchievements(currentUser.userId)
+        val userWithAchievements = db.userDao().getUserAchievements(currentUser.userId)
         userAchievements = userWithAchievements.achievements
     }
 

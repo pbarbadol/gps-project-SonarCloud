@@ -74,7 +74,7 @@ private constructor(private val beerDao: BeerDao) {
     // Compañero del objeto Repository que gestiona la creación de instancias.
     companion object {
         // Tiempo mínimo (en milisegundos) que debe pasar antes de realizar una nueva actualización.
-        private const val MIN_TIME_FROM_LAST_FETCH_MILLIS: Long = 30000
+        private const val MIN_TIME_FROM_LAST_FETCH_MILLIS: Long = 3000000
 
         // Instancia única del Repository utilizando el patrón Singleton.
         @Volatile

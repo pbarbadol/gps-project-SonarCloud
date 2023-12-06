@@ -19,21 +19,20 @@ import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 class FavsFragment : Fragment() {
-
     private lateinit var db: BeerGoDatabase
-
     private lateinit var listener: OnShowClickListener
     private lateinit var beerViewModel: BeerViewModel
     private lateinit var userViewModel: UserViewModel
     interface OnShowClickListener {
         fun onShowClick(beer : Beer)
     }
-
     private var _binding: FragmentFavsBinding? = null
     private val binding get() = _binding!!
     private lateinit  var adapter: FavsAdapter
+    private var favBeers = emptyList<Beer>()
 
-    private var favBeers = emptyList<Beer>() //dummyBeers.filter {it.isFavourite}
+    //Repositorios
+    private lateinit var favRepository: FavRepository
 
 
 
@@ -48,6 +47,7 @@ class FavsFragment : Fragment() {
         super.onAttach(context)
 
         db = BeerGoDatabase.getInstance(context)!!
+        favRepository = FavRepository.getInstance(db.userDao())
 
         if (context is OnShowClickListener) {
             listener = context
@@ -104,7 +104,7 @@ class FavsFragment : Fragment() {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
             binding.spinner.visibility = View.VISIBLE
-            favBeers = FavRepository.getInstance(db.beerDao()).loadFavs(user.userId)
+            favRepository.loadFavs(user.userId)
             adapter.updateData(favBeers)
             binding.spinner.visibility = View.GONE
         }
@@ -112,7 +112,7 @@ class FavsFragment : Fragment() {
     private fun deleteBeer(beer: Beer) {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
-            FavRepository.getInstance(db.beerDao()).deleteFav(user.userId, beer.beerId)
+            favRepository.deleteFav(user.userId, beer.beerId)
         }
     }
     private fun navigateToShowBeerFragment(beer: Beer) {

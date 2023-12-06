@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.view.achievement
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentAchievementsBinding
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.repository.AchievementRepository
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,18 +23,16 @@ import kotlinx.coroutines.withContext
  * Fragmento que muestra la lista de logros.
  */
 class AchievementsFragment : Fragment() {
-
     private lateinit var db: BeerGoDatabase
-
     // View Binding
     private var _binding: FragmentAchievementsBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var adapter: AchievementsAdapter
     private var achievements: List<Achievement> = emptyList()
     private var userAchievements: List<Achievement> = emptyList()
     private lateinit var userViewModel: UserViewModel
     private lateinit var currentUser: User
+    private lateinit var achievementRepository: AchievementRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,6 @@ class AchievementsFragment : Fragment() {
         // Obtener el usuario actual
         currentUser = userViewModel.getUser()
         // Obtener instancia de la db
-        db = BeerGoDatabase.getInstance(this.requireContext())!!
     }
 
     override fun onCreateView(
@@ -51,6 +50,12 @@ class AchievementsFragment : Fragment() {
         // Inflar el diseño del fragmento
         _binding = FragmentAchievementsBinding.inflate(inflater, container, false)
         return _binding?.root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        db = BeerGoDatabase.getInstance(this.requireContext())!!
+        achievementRepository = AchievementRepository.getInstance(db.userDao(), db.achievementDao())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,10 +105,10 @@ class AchievementsFragment : Fragment() {
      */
     private suspend fun consultaLogros() {
         // Obtener la lista de logros
-        achievements = db.achievementDao().getAll()
+        achievements = achievementRepository.getAllAchievements()
 
         // Obtener la lista de logros del usuario
-        val userWithAchievements = db.achievementDao().getUserWithAchievements(currentUser.userId)
+        val userWithAchievements = achievementRepository.getUserAchievements(currentUser.userId)
         userAchievements = userWithAchievements.achievements
     }
 
