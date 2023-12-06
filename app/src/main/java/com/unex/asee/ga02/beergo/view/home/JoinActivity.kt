@@ -5,13 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.ActivityJoinBinding
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.UserRepository
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
+import com.unex.asee.ga02.beergo.view.viewmodel.JoinViewModel
 import kotlinx.coroutines.launch
 
 
@@ -20,8 +23,8 @@ class JoinActivity : AppCompatActivity() {
     private lateinit var db: BeerGoDatabase
     private lateinit var binding: ActivityJoinBinding
 
-    //Repositorio
-    private lateinit var userRepository: UserRepository
+    //ViewModel
+    private val viewModel: JoinViewModel by viewModels { JoinViewModel.Factory  }
 
     companion object {
 
@@ -42,9 +45,9 @@ class JoinActivity : AppCompatActivity() {
         binding = ActivityJoinBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Inicialización de la base de datos
-        db = BeerGoDatabase.getInstance(applicationContext)!!
-        userRepository = UserRepository.getInstance(db.userDao())
+        //Inicialización de la base de datos desde el contenedor de dependencias
+        val appContainer = (this.application as BeerGoApplication).appContainer
+        db = appContainer.db!!
 
         //views initialization and listeners
         setUpUI()
@@ -73,7 +76,7 @@ class JoinActivity : AppCompatActivity() {
             } else {
                 lifecycleScope.launch {
                     try {
-                        val registeredUser = userRepository.registerUser(etUsername.text.toString(), etPassword.text.toString())
+                        val registeredUser = viewModel.registerUser(etUsername.text.toString(), etPassword.text.toString())
 
                         if (registeredUser != null) {
                             Toast.makeText(

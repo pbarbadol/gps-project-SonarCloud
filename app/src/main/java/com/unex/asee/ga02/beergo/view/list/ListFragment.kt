@@ -10,59 +10,38 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.R
-import com.unex.asee.ga02.beergo.api.APIError
-import com.unex.asee.ga02.beergo.api.getNetworkService
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.repository.BeerRepository
-import com.unex.asee.ga02.beergo.repository.FavRepository
-import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
-import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import com.unex.asee.ga02.beergo.view.viewmodel.ListViewModel
 import java.util.Date
 import kotlin.collections.*
 
 class ListFragment : Fragment() {
+    //declaracion del ViewModel
+    private val viewmodel: ListViewModel by viewModels { ListViewModel.Factory }
     private var beers: List<Beer> = emptyList()
     private var beersFiltered: List<Beer> = emptyList()
     private var cachedBeers: List<Beer> = emptyList()
     private lateinit var listener: OnShowClickListener
-    private lateinit var beerViewModel: BeerViewModel
-    private lateinit var db: BeerGoDatabase
-    private lateinit var userViewModel: UserViewModel
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ListAdapter
-    private lateinit var beerRepository : BeerRepository
-    private lateinit var favRepository: FavRepository
+
 
 
     interface OnShowClickListener {
         fun onShowClick(beer: Beer)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //Obtenemos el ViewModel de cervecitas
-        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
-        //Obtenemos el ViewModel de usuario
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-
-    }
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
         //Obtenemos la base de datos
-        db = BeerGoDatabase.getInstance(this.requireContext())!!
-        beerRepository = BeerRepository.getInstance(db.beerDao(), getNetworkService())
-        favRepository = FavRepository.getInstance(db.userDao())
+
         if (context is OnShowClickListener) {
             listener = context
         } else {
@@ -71,23 +50,12 @@ class ListFragment : Fragment() {
     }
 
     private fun subscribeUi (adapter: ListAdapter){
-        beerRepository.beers.observe(viewLifecycleOwner) { beers ->
+        viewmodel.beer.observe(viewLifecycleOwner) { beers ->
             adapter.updateData(beers)
         }
     }
 
-    private fun launchDataLoad(block: suspend () -> Unit) : Job {
-        return lifecycleScope.launch {
-            try {
-                binding.spinner.visibility = View.VISIBLE
-                block()
-            } catch (error: APIError) {
-                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
-            } finally {
-                binding.spinner.visibility = View.GONE
-            }
-        }
-    }
+
 
 //    private suspend fun mostrarCervezas() {
 //        try {
@@ -121,13 +89,25 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Obtenemos las dependencias del contenedor de dependencias
+
+
         setUpUI()
-        beerViewModel.setSelectedBeer(null)
-        beerViewModel.setSelectedBeer(null)
+        viewmodel.setNoSelectedBeer()
         setUpRecyclerView()
 
+        viewmodel.spinner.observe(viewLifecycleOwner){show->
+                binding.spinner.visibility = if (show) View.VISIBLE else View.GONE
+        }
+        viewmodel.toast.observe(viewLifecycleOwner){text->
+            text?.let {
+                Toast.makeText(context, text, Toast.LENGTH_SHORT)
+                viewmodel.onToastShown()
+            }
+        }
+
         subscribeUi(adapter)
-        launchDataLoad { beerRepository.tryUpdateRecentBeersCache() }
+
     }
 
     private fun setUpUI() {
@@ -190,19 +170,20 @@ class ListFragment : Fragment() {
 
     private fun setUpRecyclerView() {
         adapter = ListAdapter(beers = beers, onClick = {
-            val cervezaSeleccionada = beerViewModel.getSelectedBeer()
+            val cervezaSeleccionada = viewmodel.getSelectedBeer()
             val history = History(beer = it, date = Date())
             History.saveHistory(history)
             if (cervezaSeleccionada == null) {
                 // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
-                beerViewModel.setSelectedBeer(it)
+                viewmodel.setSelectedBeer(it)
                 listener.onShowClick(it)
             } else {
                 // Si ya hay una cerveza seleccionada, solo mostrar los detalles
                 listener.onShowClick(it)
             }
         }, onLongClick = {
-            setFavourite(it)
+
+            viewmodel.setFavourite(it)
             Toast.makeText(context, "${it.title} añadida a favoritos", Toast.LENGTH_SHORT).show()
         }, context = context
         )
@@ -215,18 +196,7 @@ class ListFragment : Fragment() {
         Log.d("DiscoverFragment", "setUpRecyclerView")
     }
 
-    private fun setFavourite(beer: Beer) {
-        val user = userViewModel.getUser()
-        lifecycleScope.launch {
-            if (db != null) {
-                favRepository.addFav(user.userId, beer.beerId)
-            } else {
-                Toast.makeText(context, "Error: Base de datos no disponible", Toast.LENGTH_SHORT)
-                    .show()
-            }
 
-        }
-    }
 
     private fun performSearch(query: String) {
         beersFiltered = if (query.isNotBlank()) {

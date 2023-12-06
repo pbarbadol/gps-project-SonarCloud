@@ -22,7 +22,7 @@ interface BeerDao {
      * @return Lista con todas las cervezas.
      */
     @Query("SELECT * FROM beer")
-    fun getAll(): LiveData<List<Beer>> //TODO: refactor
+    fun getAll(): LiveData<List<Beer>>
 
     /**
      * Obtiene el numero de cervezas

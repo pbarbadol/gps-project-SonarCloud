@@ -1,4 +1,3 @@
-//TODO: Implementar SettingsFragment
 package com.unex.asee.ga02.beergo.view.settings
 
 import android.os.Bundle

@@ -8,44 +8,38 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentAddcommentBinding
 import com.unex.asee.ga02.beergo.model.Comment
-import com.unex.asee.ga02.beergo.repository.CommentRepository
 import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
-import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
-import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.AddCommentViewModel
 import kotlinx.coroutines.launch
 
 class AddCommentFragment: Fragment() {
 
+    private val viewModel: AddCommentViewModel by viewModels { AddCommentViewModel.Factory }
+
     private lateinit var db: BeerGoDatabase
-    private lateinit var beerViewModel: BeerViewModel
-    private lateinit var userViewModel: UserViewModel
     private var _binding: FragmentAddcommentBinding? = null
     private val binding get() = _binding!!
     private lateinit var challengeObserverForCommentTable : ChallengeAchievementObserver
 
-    //Repository
-    private lateinit var commentRepository: CommentRepository
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
-        challengeObserverForCommentTable = ChallengeAchievementObserver(userViewModel.getUser(), requireContext(), db)
+        challengeObserverForCommentTable = ChallengeAchievementObserver(viewModel.getCurrentUser()!!, requireContext(), db)
         db.addDatabaseObserver("Comment", challengeObserverForCommentTable)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        db = BeerGoDatabase.getInstance(context)!!
-        commentRepository = CommentRepository.getInstance(db.commentDao())
+        val appContainer = (this.activity?.application as BeerGoApplication).appContainer
+        db = appContainer.db!!
     }
 
     override fun onCreateView(
@@ -58,11 +52,14 @@ class AddCommentFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//Obtenemos los datos del contenedor de dependencias de la aplicacion
+        val appContainer = (this.activity?.application as BeerGoApplication).appContainer
+        db = appContainer.db!!
 
-        val beer = beerViewModel.getSelectedBeer()
-        val user = userViewModel.getUser()
+        val beer = viewModel.getSelectedBeer()
+        val user = viewModel.getCurrentUser()
         Log.d("AddCommentFragment","El id de la cerveza en AddCommentFragment es ${beer?.beerId}")
-        Log.d("AddCommentFragment","El id del usuario en AddCommentFragment es ${user.userId}")
+        Log.d("AddCommentFragment","El id del usuario en AddCommentFragment es ${user?.userId}")
 
 
         val contenido = view.findViewById<EditText>(R.id.editTextText)
@@ -73,7 +70,7 @@ class AddCommentFragment: Fragment() {
 
             if(comentario.isNotEmpty()){
                 val idCerv = beer!!.beerId
-                val idUser = user.userId
+                val idUser = user!!.userId
                 val userName = user.name
                 val comment = Comment(0, idCerv, idUser, comentario, userName)
                 addComment(comment)
@@ -88,7 +85,7 @@ class AddCommentFragment: Fragment() {
     }
     private fun addComment(comment: Comment){
         lifecycleScope.launch {
-            commentRepository.addComment(comment)
+            viewModel.addComment(comment)
         }
         //db.notifyDatabaseObservers("Comment")
     }

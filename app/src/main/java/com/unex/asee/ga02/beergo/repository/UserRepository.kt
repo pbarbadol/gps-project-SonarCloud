@@ -1,5 +1,7 @@
 package com.unex.asee.ga02.beergo.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.unex.asee.ga02.beergo.database.UserDao
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
@@ -13,7 +15,23 @@ import com.unex.asee.ga02.beergo.utils.CredentialCheck
  *
  * @property userDao Instancia de UserDao para acceder a la base de datos local de usuarios.
  */
-class UserRepository private constructor(private val userDao: UserDao) {
+class UserRepository private constructor(private val userDao: UserDao) { //TODO: Sigue el patron singlenton implementado
+
+    private val userLiveData = MutableLiveData<User>()
+
+    // Propiedad pública solo de lectura para acceder al LiveData del usuario.
+    val user: LiveData<User>
+        get() = userLiveData
+
+    // Método para cambiar el valor del LiveData del usuario.
+    fun setUser(user: User?) {
+        userLiveData.value = user!!
+    }
+
+    // Función para obtener el usuario.
+    fun getCurrentUser(): User {
+        return userLiveData.value!!
+    }
 
     /**
      * Intenta autenticar a un usuario utilizando el nombre de usuario y la contraseña proporcionados.

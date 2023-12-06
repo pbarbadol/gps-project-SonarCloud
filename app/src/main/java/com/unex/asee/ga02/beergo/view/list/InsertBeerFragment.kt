@@ -9,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.api.BeerApiInterface
 import com.unex.asee.ga02.beergo.api.getNetworkService
@@ -21,6 +23,7 @@ import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.BeerRepository
 import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
+import com.unex.asee.ga02.beergo.view.viewmodel.InsertBeerViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,13 +39,11 @@ class InsertBeerFragment : Fragment() {
     private var selectedImageUri: Uri? = null
     // Database
     private lateinit var db: BeerGoDatabase
-    // ViewModel
-    private lateinit var userViewModel: UserViewModel
+    private val viewModel: InsertBeerViewModel by viewModels { InsertBeerViewModel.Factory }
     private lateinit var currentUser: User
     private lateinit var challengeObserverForBeerTable : ChallengeAchievementObserver
 
     //Repositorios
-    private lateinit var beerRepository: BeerRepository
 
 
     /**
@@ -52,12 +53,9 @@ class InsertBeerFragment : Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Obtener instancia de la base de datos
-        // Obtener el ViewModel
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-        currentUser = userViewModel.getUser()
+        currentUser = viewModel.getCurrentUser()
         // Añadir el observador de desafíos para la tabla de cervezas
-        challengeObserverForBeerTable = ChallengeAchievementObserver(userViewModel.getUser(), requireContext(), db)
+        challengeObserverForBeerTable = ChallengeAchievementObserver(viewModel.getCurrentUser(), requireContext(), db)
         db.addDatabaseObserver("UserBeerCrossRef", challengeObserverForBeerTable)
     }
 
@@ -82,8 +80,8 @@ class InsertBeerFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        db = BeerGoDatabase.getInstance(requireContext())!!
-        beerRepository = BeerRepository.getInstance(db.beerDao(), getNetworkService())
+        val appContainer = (this.activity?.application as BeerGoApplication).appContainer
+        db = appContainer.db!!
     }
 
     /**
@@ -211,7 +209,7 @@ class InsertBeerFragment : Fragment() {
      * @param beer La cerveza que se va a insertar en la base de datos.
      */
     private suspend fun insertarCerveza(beer: Beer) {
-        beerRepository.addBeer(beer)
+        viewModel.addBeer(beer)
         // Notificar a los observadores de desafíos
         //db.notifyDatabaseObservers("UserBeerCrossRef") TODO: observer
     }

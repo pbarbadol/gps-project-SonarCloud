@@ -7,14 +7,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentProfileBinding
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.UserRepository
 import com.unex.asee.ga02.beergo.view.home.LoginActivity
+import com.unex.asee.ga02.beergo.view.viewmodel.ProfileViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,18 +27,15 @@ class ProfileFragment : Fragment() {
     private var nivel: Int = 0
     private var exp: Int = 0
     private lateinit var binding: FragmentProfileBinding
-    private lateinit var userViewModel: UserViewModel
+    private val viewModel: ProfileViewModel by viewModels { ProfileViewModel.Factory }
     private var achievements: List<Achievement> = emptyList()
     private var userAchievements: List<Achievement> = emptyList()
     private lateinit var currentUser: User
     private lateinit var db: BeerGoDatabase
-    //Repositorios
-    private lateinit var userRepository: UserRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-        currentUser = userViewModel.getUser()
+        currentUser = viewModel.getCurrentUser()!!
     }
 
     override fun onCreateView(
@@ -47,11 +47,15 @@ class ProfileFragment : Fragment() {
     }
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        db = BeerGoDatabase.getInstance(this.requireContext())!!
-        userRepository = UserRepository.getInstance(db.userDao())
+
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Obtenemos los datos del contenedor de dependencias
+        val appContainer = (this.activity?.application as BeerGoApplication).appContainer
+        db = appContainer.db!!
+
         binding.idUser.text = currentUser.name
         lifecycleScope.launch(Dispatchers.IO) {
 
@@ -70,16 +74,16 @@ class ProfileFragment : Fragment() {
 
 
         // Accede a las vistas a través del binding
-        binding.idUser.text = userViewModel.getUser()?.name
+        binding.idUser.text = viewModel.getCurrentUser()?.name
         lifecycleScope.launch(Dispatchers.Main) {
             setUpStadistics()
         }
         binding.eliminarUsuario.setOnClickListener {
-            val user = userViewModel.getUser()
+            val user = viewModel.getCurrentUser()
 
             if (user != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    userRepository.deleteUser(user)
+                    viewModel.deleteUser(user)
                     activity?.finish()
                     val intent = Intent(context, LoginActivity::class.java)
                     startActivity(intent)
@@ -89,8 +93,8 @@ class ProfileFragment : Fragment() {
 
         binding.cerrarSesion.setOnClickListener {
             val emptyUser = User(userId = 0, name = "", password = "")
-            userViewModel.setUser(emptyUser)
-            userViewModel.setUser(User(0, "", ""))
+            viewModel.setUser(emptyUser)
+            viewModel.setUser(User(0, "", ""))
             activity?.finish()
             val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
@@ -99,25 +103,25 @@ class ProfileFragment : Fragment() {
 
     private suspend fun setUpStadistics() {
         binding.cervezasAnadidas.text = "Cervezas Añadidas: ${
-            userRepository.countBeersInsertedByUser(userViewModel.getUser().userId)
+            viewModel.countBeersInsertedByUser(viewModel.getCurrentUser()!!.userId)
         }"
         binding.cervezasFavoritas.text = "Cervezas Favoritas: ${
-            userRepository.countFavouritesByUser(userViewModel.getUser().userId)
+            viewModel.countFavouritesByUser(viewModel.getCurrentUser()!!.userId)
         }"
         binding.comentariosAnadidos.text = "Comentarios Añadidos: ${
-            userRepository.countCommentsByUser(userViewModel.getUser().userId)
+            viewModel.countCommentsByUser(viewModel.getCurrentUser()!!.userId)
         }"
         binding.logrosConseguidos.text = "Logros Conseguidos: ${
-            userRepository.countUserAchievements(userViewModel.getUser().userId)
+            viewModel.countUserAchievements(viewModel.getCurrentUser()!!.userId)
         }"
     }
 
     private suspend fun consultaLogros() {
         // Obtener la lista de logros
-        achievements = db.achievementDao().getAll()
+        achievements = viewModel.getAllAchievements()
 
         // Obtener la lista de logros del usuario
-        val userWithAchievements = db.userDao().getUserAchievements(currentUser.userId)
+        val userWithAchievements = viewModel.getUserAchievements(currentUser.userId)
         userAchievements = userWithAchievements.achievements
     }
 

@@ -9,7 +9,7 @@ import com.unex.asee.ga02.beergo.database.UserDao
  * @property userDao DAO para la entidad de usuario.
  * @property achievementDao DAO para la entidad de logro (Achievement).
  */
-class AchievementRepository private constructor(private val userDao: UserDao, private val achievementDao: AchievementDao) {
+class AchievementRepository private constructor(private val userDao: UserDao, private val achievementDao: AchievementDao) { //TODO: Sigue el patron singlenton implementado
 
     /**
      * Obtiene todos los logros.
