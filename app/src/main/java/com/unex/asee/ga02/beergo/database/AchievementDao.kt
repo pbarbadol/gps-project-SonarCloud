@@ -42,33 +42,12 @@ interface AchievementDao {
     suspend fun insert(achievement: Achievement)
 
     /**
-     * Comprueba si un usuario tiene un logro.
-     *
-     * @param userId El ID del usuario.
-     * @param achievementId El ID del logro.
-     * @return El número de logros encontrados.
-     */
-    @Query("SELECT COUNT(*) FROM UserAchievementCrossRef WHERE userId = :userId AND achievementId = :achievementId")
-    suspend fun checkAchievement(userId: Long, achievementId: Long): Int
-
-    /**
      * Elimina un logro.
      *
      * @param achievement El logro a eliminar.
      */
     @Delete
     suspend fun delete(achievement: Achievement)
-
-    /**
-     * Obtiene un usuario con sus logros.
-     *
-     * @param userId El ID del usuario.
-     * @return [UserWithAchievements] que contiene el usuario y sus logros.
-     */
-    @Transaction
-    @Query("SELECT * FROM User where userId = :userId")
-    suspend fun getUserWithAchievements(userId: Long): UserWithAchievements
-
     /**
      * Inserta una relación entre usuario y logro.
      *
@@ -90,6 +69,4 @@ interface AchievementDao {
         // Inserta la relación entre usuario y logro
         insertUserAchievement(UserAchievementCrossRef(userId, achievement.achievementId))
     }
-
-
 }

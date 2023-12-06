@@ -30,6 +30,8 @@ class AddCommentFragment: Fragment() {
     private val binding get() = _binding!!
     private lateinit var challengeObserverForCommentTable : ChallengeAchievementObserver
 
+    //Repository
+    private lateinit var commentRepository: CommentRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +45,7 @@ class AddCommentFragment: Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         db = BeerGoDatabase.getInstance(context)!!
+        commentRepository = CommentRepository.getInstance(db.commentDao())
     }
 
     override fun onCreateView(
@@ -85,7 +88,7 @@ class AddCommentFragment: Fragment() {
     }
     private fun addComment(comment: Comment){
         lifecycleScope.launch {
-            CommentRepository.getInstance(db.commentDao()).addComment(comment)
+            commentRepository.addComment(comment)
         }
         db.notifyDatabaseObservers("Comment")
     }

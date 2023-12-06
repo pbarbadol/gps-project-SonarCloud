@@ -21,6 +21,7 @@ import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.repository.BeerRepository
+import com.unex.asee.ga02.beergo.repository.FavRepository
 import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Job
@@ -40,6 +41,7 @@ class ListFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: ListAdapter
     private lateinit var beerRepository : BeerRepository
+    private lateinit var favRepository: FavRepository
 
 
     interface OnShowClickListener {
@@ -60,6 +62,7 @@ class ListFragment : Fragment() {
         //Obtenemos la base de datos
         db = BeerGoDatabase.getInstance(this.requireContext())!!
         beerRepository = BeerRepository.getInstance(db.beerDao(), getNetworkService())
+        favRepository = FavRepository.getInstance(db.userDao())
         if (context is OnShowClickListener) {
             listener = context
         } else {
@@ -215,7 +218,7 @@ class ListFragment : Fragment() {
         val user = userViewModel.getUser()
         lifecycleScope.launch {
             if (db != null) {
-                db.beerDao().insertAndRelate(beer, user.userId!!)
+                favRepository.addFav(user.userId, beer.beerId)
             } else {
                 Toast.makeText(context, "Error: Base de datos no disponible", Toast.LENGTH_SHORT)
                     .show()
@@ -239,18 +242,4 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            ApiUtils().beersFromApiToBd(db)
-//            withContext(Dispatchers.Main) {
-//                //mostrarCervezas()
-//            }
-//        }
-//        adapter.updateData(beersFiltered) // O usa beers si deseas mostrar todas las cervezas
-//    }
-
-
 }
