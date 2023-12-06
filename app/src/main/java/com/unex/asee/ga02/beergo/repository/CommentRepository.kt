@@ -25,6 +25,10 @@ class CommentRepository private constructor(private val commentDao: CommentDao) 
         commentDao.insert(comment)
     }
 
+    suspend fun deleteComment(comment: Comment) {
+        commentDao.delete(comment)
+    }
+
     /**
      * Método para cargar comentarios de la base de datos local, intentando actualizar la caché si es necesario.
      *

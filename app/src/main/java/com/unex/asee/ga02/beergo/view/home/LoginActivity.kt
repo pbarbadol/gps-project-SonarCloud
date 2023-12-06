@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity(){
     private lateinit var db: BeerGoDatabase
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var userRepository: UserRepository
     // Resultado lanzador para la actividad de registro
     private val responseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -50,6 +51,7 @@ class LoginActivity : AppCompatActivity(){
 
         // Inicialización de la base de datos
         db = BeerGoDatabase.getInstance(applicationContext)!!
+        userRepository = UserRepository.getInstance(db.userDao())
 
         // Inicialización de las vistas y los listeners
         setUpUI()
@@ -105,7 +107,7 @@ class LoginActivity : AppCompatActivity(){
             lifecycleScope.launch {
                 try {
                     // Intenta autenticar al usuario utilizando el UserRepository
-                    val user = UserRepository.getInstance(db.userDao()).loginUser(binding.etUsername.text.toString(), binding.etPassword.text.toString())
+                    val user = userRepository.loginUser(binding.etUsername.text.toString(), binding.etPassword.text.toString())
                     navigateToHomeActivity(user, "Login successful")
                 } catch (e: Exception) {
                     // Maneja excepciones relacionadas con la autenticación

@@ -7,7 +7,7 @@ import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
 
 class FavRepository private constructor(private val userDao: UserDao) {
     suspend fun addFav(userId: Long, beerId: Long) {
-        userDao.insertAndRelateUserFavouriteBeer(beerId, userId)
+        userDao.insertAndRelateUserFavouriteBeer(userId, beerId)
     }
     suspend fun loadFavs(userId: Long): List<Beer> {
         return userDao.getFavouritesBeersByUserId(userId)
