@@ -162,4 +162,5 @@ interface UserDao {
     suspend fun insertAndRelateUserFavouriteBeer(userId: Long, beerId: Long) {
         insertUserFavouriteBeer(UserFavouriteBeerCrossRef(userId, beerId))
     }
+
 }
