@@ -17,8 +17,8 @@ import java.io.Serializable
 data class User(
     @PrimaryKey(autoGenerate = true)
     var userId: Long = 0,
-    val name: String = "",
-    val password: String = ""
+    var name: String = "",
+    var password: String = ""
 
 
 ) : Serializable
