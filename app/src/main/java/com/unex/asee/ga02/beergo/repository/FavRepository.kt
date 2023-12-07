@@ -4,7 +4,7 @@ import com.unex.asee.ga02.beergo.database.UserDao
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
 
-class FavRepository private constructor(private val userDao: UserDao) { //TODO: Sigue el patron singlenton implementado
+class FavRepository (private val userDao: UserDao) {
     suspend fun addFav(userId: Long, beerId: Long) {
         userDao.insertAndRelateUserFavouriteBeer(userId, beerId)
     }
@@ -24,13 +24,5 @@ class FavRepository private constructor(private val userDao: UserDao) { //TODO: 
             }
         }
         return isFav
-    }
-    companion object {
-        private var INSTANCE: FavRepository? = null
-        fun getInstance(userDao: UserDao): FavRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: FavRepository(userDao)
-            }
-        }
     }
 }
