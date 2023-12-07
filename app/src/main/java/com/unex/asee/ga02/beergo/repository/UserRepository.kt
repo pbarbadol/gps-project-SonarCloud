@@ -15,7 +15,7 @@ import com.unex.asee.ga02.beergo.utils.CredentialCheck
  *
  * @property userDao Instancia de UserDao para acceder a la base de datos local de usuarios.
  */
-class UserRepository private constructor(private val userDao: UserDao) { //TODO: Sigue el patron singlenton implementado
+class UserRepository (private val userDao: UserDao) {
 
     private val userLiveData = MutableLiveData<User>()
 
@@ -101,24 +101,5 @@ class UserRepository private constructor(private val userDao: UserDao) { //TODO:
 
     suspend fun countUserAchievements(userId: Long): Int {
         return userDao.countUserAchievements(userId)
-    }
-
-    companion object {
-        private var INSTANCE: UserRepository? = null
-
-        /**
-         * Obtiene una instancia única del UserRepository.
-         *
-         * @param userDao Instancia de UserDao para acceder a la base de datos local de usuarios.
-         * @return Instancia única del UserRepository.
-         */
-        fun getInstance(userDao: UserDao): UserRepository {
-            if (INSTANCE == null) {
-                synchronized(UserRepository::class) {
-                    INSTANCE = UserRepository(userDao)
-                }
-            }
-            return INSTANCE!!
-        }
     }
 }

@@ -9,7 +9,7 @@ import com.unex.asee.ga02.beergo.database.UserDao
  * @property userDao DAO para la entidad de usuario.
  * @property achievementDao DAO para la entidad de logro (Achievement).
  */
-class AchievementRepository private constructor(private val userDao: UserDao, private val achievementDao: AchievementDao) { //TODO: Sigue el patron singlenton implementado
+class AchievementRepository (private val userDao: UserDao, private val achievementDao: AchievementDao) {
 
     /**
      * Obtiene todos los logros.
@@ -42,25 +42,5 @@ class AchievementRepository private constructor(private val userDao: UserDao, pr
             }
         }
         return exist
-    }
-
-    /**
-     * Singleton para obtener una única instancia del repositorio.
-     */
-    companion object {
-        @Volatile
-        private var instance: AchievementRepository? = null
-
-        /**
-         * Obtiene o crea la instancia única del repositorio.
-         *
-         * @param userDao DAO para la entidad de usuario.
-         * @param achievementDao DAO para la entidad de logro (Achievement).
-         * @return Instancia única del repositorio.
-         */
-        fun getInstance(userDao: UserDao, achievementDao: AchievementDao) =
-            instance ?: synchronized(this) {
-                instance ?: AchievementRepository(userDao, achievementDao).also { instance = it }
-            }
     }
 }

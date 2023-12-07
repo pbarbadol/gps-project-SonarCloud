@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.unex.asee.ga02.beergo.api.BeerApiInterface
 import com.unex.asee.ga02.beergo.api.getNetworkService
+import com.unex.asee.ga02.beergo.data.api.BeerApi
 import com.unex.asee.ga02.beergo.data.toBeer
 import com.unex.asee.ga02.beergo.database.BeerDao
 import com.unex.asee.ga02.beergo.model.Beer
@@ -19,8 +20,7 @@ import kotlinx.coroutines.withContext
  *
  * @property beerDao Instancia de BeerDao para acceder a la base de datos local.
  */
-class BeerRepository
-private constructor(private val beerDao: BeerDao) { //TODO: Sigue el patron singlenton implementado
+class BeerRepository(private val beerDao: BeerDao, private val networkService : BeerApiInterface) {
     // Variable para almacenar el tiempo de la última actualización de datos.
     private var lastUpdateTimeMillis: Long = 0L
     // Lista de cervezas obtenidas de la base de datos local.
@@ -72,7 +72,7 @@ private constructor(private val beerDao: BeerDao) { //TODO: Sigue el patron sing
      */
     private suspend fun fetchBeersFromApi(): List<Beer> = withContext(Dispatchers.IO) {
         try {
-            val result = getNetworkService().getBeers(1).execute()
+            val result = networkService.getBeers(1).execute()
 
             if (result.isSuccessful) {
                 result.body()?.map { it?.toBeer() ?: Beer(0, "", " ", " ", 0.0, "", 0) }
@@ -111,23 +111,5 @@ private constructor(private val beerDao: BeerDao) { //TODO: Sigue el patron sing
         // Tiempo mínimo (en milisegundos) que debe pasar antes de realizar una nueva actualización.
         private const val MIN_TIME_FROM_LAST_FETCH_MILLIS: Long = 3000000
 
-        // Instancia única del Repository utilizando el patrón Singleton.
-        @Volatile
-        private var INSTANCE: BeerRepository? = null
-
-        /**
-         * Obtiene la instancia única del Repository.
-         *
-         * @param beerDao Instancia de BeerDao para acceder a la base de datos local.
-         * @param beerAPI Instancia de BeerApiInterface para realizar llamadas a la API.
-         * @return Instancia única del Repository.
-         */
-        fun getInstance(beerDao: BeerDao, beerAPI: BeerApiInterface): BeerRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: BeerRepository(
-                    beerDao
-                ).also { INSTANCE = it }
-            }
-        }
     }
 }

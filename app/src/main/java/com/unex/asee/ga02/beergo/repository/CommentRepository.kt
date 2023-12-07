@@ -11,7 +11,7 @@ import com.unex.asee.ga02.beergo.model.Comment
  *
  * @property commentDao Instancia de CommentDao para acceder a la base de datos local.
  */
-class CommentRepository private constructor(private val commentDao: CommentDao) { //TODO: Sigue el patron singlenton implementado
+class CommentRepository (private val commentDao: CommentDao) {
 
     // Variable para almacenar el tiempo de la última actualización de datos.
     private var lastUpdateTimeMillis: Long = 0L
@@ -80,21 +80,5 @@ class CommentRepository private constructor(private val commentDao: CommentDao) 
     companion object {
         // Tiempo mínimo (en milisegundos) que debe pasar antes de realizar una nueva actualización.
         private const val MIN_TIME_FROM_LAST_FETCH_MILLIS: Long = 30000
-
-        // Instancia única del Repository utilizando el patrón Singleton.
-        @Volatile
-        private var INSTANCE: CommentRepository? = null
-
-        /**
-         * Obtiene la instancia única del Repository.
-         *
-         * @param commentDao Instancia de CommentDao para acceder a la base de datos local.
-         * @return Instancia única del Repository.
-         */
-        fun getInstance(commentDao: CommentDao): CommentRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: CommentRepository(commentDao).also { INSTANCE = it }
-            }
-        }
     }
 }
