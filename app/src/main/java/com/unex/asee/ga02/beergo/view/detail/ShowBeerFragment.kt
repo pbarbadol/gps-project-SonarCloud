@@ -5,36 +5,31 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentShowBeerBinding
-import com.unex.asee.ga02.beergo.repository.FavRepository
-import com.unex.asee.ga02.beergo.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
-import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
-import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.ShowBeerViewModel
+
 class ShowBeerFragment : Fragment() {
+    private val viewModel: ShowBeerViewModel by viewModels { ShowBeerViewModel.Factory }
     private lateinit var db: BeerGoDatabase
     private var _binding: FragmentShowBeerBinding? = null
-    private lateinit var userViewModel: UserViewModel
-    private lateinit var beerViewModel: BeerViewModel
+
     private val binding get() = _binding!!
     private lateinit var challengeObserverForUserFavouriteBeerCrossRefTable : ChallengeAchievementObserver
 
-    //Repositorios
-    private lateinit var favRepository: FavRepository //TODO: hacer esto para todos los repostiorios y fragmentos
-    private lateinit var userRepository: UserRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
-        challengeObserverForUserFavouriteBeerCrossRefTable = ChallengeAchievementObserver(userViewModel.getUser(), requireContext(), db)
+        var user = viewModel.getCurrentUser()!!
+        challengeObserverForUserFavouriteBeerCrossRefTable = ChallengeAchievementObserver(user, requireContext(), db)
         db.addDatabaseObserver("UserFavouriteBeerCrossRef", challengeObserverForUserFavouriteBeerCrossRefTable)
     }
     override fun onCreateView(
@@ -49,9 +44,11 @@ class ShowBeerFragment : Fragment() {
     //Se crea la funcion onAttach para poder inicializar correctamente la instancia de la base de datos
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        db = BeerGoDatabase.getInstance(context)!!
-        favRepository = FavRepository.getInstance(db.userDao())
-        userRepository = UserRepository.getInstance(db.userDao())
+
+        //Obtenemos los datos del contenedor de dependencias de la aplicacion
+        val appContainer = (this.activity?.application as BeerGoApplication).appContainer
+        db = appContainer.db!!
+
     }
     override fun onDestroyView() {
         super.onDestroyView()
@@ -59,7 +56,7 @@ class ShowBeerFragment : Fragment() {
     }
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) { //TODO: reparar visualización de la imagen
         super.onViewCreated(View, savedInstanceState)
-        val beer = beerViewModel.getSelectedBeer()
+        val beer = viewModel.getSelectedBeer()
         if (beer == null) {
             findNavController().popBackStack() //Retrocedemos en la navegación
             return
@@ -68,7 +65,7 @@ class ShowBeerFragment : Fragment() {
         if(inserted != null){
             lifecycleScope.launch(Dispatchers.Main) {
                 val userId = beer.insertedBy
-                val user = userRepository.getUser(userId)
+                val user = viewModel.getUser(userId)
                 if(user != null) {
                     val userName = user.name
                     binding.nombreUsuario.text = "Insertada por " + userName
@@ -92,31 +89,23 @@ class ShowBeerFragment : Fragment() {
         }
         val beerId = beer.beerId
         lifecycleScope.launch(Dispatchers.Main) {
-            val isFavourite: Boolean = isInFavourite(beerId)
+            val isFavourite: Boolean = viewModel.isInFavourite(beerId)
             binding.favSwitch.isChecked = isFavourite
             binding.favSwitch.setOnCheckedChangeListener { _, isChecked ->
-                val user = userViewModel.getUser()
+                val user = viewModel.getCurrentUser()
                 lifecycleScope.launch(Dispatchers.IO) {
                     if (isChecked) {
-                        favRepository.addFav(user.userId, beerId)
+                        viewModel.addFav(user!!.userId, beerId)
                         //db.notifyDatabaseObservers("UserFavouriteBeerCrossRef") TODO: observer, arreglar
                     } else {
-                        favRepository.deleteFav(user.userId!!, beerId)
+                        viewModel.deleteFav(user!!.userId, beerId)
                     }
                 }
             }
         }
     }
 
-    /**
-     * Comprueba si la cerveza está en la lista de favoritos del usuario
-     * @return true si está en la lista de favoritos, false en caso contrario
-     */
-    private suspend fun isInFavourite(id: Long): Boolean {
-        return withContext(Dispatchers.IO) {
-            val user = userViewModel.getUser()
-            favRepository.isFavorite(user.userId, id)
-        }
-    }
+
+
 
 }

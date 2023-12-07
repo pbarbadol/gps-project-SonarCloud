@@ -7,25 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentCommentsBinding
 import com.unex.asee.ga02.beergo.model.Comment
-import com.unex.asee.ga02.beergo.repository.CommentRepository
-import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
-import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.CommentsViewModel
 import kotlinx.coroutines.launch
 
 
 class CommentsFragment: Fragment() {
-    private lateinit var db: BeerGoDatabase
-    private lateinit var beerViewModel: BeerViewModel
-    private lateinit var userViewModel: UserViewModel
-    //repository
-    private lateinit var commentRepository: CommentRepository
+
+    private val viewModel: CommentsViewModel by viewModels { CommentsViewModel.Factory }
     private lateinit var listener: OnShowClickListener
     interface OnShowClickListener {
         fun onShowClick(comment: Comment)
@@ -38,15 +32,11 @@ class CommentsFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-
     }
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
-        db = BeerGoDatabase.getInstance(context)!!
-        commentRepository = CommentRepository.getInstance(db.commentDao())
+
         if (context is CommentsFragment.OnShowClickListener) {
             listener = context
         } else {
@@ -65,11 +55,13 @@ class CommentsFragment: Fragment() {
 
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
-        val cerveza = beerViewModel.getSelectedBeer()
+        //Obtenemos los datos del contenedor de dependencias de la aplicacion
+
+        val cerveza = viewModel.getSelectedBeer()
         Log.d("ShowBeerFragment", "El id de la cerveza en Comments es ${cerveza?.beerId}")
 
-        val user = userViewModel.getUser()
-        Log.d("ShowBeerFragment", "El id del usuario en Comments es ${user.userId}")
+        val user = viewModel.getCurrentUser()
+        Log.d("ShowBeerFragment", "El id del usuario en Comments es ${user?.userId}")
         setUpRecyclerView()
         loadComments()
 
@@ -102,11 +94,11 @@ class CommentsFragment: Fragment() {
 
     private fun deleteComment(comment: Comment) {
         val userCommentId = comment.userId
-        val user= userViewModel.getUser()
-        val userId = user.userId
+        val user= viewModel.getCurrentUser()
+        val userId = user?.userId
         if(userId == userCommentId){
             lifecycleScope.launch {
-                commentRepository.deleteComment(comment)
+                viewModel.deleteComment(comment)
                 Toast.makeText(
                     requireContext(),
                     "Se ha borrado el comentario con ID: ${comment.commentId}",
@@ -124,12 +116,12 @@ class CommentsFragment: Fragment() {
     }
 
     private fun loadComments() { //TODO: Aqui deberá usarse viewModel ¿?
-        val beer = beerViewModel.getSelectedBeer()
+        val beer = viewModel.getSelectedBeer()
         beer?.let {
             val idCerveza = it.beerId
             lifecycleScope.launch {
                 binding.spinner.visibility = View.VISIBLE
-                beerComments = commentRepository.loadComments(idCerveza)
+                beerComments = viewModel.loadComments(idCerveza)
                 adapter.updateData(beerComments)
                 binding.spinner.visibility = View.GONE
             }

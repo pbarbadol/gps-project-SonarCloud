@@ -6,23 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentFavsBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.repository.FavRepository
-import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
-import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.FavsViewModel
 import kotlinx.coroutines.launch
 
 class FavsFragment : Fragment() {
-    private lateinit var db: BeerGoDatabase
+
+    private val viewModel: FavsViewModel by viewModels { FavsViewModel.Factory }
     private lateinit var listener: OnShowClickListener
-    private lateinit var beerViewModel: BeerViewModel
-    private lateinit var userViewModel: UserViewModel
     interface OnShowClickListener {
         fun onShowClick(beer : Beer)
     }
@@ -31,24 +27,15 @@ class FavsFragment : Fragment() {
     private lateinit  var adapter: FavsAdapter
     private var favBeers = emptyList<Beer>()
 
-    //Repositorios
-    private lateinit var favRepository: FavRepository
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-        beerViewModel = ViewModelProvider(requireActivity()).get(BeerViewModel::class.java)
 
     }
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
-
-        db = BeerGoDatabase.getInstance(context)!!
-        favRepository = FavRepository.getInstance(db.userDao())
-
         if (context is OnShowClickListener) {
             listener = context
         } else {
@@ -66,7 +53,8 @@ class FavsFragment : Fragment() {
     }
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
-        beerViewModel.setSelectedBeer(null)
+
+        viewModel.setNoSelectedBeer()
         setUpRecyclerView()
         loadFavourites()
     }
@@ -76,11 +64,11 @@ class FavsFragment : Fragment() {
     private fun setUpRecyclerView()  {
         adapter = FavsAdapter(beers = favBeers, onClick = {
 
-            val cervezaSeleccionada = beerViewModel.getSelectedBeer()
+            val cervezaSeleccionada = viewModel.getSelectedBeer()
 
             if (cervezaSeleccionada == null) {
                 // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
-                beerViewModel.setSelectedBeer(it)
+                viewModel.setSelectedBeer(it)
                 navigateToShowBeerFragment(it)
             } else {
                 // Si ya hay una cerveza seleccionada, solo mostrar los detalles
@@ -101,18 +89,18 @@ class FavsFragment : Fragment() {
         android.util.Log.d("DiscoverFragment", "setUpRecyclerView")
     }
     private fun loadFavourites(){
-        val user = userViewModel.getUser()
+        val user = viewModel.getCurrentUser()
         lifecycleScope.launch {
             binding.spinner.visibility = View.VISIBLE
-            favBeers = favRepository.loadFavs(user.userId)
+            favBeers = viewModel.loadFavs(user!!.userId)
             adapter.updateData(favBeers)
             binding.spinner.visibility = View.GONE
         }
     }
     private fun deleteBeer(beer: Beer) {
-        val user = userViewModel.getUser()
+        val user = viewModel.getCurrentUser()
         lifecycleScope.launch {
-            favRepository.deleteFav(user.userId, beer.beerId)
+            viewModel.deleteFav(user!!.userId, beer.beerId)
         }
     }
     private fun navigateToShowBeerFragment(beer: Beer) {

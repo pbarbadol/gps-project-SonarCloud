@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -21,16 +21,16 @@ import com.unex.asee.ga02.beergo.view.comment.CommentsFragmentDirections
 import com.unex.asee.ga02.beergo.view.favs.FavsFragment
 import com.unex.asee.ga02.beergo.view.list.ListFragment
 import com.unex.asee.ga02.beergo.view.list.ListFragmentDirections
-import com.unex.asee.ga02.beergo.view.viewmodel.BeerViewModel
-import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
+
 class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , CommentsFragment.OnShowClickListener, FavsFragment.OnShowClickListener{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding //Creamos el binding
     private val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
-    private lateinit var beerViewModel: BeerViewModel
-    private lateinit var userViewModel: UserViewModel
+
+    private val viewModel: HomeViewModel by viewModels { HomeViewModel.Factory }
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
         val user = null
@@ -49,11 +49,9 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         supportActionBar?.setDisplayShowTitleEnabled(false)
         // Obtener el usuario desde la actividad anterior
         val user = intent.getSerializableExtra(LOGIN_USER) as User
-        //Inicializamos el ViewModel
-        beerViewModel = ViewModelProvider(this).get(BeerViewModel::class.java)
-        beerViewModel.setSelectedBeer(null)
-        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
-        userViewModel.setUser(user)
+
+        viewModel.setSelectedBeer(null)
+        viewModel.setUser(user)
         // Inicialización de la interfaz de usuario
         setUpUI(user)
         // Inicialización de los listeners

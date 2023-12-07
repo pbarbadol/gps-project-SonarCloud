@@ -7,14 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentAchievementsBinding
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
-import com.unex.asee.ga02.beergo.repository.AchievementRepository
-import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.AchievementsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,24 +21,21 @@ import kotlinx.coroutines.withContext
  * Fragmento que muestra la lista de logros.
  */
 class AchievementsFragment : Fragment() {
-    private lateinit var db: BeerGoDatabase
+
+    private val viewModel: AchievementsViewModel by viewModels { AchievementsViewModel.Factory }
     // View Binding
     private var _binding: FragmentAchievementsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: AchievementsAdapter
     private var achievements: List<Achievement> = emptyList()
     private var userAchievements: List<Achievement> = emptyList()
-    private lateinit var userViewModel: UserViewModel
     private lateinit var currentUser: User
-    private lateinit var achievementRepository: AchievementRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Obtener el ViewModel
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         // Obtener el usuario actual
-        currentUser = userViewModel.getUser()
+        currentUser = viewModel.getCurrentUser()!!
     }
 
     override fun onCreateView(
@@ -53,14 +48,11 @@ class AchievementsFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        // Obtener la instancia de la base de datos
-        db = BeerGoDatabase.getInstance(this.requireContext())!!
-        // Obtener la instancia del repositorio
-        achievementRepository = AchievementRepository.getInstance(db.userDao(), db.achievementDao())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         lifecycleScope.launch(Dispatchers.IO) {
             // Muestra el ProgressBar
             binding.loadingProgressBar.visibility = View.VISIBLE
@@ -106,10 +98,10 @@ class AchievementsFragment : Fragment() {
      */
     private suspend fun consultaLogros() {
         // Obtener la lista de logros
-        achievements = achievementRepository.getAllAchievements()
+        achievements = viewModel.getAllAchievements()
 
         // Obtener la lista de logros del usuario
-        val userWithAchievements = achievementRepository.getUserAchievements(currentUser.userId)
+        val userWithAchievements = viewModel.getUserAchievements(currentUser.userId)
         userAchievements = userWithAchievements.achievements
     }
 

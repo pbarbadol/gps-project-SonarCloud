@@ -32,5 +32,4 @@ import java.time.LocalDate
 data class UserAchievementCrossRef(
     val userId: Long,
     val achievementId: Long
-    //,val date: LocalDate TODO: Implementar fecha
 )

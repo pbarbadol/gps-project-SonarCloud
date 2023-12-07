@@ -11,7 +11,7 @@ import com.unex.asee.ga02.beergo.model.Comment
  *
  * @property commentDao Instancia de CommentDao para acceder a la base de datos local.
  */
-class CommentRepository private constructor(private val commentDao: CommentDao) {
+class CommentRepository private constructor(private val commentDao: CommentDao) { //TODO: Sigue el patron singlenton implementado
 
     // Variable para almacenar el tiempo de la última actualización de datos.
     private var lastUpdateTimeMillis: Long = 0L
@@ -25,6 +25,11 @@ class CommentRepository private constructor(private val commentDao: CommentDao) 
         commentDao.insert(comment)
     }
 
+    /**
+     * Método para borrar un comentario de la base de datos local.
+     *
+     * @param comment Objeto Comment que se va a eliminar.
+     */
     suspend fun deleteComment(comment: Comment) {
         commentDao.delete(comment)
     }

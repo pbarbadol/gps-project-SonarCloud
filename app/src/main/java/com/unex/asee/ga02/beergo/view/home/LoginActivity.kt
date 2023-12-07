@@ -4,14 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.ActivityLoginBinding
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.UserRepository
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
+import com.unex.asee.ga02.beergo.view.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
 /**
@@ -20,7 +23,7 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity(){
     private lateinit var db: BeerGoDatabase
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var userRepository: UserRepository
+    private val viewModel: LoginViewModel by viewModels { LoginViewModel.Factory }
     // Resultado lanzador para la actividad de registro
     private val responseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -49,9 +52,9 @@ class LoginActivity : AppCompatActivity(){
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inicialización de la base de datos
-        db = BeerGoDatabase.getInstance(applicationContext)!!
-        userRepository = UserRepository.getInstance(db.userDao())
+        // Inicialización de la base de datos desde el contenedor de dependencias
+        val appContainer = (this.application as BeerGoApplication).appContainer
+        db = appContainer.db!!
 
         // Inicialización de las vistas y los listeners
         setUpUI()
@@ -107,7 +110,7 @@ class LoginActivity : AppCompatActivity(){
             lifecycleScope.launch {
                 try {
                     // Intenta autenticar al usuario utilizando el UserRepository
-                    val user = userRepository.loginUser(binding.etUsername.text.toString(), binding.etPassword.text.toString())
+                    val user = viewModel.loginUser(binding.etUsername.text.toString(), binding.etPassword.text.toString())
                     navigateToHomeActivity(user, "Login successful")
                 } catch (e: Exception) {
                     // Maneja excepciones relacionadas con la autenticación

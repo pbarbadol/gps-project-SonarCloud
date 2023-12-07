@@ -1,5 +1,8 @@
 package com.unex.asee.ga02.beergo.repository
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.unex.asee.ga02.beergo.api.BeerApiInterface
 import com.unex.asee.ga02.beergo.api.getNetworkService
 import com.unex.asee.ga02.beergo.data.toBeer
@@ -17,11 +20,36 @@ import kotlinx.coroutines.withContext
  * @property beerDao Instancia de BeerDao para acceder a la base de datos local.
  */
 class BeerRepository
-private constructor(private val beerDao: BeerDao) {
+private constructor(private val beerDao: BeerDao) { //TODO: Sigue el patron singlenton implementado
     // Variable para almacenar el tiempo de la última actualización de datos.
     private var lastUpdateTimeMillis: Long = 0L
     // Lista de cervezas obtenidas de la base de datos local.
     val beers = beerDao.getAll()
+    // LiveData que contiene información de la cerveza seleccionada.
+    private val selectedBeer = MutableLiveData<Beer?>()
+
+    /**
+     * Propiedad pública solo de lectura para acceder al LiveData de la cerveza seleccionada.
+     */
+    val beer: LiveData<Beer?>
+        get() = selectedBeer
+
+    /**
+     * Cambia el valor del LiveData de la cerveza seleccionada.
+     * @param beer La cerveza que se establecerá como la cerveza seleccionada.
+     */
+    fun setSelectedBeer(beer: Beer?) {
+        selectedBeer.value = beer
+        Log.d("BeerViewModel", "Cerveza seleccionada: ${beer}")
+    }
+
+    /**
+     * Obtiene la cerveza seleccionada actualmente.
+     * @return La cerveza seleccionada. Puede ser nulo si no hay una cerveza seleccionada.
+     */
+    fun getSelectedBeer(): Beer? {
+        return selectedBeer.value
+    }
 
     /**
      *  Añade una cerveza a la base de datos local.
