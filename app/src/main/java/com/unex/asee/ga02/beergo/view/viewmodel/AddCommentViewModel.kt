@@ -17,13 +17,8 @@ class AddCommentViewModel(
     private val commentRepository: CommentRepository
 ): ViewModel() {
 
-    /**
-     * Obtiene la el usuario logueado
-     * @return Método getCurrentUser de userRepository
-     */
-    fun getCurrentUser(): User? {
-        return userRepository.getCurrentUser()
-    }
+
+    var user : User? = null
 
     /**
      * Obtiene la cerveza seleccionada actualmente.

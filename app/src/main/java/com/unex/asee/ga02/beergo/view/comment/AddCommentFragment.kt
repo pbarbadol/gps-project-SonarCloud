@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -18,12 +19,13 @@ import com.unex.asee.ga02.beergo.databinding.FragmentAddcommentBinding
 import com.unex.asee.ga02.beergo.model.Comment
 //import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.AddCommentViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
 class AddCommentFragment: Fragment() {
 
     private val viewModel: AddCommentViewModel by viewModels { AddCommentViewModel.Factory }
-
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var db: BeerGoDatabase
     private var _binding: FragmentAddcommentBinding? = null
     private val binding get() = _binding!!

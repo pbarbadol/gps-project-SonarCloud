@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentShowBeerBinding
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 //import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
@@ -19,6 +21,8 @@ import com.unex.asee.ga02.beergo.view.viewmodel.ShowBeerViewModel
 
 class ShowBeerFragment : Fragment() {
     private val viewModel: ShowBeerViewModel by viewModels { ShowBeerViewModel.Factory }
+    private val homeViewModel: HomeViewModel by activityViewModels()
+
     private lateinit var db: BeerGoDatabase
     private var _binding: FragmentShowBeerBinding? = null
 

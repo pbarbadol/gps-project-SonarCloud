@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,11 +14,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.databinding.FragmentFavsBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.view.viewmodel.FavsViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
 class FavsFragment : Fragment() {
 
     private val viewModel: FavsViewModel by viewModels { FavsViewModel.Factory }
+    private val homeViewModel: HomeViewModel by activityViewModels()
+
     private lateinit var listener: OnShowClickListener
     interface OnShowClickListener {
         fun onShowClick(beer : Beer)

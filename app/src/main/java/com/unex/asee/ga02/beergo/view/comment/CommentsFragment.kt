@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -14,12 +15,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.databinding.FragmentCommentsBinding
 import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.view.viewmodel.CommentsViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
 
 class CommentsFragment: Fragment() {
 
     private val viewModel: CommentsViewModel by viewModels { CommentsViewModel.Factory }
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var listener: OnShowClickListener
     interface OnShowClickListener {
         fun onShowClick(comment: Comment)

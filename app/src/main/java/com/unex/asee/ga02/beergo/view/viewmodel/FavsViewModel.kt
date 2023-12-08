@@ -16,6 +16,8 @@ class FavsViewModel(
     private var favRepository: FavRepository
 ): ViewModel() {
 
+    var user : User? = null
+
     /**
      * Cambia el valor del LiveData de la cerveza seleccionada a null.
      * @return Método setSelecterBeer de beerRepository.
@@ -42,13 +44,6 @@ class FavsViewModel(
         return beerRepository.getSelectedBeer()
     }
 
-    /**
-     * Obtiene el usuario logueado.
-     * @return @return Método getCurrentUser de userRepository.
-     */
-    fun getCurrentUser(): User? {
-        return userRepository.getCurrentUser()
-    }
 
     /**
      * Obtiene las cervezas favoritas de un usuario

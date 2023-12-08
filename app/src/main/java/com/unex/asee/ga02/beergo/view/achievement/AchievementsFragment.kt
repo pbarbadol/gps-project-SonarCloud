@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.unex.asee.ga02.beergo.databinding.FragmentAchievementsBinding
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.view.viewmodel.AchievementsViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,19 +25,17 @@ import kotlinx.coroutines.withContext
 class AchievementsFragment : Fragment() {
 
     private val viewModel: AchievementsViewModel by viewModels { AchievementsViewModel.Factory }
+    private val homeViewModel: HomeViewModel by activityViewModels()
+
     // View Binding
     private var _binding: FragmentAchievementsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: AchievementsAdapter
     private var achievements: List<Achievement> = emptyList()
     private var userAchievements: List<Achievement> = emptyList()
-    private lateinit var currentUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Obtener el usuario actual
-        currentUser = viewModel.getCurrentUser()!!
     }
 
     override fun onCreateView(
@@ -46,9 +46,6 @@ class AchievementsFragment : Fragment() {
         return _binding?.root
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,7 +98,7 @@ class AchievementsFragment : Fragment() {
         achievements = viewModel.getAllAchievements()
 
         // Obtener la lista de logros del usuario
-        userAchievements = viewModel.getUserAchievements(currentUser.userId)!!
+        userAchievements = viewModel.getUserAchievements()!!
     }
 
 }

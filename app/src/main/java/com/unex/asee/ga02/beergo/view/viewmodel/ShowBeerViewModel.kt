@@ -18,6 +18,8 @@ class ShowBeerViewModel(
     private val userRepository: UserRepository
 ): ViewModel() {
 
+    var user : User? = null
+
     /**
      * Comprueba si la cerveza está en la lista de favoritos del usuario
      * @return true si está en la lista de favoritos, false en caso contrario
@@ -33,13 +35,6 @@ class ShowBeerViewModel(
         return beerRepository.getSelectedBeer()
     }
 
-    suspend fun getUser(userId: Long) : User? {
-        return userRepository.getUser(userId)
-    }
-
-    fun getCurrentUser(): User? {
-        return userRepository.getCurrentUser()
-    }
     suspend fun addFav(userId: Long, beerId: Long){
         favRepository.addFav(userId, beerId)
     }

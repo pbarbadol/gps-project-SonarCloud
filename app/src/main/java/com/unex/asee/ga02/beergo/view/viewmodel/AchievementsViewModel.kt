@@ -15,13 +15,7 @@ class AchievementsViewModel(
     private var achievementRepository: AchievementRepository
 ): ViewModel() {
 
-    /**
-     * Obtiene la el usuario logueado.
-     * @return Método getCurrentUser de userRepository.
-     */
-    fun getCurrentUser(): User? {
-        return userRepository.getCurrentUser()
-    }
+    var user : User? = null
 
     /**
      * Obtiene todos los logros.
@@ -37,11 +31,9 @@ class AchievementsViewModel(
      * @param userId ID del usuario.
      * @return Método getUserAchievements de achievementRepository.
      */
-    fun getUserAchievements(userId: Long): List<Achievement>?{
-        return achievementRepository.getUserAchievements(userId)
+    fun getUserAchievements(): List<Achievement>?{
+        return achievementRepository.getUserAchievements(user?.userId!!)
     }
-
-
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

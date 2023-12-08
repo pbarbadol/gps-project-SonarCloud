@@ -14,7 +14,7 @@ class InsertBeerViewModel(
     private var beerRepository: BeerRepository
 ): ViewModel() {
 
-    private var user = null
+    var user : User? = null
 
 
     /**
