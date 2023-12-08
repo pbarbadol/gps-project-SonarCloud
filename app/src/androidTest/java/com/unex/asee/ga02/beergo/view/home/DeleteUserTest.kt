@@ -3,7 +3,6 @@ package com.unex.asee.ga02.beergo.view.home
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.*
@@ -12,33 +11,26 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.unex.asee.ga02.beergo.R
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class SettingsTest2 {
+class DeleteUserTest {
 
     @Rule
     @JvmField
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
-
-
-
-
     @Test
-    fun settingsTest2() {
-
+    fun deleteUserTest() {
         val materialButton = onView(
             allOf(
                 withId(R.id.bt_register), withText("Unete!"),
@@ -59,7 +51,6 @@ class SettingsTest2 {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-
         val appCompatEditText = onView(
             allOf(
                 withId(R.id.et_username),
@@ -88,7 +79,7 @@ class SettingsTest2 {
                 isDisplayed()
             )
         )
-        appCompatEditText2.perform(replaceText("1234"), closeSoftKeyboard())
+        appCompatEditText2.perform(replaceText("12345"), closeSoftKeyboard())
 
         val appCompatEditText3 = onView(
             allOf(
@@ -103,11 +94,11 @@ class SettingsTest2 {
                 isDisplayed()
             )
         )
-        appCompatEditText3.perform(replaceText("1234"), closeSoftKeyboard())
+        appCompatEditText3.perform(replaceText("12345"), closeSoftKeyboard())
 
         val appCompatEditText4 = onView(
             allOf(
-                withId(R.id.et_repassword), withText("1234"),
+                withId(R.id.et_repassword), withText("12345"),
                 childAtPosition(
                     childAtPosition(
                         withId(android.R.id.content),
@@ -140,7 +131,6 @@ class SettingsTest2 {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-
         val materialButton3 = onView(
             allOf(
                 withId(R.id.bt_login), withText("Inicar Sesion"),
@@ -161,103 +151,76 @@ class SettingsTest2 {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        val imageView = onView(
+        val bottomNavigationItemView = onView(
             allOf(
-                withContentDescription("More options"),
-                withParent(withParent(withId(R.id.toolbar))),
-                isDisplayed()
-            )
-        )
-        imageView.check(matches(isDisplayed()))
-
-        val overflowMenuButton = onView(
-            allOf(
-                withContentDescription("More options"),
+                withId(R.id.profileFragment), withContentDescription("Perfil"),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.toolbar),
-                        1
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
-        )
-        overflowMenuButton.perform(click())
-
-        try {
-            Thread.sleep(2000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-        val linearLayout = onView(
-            allOf(
-                withId(androidx.appcompat.R.id.content),
-                withParent(withParent(IsInstanceOf.instanceOf(android.widget.ListView::class.java))),
-                isDisplayed()
-            )
-        )
-        linearLayout.check(matches(isDisplayed()))
-
-        val materialTextView = onView(
-            allOf(
-                withId(R.id.title), withText("settings"),
-                childAtPosition(
-                    childAtPosition(
-                        withId(androidx.appcompat.R.id.content),
+                        withId(R.id.bottomNavigationView),
                         0
                     ),
-                    0
+                    4
                 ),
                 isDisplayed()
             )
         )
-        materialTextView.perform(click())
+        bottomNavigationItemView.perform(click())
 
         try {
             Thread.sleep(2000)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        val switch_ = onView(
+        val button = onView(
             allOf(
-                withId(android.R.id.switch_widget),
-                withParent(
-                    allOf(
-                        withId(android.R.id.widget_frame),
-                        withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java))
-                    )
+                withId(R.id.eliminarUsuario), withText("Eliminar Usuario"),
+                withParent(withParent(IsInstanceOf.instanceOf(android.widget.FrameLayout::class.java))),
+                isDisplayed()
+            )
+        )
+        button.check(matches(isDisplayed()))
+
+        val materialButton4 = onView(
+            allOf(
+                withId(R.id.eliminarUsuario), withText("Eliminar Usuario"),
+                childAtPosition(
+                    childAtPosition(
+                        withClassName(`is`("android.widget.FrameLayout")),
+                        0
+                    ),
+                    3
                 ),
                 isDisplayed()
             )
         )
-        switch_.check(matches(isDisplayed()))
+        materialButton4.perform(click())
 
-        val textView = onView(
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+
+
+        val button2 = onView(
             allOf(
-                withText("SettingsFragment"),
-                withParent(
-                    allOf(
-                        withId(R.id.toolbar),
-                        withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))
-                    )
-                ),
+                withId(R.id.bt_login), withText("Inicar Sesion"),
+                withParent(withParent(withId(android.R.id.content))),
                 isDisplayed()
             )
         )
-        textView.check(matches(withText("SettingsFragment")))
+        button2.check(matches(isDisplayed()))
 
-        val textView2 = onView(
+        val button3 = onView(
             allOf(
-                withId(android.R.id.title), withText("Recuerdame"),
-                withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java))),
+                withId(R.id.bt_register), withText("Unete!"),
+                withParent(withParent(withId(android.R.id.content))),
                 isDisplayed()
             )
         )
-        textView2.check(matches(withText("Recuerdame")))
+        button3.check(matches(isDisplayed()))
 
     }
-
 
     private fun childAtPosition(
         parentMatcher: Matcher<View>, position: Int
