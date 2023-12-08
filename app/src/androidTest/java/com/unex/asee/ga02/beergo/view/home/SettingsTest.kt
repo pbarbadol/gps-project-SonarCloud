@@ -3,7 +3,6 @@ package com.unex.asee.ga02.beergo.view.home
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.*
@@ -12,14 +11,11 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.unex.asee.ga02.beergo.R
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,17 +28,12 @@ class SettingsTest {
     @JvmField
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
-    /*
-    @Before
-    suspend fun limpiezaUser() {
-        BeerGoDatabase.getInstance(ApplicationProvider.getApplicationContext())?.userDao()
-            ?.deleteAll()
-    }
 
-*/
+
+
+
     @Test
-    fun settingsTest() {
-
+    fun settingsTest2() {
 
         val materialButton = onView(
             allOf(
@@ -139,6 +130,7 @@ class SettingsTest {
             )
         )
         materialButton2.perform(click())
+
         try {
             Thread.sleep(2000)
         } catch (e: InterruptedException) {
@@ -147,7 +139,7 @@ class SettingsTest {
 
         val materialButton3 = onView(
             allOf(
-                withId(R.id.bt_login), withText("Iniciar Sesion"),
+                withId(R.id.bt_login), withText("Inicar Sesion"),
                 childAtPosition(
                     childAtPosition(
                         withId(android.R.id.content),
@@ -165,6 +157,14 @@ class SettingsTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+        val imageView = onView(
+            allOf(
+                withContentDescription("More options"),
+                withParent(withParent(withId(R.id.toolbar))),
+                isDisplayed()
+            )
+        )
+        imageView.check(matches(isDisplayed()))
 
         val overflowMenuButton = onView(
             allOf(
@@ -186,21 +186,14 @@ class SettingsTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-
-        val textView = onView(
+        val linearLayout = onView(
             allOf(
-                withId(R.id.title), withText("settings"),
-                withParent(withParent(withId(androidx.appcompat.R.id.content))),
+                withId(androidx.appcompat.R.id.content),
+                withParent(withParent(IsInstanceOf.instanceOf(android.widget.ListView::class.java))),
                 isDisplayed()
             )
         )
-        textView.check(matches(isDisplayed()))
-
-        try {
-            Thread.sleep(2000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        linearLayout.check(matches(isDisplayed()))
 
         val materialTextView = onView(
             allOf(
@@ -222,21 +215,6 @@ class SettingsTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-
-        val textView2 = onView(
-            allOf(
-                withText("SettingsFragment"),
-                withParent(
-                    allOf(
-                        withId(R.id.toolbar),
-                        withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))
-                    )
-                ),
-                isDisplayed()
-            )
-        )
-        textView2.check(matches(withText("SettingsFragment")))
-
         val switch_ = onView(
             allOf(
                 withId(android.R.id.switch_widget),
@@ -251,41 +229,32 @@ class SettingsTest {
         )
         switch_.check(matches(isDisplayed()))
 
-        val textView3 = onView(
+        val textView = onView(
             allOf(
-                withId(android.R.id.title), withText("Nombre de Usuario"),
-                withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java))),
+                withText("SettingsFragment"),
+                withParent(
+                    allOf(
+                        withId(R.id.toolbar),
+                        withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))
+                    )
+                ),
                 isDisplayed()
             )
         )
-        textView3.check(matches(isDisplayed()))
+        textView.check(matches(withText("SettingsFragment")))
 
-        val textView4 = onView(
+        val textView2 = onView(
             allOf(
-                withId(android.R.id.title), withText("Contrase�a"),
+                withId(android.R.id.title), withText("Recuerdame"),
                 withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java))),
                 isDisplayed()
             )
         )
-        textView4.check(matches(isDisplayed()))
+        textView2.check(matches(withText("Recuerdame")))
 
-        val textView5 = onView(
-            allOf(
-                withId(android.R.id.title), withText("Contrase�a"),
-                withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java))),
-                isDisplayed()
-            )
-        )
-        textView5.check(matches(isDisplayed()))
     }
 
-    /*
-    @After
-    suspend fun limpiezaUserDespues() {
-        BeerGoDatabase.getInstance(ApplicationProvider.getApplicationContext())?.userDao()
-            ?.deleteAll()
 
-    }*/
     private fun childAtPosition(
         parentMatcher: Matcher<View>, position: Int
     ): Matcher<View> {
