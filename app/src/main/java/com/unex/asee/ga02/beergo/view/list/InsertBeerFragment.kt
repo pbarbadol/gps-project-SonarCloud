@@ -22,7 +22,7 @@ import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.BeerRepository
-import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
+//import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.InsertBeerViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
@@ -41,10 +41,7 @@ class InsertBeerFragment : Fragment() {
     private lateinit var db: BeerGoDatabase
     private val viewModel: InsertBeerViewModel by viewModels { InsertBeerViewModel.Factory }
     private lateinit var currentUser: User
-    private lateinit var challengeObserverForBeerTable : ChallengeAchievementObserver
-
-    //Repositorios
-
+//    private lateinit var challengeObserverForBeerTable : ChallengeAchievementObserver
 
     /**
      * Método llamado cuando se crea la instancia del fragmento.
@@ -54,9 +51,6 @@ class InsertBeerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentUser = viewModel.getCurrentUser()
-        // Añadir el observador de desafíos para la tabla de cervezas
-        challengeObserverForBeerTable = ChallengeAchievementObserver(viewModel.getCurrentUser(), requireContext(), db)
-        db.addDatabaseObserver("UserBeerCrossRef", challengeObserverForBeerTable)
     }
 
     /**
@@ -73,7 +67,6 @@ class InsertBeerFragment : Fragment() {
         _binding = FragmentInsertBeerBinding.inflate(inflater, container, false)
 
         setupInsertButton()
-
         return binding.root
     }
 

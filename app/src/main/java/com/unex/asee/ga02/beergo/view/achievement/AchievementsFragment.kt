@@ -101,8 +101,7 @@ class AchievementsFragment : Fragment() {
         achievements = viewModel.getAllAchievements()
 
         // Obtener la lista de logros del usuario
-        val userWithAchievements = viewModel.getUserAchievements(currentUser.userId)
-        userAchievements = userWithAchievements.achievements
+        userAchievements = viewModel.getUserAchievements(currentUser.userId)!!
     }
 
 }

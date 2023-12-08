@@ -16,7 +16,7 @@ import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentAddcommentBinding
 import com.unex.asee.ga02.beergo.model.Comment
-import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
+//import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.AddCommentViewModel
 import kotlinx.coroutines.launch
 
@@ -27,13 +27,13 @@ class AddCommentFragment: Fragment() {
     private lateinit var db: BeerGoDatabase
     private var _binding: FragmentAddcommentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var challengeObserverForCommentTable : ChallengeAchievementObserver
+//    private lateinit var challengeObserverForCommentTable : ChallengeAchievementObserver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        challengeObserverForCommentTable = ChallengeAchievementObserver(viewModel.getCurrentUser()!!, requireContext(), db)
-        db.addDatabaseObserver("Comment", challengeObserverForCommentTable)
+//        challengeObserverForCommentTable = ChallengeAchievementObserver(viewModel.getCurrentUser()!!, requireContext(), db)
+//        db.addDatabaseObserver("Comment", challengeObserverForCommentTable)
     }
 
     override fun onAttach(context: Context) {

@@ -14,7 +14,7 @@ import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentShowBeerBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
+//import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.ShowBeerViewModel
 
 class ShowBeerFragment : Fragment() {
@@ -23,14 +23,14 @@ class ShowBeerFragment : Fragment() {
     private var _binding: FragmentShowBeerBinding? = null
 
     private val binding get() = _binding!!
-    private lateinit var challengeObserverForUserFavouriteBeerCrossRefTable : ChallengeAchievementObserver
+//    private lateinit var challengeObserverForUserFavouriteBeerCrossRefTable : ChallengeAchievementObserver
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var user = viewModel.getCurrentUser()!!
-        challengeObserverForUserFavouriteBeerCrossRefTable = ChallengeAchievementObserver(user, requireContext(), db)
-        db.addDatabaseObserver("UserFavouriteBeerCrossRef", challengeObserverForUserFavouriteBeerCrossRefTable)
+//        challengeObserverForUserFavouriteBeerCrossRefTable = ChallengeAchievementObserver(user, requireContext(), db)
+//        db.addDatabaseObserver("UserFavouriteBeerCrossRef", challengeObserverForUserFavouriteBeerCrossRefTable)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

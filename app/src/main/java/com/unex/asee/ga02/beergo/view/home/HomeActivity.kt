@@ -29,7 +29,6 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
     private val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
-
     private val viewModel: HomeViewModel by viewModels { HomeViewModel.Factory }
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
@@ -37,9 +36,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         public fun start(
             context: Context,
             user: User
-        ) {
-        }
-    }
+        ){}}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) // Creamos la actividad
         // Inflar el diseño usando DataBinding

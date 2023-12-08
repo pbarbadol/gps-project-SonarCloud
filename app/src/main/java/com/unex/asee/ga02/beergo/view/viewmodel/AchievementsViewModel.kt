@@ -37,7 +37,7 @@ class AchievementsViewModel(
      * @param userId ID del usuario.
      * @return Método getUserAchievements de achievementRepository.
      */
-    suspend fun getUserAchievements(userId: Long): UserWithAchievements{
+    fun getUserAchievements(userId: Long): List<Achievement>?{
         return achievementRepository.getUserAchievements(userId)
     }
 

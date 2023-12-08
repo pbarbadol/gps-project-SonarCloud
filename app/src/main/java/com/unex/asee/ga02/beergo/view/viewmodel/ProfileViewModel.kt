@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -23,6 +24,7 @@ class ProfileViewModel(
             field = value
             getUserAchievements()
             updateLevelAndExp()
+            Log.d("Observation", "User: $user asignado")
         }
     var nivel: Int = 0
     var exp: Int = 0
@@ -62,7 +64,7 @@ class ProfileViewModel(
      */
     fun countBeersInsertedByUser(): Int {
         if(user == null) {
-            throw Exception("User no encontrado")
+            return 0
         }else{
             return userRepository.countBeersInsertedByUser(user!!.userId)
         }
@@ -75,7 +77,7 @@ class ProfileViewModel(
      */
     fun countFavouritesByUser(): Int {
         if(user == null) {
-            throw Exception("User no encontrado")
+            return 0
         }else{
             return userRepository.countFavouritesByUser(user!!.userId)
         }
@@ -88,7 +90,7 @@ class ProfileViewModel(
      */
     fun countCommentsByUser(): Int {
         if(user == null) {
-            throw Exception("User no encontrado")
+            return 0
         }else{
             return userRepository.countCommentsByUser(user!!.userId)
         }
@@ -101,7 +103,7 @@ class ProfileViewModel(
      */
     fun countUserAchievements(): Int {
         if(user == null) {
-            throw Exception("User no encontrado")
+            return 0
         }else{
             return userRepository.countUserAchievements(user!!.userId)
         }

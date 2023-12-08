@@ -33,14 +33,14 @@ class AchievementRepository (private val userDao: UserDao, private val achieveme
      * @param achievementId ID del logro a verificar.
      * @return `true` si el usuario ha alcanzado el logro, `false` en caso contrario.
      */
-    suspend fun checkAchievement(userId: Long, achievementId: Long): Boolean {
-        val userAchievements = userDao.getUserAchievements(userId).achievements
-        var exist = false
-        userAchievements.forEach {
-            if (it.achievementId == achievementId) {
-                exist = true
-            }
-        }
-        return exist
-    }
+//    suspend fun checkAchievement(userId: Long, achievementId: Long): Boolean {
+//        val userAchievements = userDao.getUserAchievements(userId).achievements
+//        var exist = false
+//        userAchievements.forEach {
+//            if (it.achievementId == achievementId) {
+//                exist = true
+//            }
+//        }
+//        return exist
+//    }
 }

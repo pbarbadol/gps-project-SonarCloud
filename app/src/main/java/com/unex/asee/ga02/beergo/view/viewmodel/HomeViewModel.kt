@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,8 @@ class HomeViewModel(
         set(value) {
             field = value
             _user.value = value!!
+            Log.d("Observation", "UserInSession updated: $value")
+
         }
 
     /**

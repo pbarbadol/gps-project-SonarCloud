@@ -2,6 +2,7 @@ package com.unex.asee.ga02.beergo.view.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,17 +26,19 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("Observation", "Iniciado ProfileFragment")
         //Observamos el usuario de HomeViewModel y se lo asignamos a nuestro viewModel
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            Log.d("Observation", "User observed: $user")
             viewModel.user = user
         }
+        Log.d("Observation", "Finalizado ProfileFragment")
         //El viewModel se encargará solo de calcular el nivel y la experiencia
         binding.idUser.text = viewModel.user?.name
         binding.progressBar.progress = viewModel.exp
