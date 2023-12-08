@@ -14,7 +14,7 @@ class AppContainer(context: Context?) {
     private val networkService = getNetworkService()
     val beerRepository = BeerRepository(db!!.beerDao(), networkService)
     val favRepository = FavRepository(db!!.userDao())
-    val achievmentRepository = AchievementRepository(db!!.userDao(), db!!.achievementDao())
+    val achievmentRepository = AchievementRepository(db!!.userDao(), db.achievementDao())
     val commentRepository = CommentRepository(db!!.commentDao())
     val userRepository = UserRepository(db!!.userDao())
 

@@ -10,5 +10,4 @@ class BeerGoApplication : Application() {
         super.onCreate()
         appContainer = AppContainer(this)
     }
-
 }
