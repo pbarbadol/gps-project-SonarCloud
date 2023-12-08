@@ -174,6 +174,7 @@ class ListFragment : Fragment() {
 
     private fun setUpRecyclerView() {
         adapter = ListAdapter(beers = beers, onClick = {
+            homeViewModel.beerInSession = it
             val cervezaSeleccionada = viewmodel.getSelectedBeer()
             val history = History(beer = it, date = Date())
             History.saveHistory(history)

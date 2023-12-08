@@ -52,6 +52,10 @@ class CommentsFragment : Fragment() {
 
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            Log.d("Observation", "User observed: $user")
+            viewModel.user = user
+        }
         // Show a Toast whenever the [toast] is updated a non-null value
         viewModel.toast.observe(viewLifecycleOwner) { text ->
             text?.let {

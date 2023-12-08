@@ -46,8 +46,6 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         supportActionBar?.setDisplayShowTitleEnabled(false)
         // Obtener el usuario desde la actividad anterior
         viewModel.userInSession = intent.getSerializableExtra(LOGIN_USER) as User //TODO: El usuario se obtiene del intent y se guarda en el HomeViewModel
-
-        viewModel.setSelectedBeer(null)
         // Inicialización de la interfaz de usuario
         setUpUI()
         // Inicialización de los listeners

@@ -79,7 +79,7 @@ interface UserDao {
      */
     @Transaction
     @Query("SELECT * FROM Beer WHERE beerId IN (SELECT beerId FROM userfavouritebeercrossref WHERE userId = :userId)")
-    suspend fun getFavouritesBeersByUserId(userId: Long): List<Beer>
+    fun getFavouritesBeersByUserId(userId: Long): LiveData<List<Beer>>
 
     /**
      * Obtiene el número de cervezas favoritas de un usuario específico.

@@ -18,7 +18,8 @@ class HomeViewModel(
 ): ViewModel() {
 
     // Propiedad pública solo de lectura para acceder al LiveData del usuario.
-    private val _user = MutableLiveData<User>(null) //TODO: el usuario se guarda en este view model
+    private val _user = MutableLiveData<User>(null)
+    private val _beer = MutableLiveData<Beer>(null)
     val user: LiveData<User>
         get() = _user
     var userInSession: User? = null
@@ -26,7 +27,14 @@ class HomeViewModel(
             field = value
             _user.value = value!!
             Log.d("Observation", "UserInSession updated: $value")
+        }
 
+    val beer: LiveData<Beer>
+        get() = _beer
+    var beerInSession: Beer? = null
+        set(value) {
+            field = value
+            _beer.value = value!!
         }
 
     /**

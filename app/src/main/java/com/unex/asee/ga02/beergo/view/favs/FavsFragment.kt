@@ -1,6 +1,7 @@
 package com.unex.asee.ga02.beergo.view.favs
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +58,10 @@ class FavsFragment : Fragment() {
     }
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
-
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            Log.d("Observation", "User observed: $user")
+            viewModel.user = user
+        }
         viewModel.setNoSelectedBeer()
         setUpRecyclerView()
         loadFavourites()
