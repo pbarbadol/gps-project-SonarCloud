@@ -17,7 +17,7 @@ class HomeViewModel(
 ): ViewModel() {
 
     // Propiedad pública solo de lectura para acceder al LiveData del usuario.
-    private val _user = MutableLiveData<User>(null)
+    private val _user = MutableLiveData<User>(null) //TODO: el usuario se guarda en este view model
     val user: LiveData<User>
         get() = _user
     var userInSession: User? = null
@@ -35,18 +35,6 @@ class HomeViewModel(
     fun setSelectedBeer(beer: Beer?){ //TODO: estamos almacenando el valor en el repositorio. ¿Es correcto?
         return beerRepository.setSelectedBeer(beer)
     }
-
-    /**
-     * Guarda la información del usuario logueado.
-     *
-     * @param user el usuario
-     * @return @return Método setUser de userRepository.
-     */
-    fun setUser(user: User?) {
-        return userRepository.setUser(user)
-    }
-
-
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

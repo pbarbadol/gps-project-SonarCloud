@@ -24,7 +24,7 @@ class AchievementRepository (private val userDao: UserDao, private val achieveme
      * @param userId ID del usuario.
      * @return Logros del usuario.
      */
-    suspend fun getUserAchievements(userId: Long) = userDao.getUserAchievements(userId)
+     fun getUserAchievements(userId: Long) = userDao.getUserAchievements(userId).value?.achievements
 
     /**
      * Verifica si un usuario ha alcanzado un logro específico.
