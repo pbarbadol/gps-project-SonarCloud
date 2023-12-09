@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 class JoinActivity : AppCompatActivity() {
 
-    private lateinit var db: BeerGoDatabase
+
     private lateinit var binding: ActivityJoinBinding
 
     //ViewModel
@@ -33,10 +33,7 @@ class JoinActivity : AppCompatActivity() {
         fun start(
             context: Context, responseLauncher: ActivityResultLauncher<Intent>
         ) {
-            val intent = Intent(context, JoinActivity::class.java)
-            responseLauncher.launch(intent)
-
-
+            responseLauncher.launch(Intent(context, JoinActivity::class.java))
         }
     }
 
@@ -45,9 +42,7 @@ class JoinActivity : AppCompatActivity() {
         binding = ActivityJoinBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Inicialización de la base de datos desde el contenedor de dependencias
-        val appContainer = (this.application as BeerGoApplication).appContainer
-        db = appContainer.db!!
+
 
         //views initialization and listeners
         setUpUI()
