@@ -3,7 +3,7 @@ package com.unex.asee.ga02.beergo.view.home
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.test.core.app.ApplicationProvider
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.*
@@ -12,33 +12,29 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.unex.asee.ga02.beergo.R
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class SettingsTest2 {
+class CommentTest {
 
     @Rule
     @JvmField
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
-
-
-
-
     @Test
-    fun settingsTest2() {
-
+    fun commentTest() {
         val materialButton = onView(
             allOf(
                 withId(R.id.bt_register), withText("Unete!"),
@@ -59,7 +55,6 @@ class SettingsTest2 {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-
         val appCompatEditText = onView(
             allOf(
                 withId(R.id.et_username),
@@ -140,7 +135,6 @@ class SettingsTest2 {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-
         val materialButton3 = onView(
             allOf(
                 withId(R.id.bt_login), withText("Inicar Sesion"),
@@ -161,50 +155,99 @@ class SettingsTest2 {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+        val recyclerView = onView(
+            allOf(
+                withId(R.id.rv_beer_list),
+                childAtPosition(
+                    withClassName(`is`("androidx.constraintlayout.widget.ConstraintLayout")),
+                    2
+                )
+            )
+        )
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(6, click()))
+
         val imageView = onView(
             allOf(
-                withContentDescription("More options"),
-                withParent(withParent(withId(R.id.toolbar))),
+                withId(R.id.imageView7),
+                withParent(withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))),
                 isDisplayed()
             )
         )
         imageView.check(matches(isDisplayed()))
 
-        val overflowMenuButton = onView(
+        val appCompatImageView = onView(
             allOf(
-                withContentDescription("More options"),
+                withId(R.id.imageView7),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.toolbar),
+                        withClassName(`is`("androidx.constraintlayout.widget.ConstraintLayout")),
                         1
                     ),
-                    0
+                    2
                 ),
                 isDisplayed()
             )
         )
-        overflowMenuButton.perform(click())
+        appCompatImageView.perform(click())
 
         try {
             Thread.sleep(2000)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        val linearLayout = onView(
+        val button = onView(
             allOf(
-                withId(androidx.appcompat.R.id.content),
-                withParent(withParent(IsInstanceOf.instanceOf(android.widget.ListView::class.java))),
+                withId(R.id.addCommentButton), withText("Añadir Comentario"),
+                withParent(withParent(withId(R.id.nav_host_fragment))),
                 isDisplayed()
             )
         )
-        linearLayout.check(matches(isDisplayed()))
+        button.check(matches(isDisplayed()))
 
-        val materialTextView = onView(
+        val materialButton4 = onView(
             allOf(
-                withId(R.id.title), withText("settings"),
+                withId(R.id.addCommentButton), withText("Añadir Comentario"),
                 childAtPosition(
                     childAtPosition(
-                        withId(androidx.appcompat.R.id.content),
+                        withId(R.id.nav_host_fragment),
+                        0
+                    ),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton4.perform(click())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        val button2 = onView(
+            allOf(
+                withId(R.id.btAccept), withText("Aceptar"),
+                withParent(withParent(withId(R.id.nav_host_fragment))),
+                isDisplayed()
+            )
+        )
+        button2.check(matches(isDisplayed()))
+
+        val button3 = onView(
+            allOf(
+                withId(R.id.btCancel), withText("Cancelar"),
+                withParent(withParent(withId(R.id.nav_host_fragment))),
+                isDisplayed()
+            )
+        )
+        button3.check(matches(isDisplayed()))
+
+        val appCompatEditText5 = onView(
+            allOf(
+                withId(R.id.editTextText),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.nav_host_fragment),
                         0
                     ),
                     0
@@ -212,52 +255,37 @@ class SettingsTest2 {
                 isDisplayed()
             )
         )
-        materialTextView.perform(click())
+        appCompatEditText5.perform(replaceText("Muy buena cerveza"), closeSoftKeyboard())
+
+        val materialButton5 = onView(
+            allOf(
+                withId(R.id.btAccept), withText("Aceptar"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.nav_host_fragment),
+                        0
+                    ),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton5.perform(click())
 
         try {
             Thread.sleep(2000)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        val switch_ = onView(
-            allOf(
-                withId(android.R.id.switch_widget),
-                withParent(
-                    allOf(
-                        withId(android.R.id.widget_frame),
-                        withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java))
-                    )
-                ),
-                isDisplayed()
-            )
-        )
-        switch_.check(matches(isDisplayed()))
-
         val textView = onView(
             allOf(
-                withText("SettingsFragment"),
-                withParent(
-                    allOf(
-                        withId(R.id.toolbar),
-                        withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))
-                    )
-                ),
+                withId(R.id.commentText), withText("Muy buena cerveza"),
+                withParent(withParent(withId(R.id.cv_Item))),
                 isDisplayed()
             )
         )
-        textView.check(matches(withText("SettingsFragment")))
-
-        val textView2 = onView(
-            allOf(
-                withId(android.R.id.title), withText("Recuerdame"),
-                withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java))),
-                isDisplayed()
-            )
-        )
-        textView2.check(matches(withText("Recuerdame")))
-
+        textView.check(matches(withText("Muy buena cerveza")))
     }
-
 
     private fun childAtPosition(
         parentMatcher: Matcher<View>, position: Int
