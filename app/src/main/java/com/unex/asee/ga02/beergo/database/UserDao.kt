@@ -69,7 +69,7 @@ interface UserDao {
      * @return El número de cervezas insertadas por el usuario.
      */
     @Query("SELECT COUNT(*) FROM Beer WHERE insertedBy = :userId")
-    fun countBeersInsertedByUser(userId: Long): LiveData<Int>
+    suspend fun countBeersInsertedByUser(userId: Long): Int
 
     /**
      * Obtiene todas las cervezas favoritas de un usuario.
@@ -88,7 +88,7 @@ interface UserDao {
      * @return El número de cervezas favoritas del usuario.
      */
     @Query("SELECT COUNT(*) FROM UserFavouriteBeerCrossRef WHERE userId = :userId")
-    fun countUserFavouriteBeers(userId: Long): LiveData<Int>
+    fun countUserFavouriteBeers(userId: Long): Int
 
     /**
      * Obtiene el número de comentarios realizados por un usuario específico.
@@ -97,7 +97,7 @@ interface UserDao {
      * @return El número de comentarios realizados por el usuario.
      */
     @Query("SELECT COUNT(*) FROM Comment WHERE userId = :userId")
-    fun countCommentsByUser(userId: Long): LiveData<Int>
+    fun countCommentsByUser(userId: Long): Int
 
     /**
      * Obtiene un usuario con sus logros.
@@ -116,7 +116,7 @@ interface UserDao {
      * @return El número de logros obtenidos por el usuario.
      */
     @Query("SELECT COUNT(*) FROM UserAchievementCrossRef WHERE userId = :userId")
-    fun countUserAchievements(userId: Long): LiveData<Int>
+    fun countUserAchievements(userId: Long): Int
 
     /**
      * Obtiene el número de comentarios realizados por un usuario específico.

@@ -40,6 +40,10 @@ class AddCommentFragment : Fragment() {
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             viewModel.user = user
         }
+
+        homeViewModel.beer.observe(viewLifecycleOwner) { beer ->
+            viewModel.beer = beer
+        }
         //Si el usuario pulsa en aceptar, se escribe el comentario en la base de datos y volvemos a la pantalla anterior
         binding.btAccept.setOnClickListener {
             viewModel.writeComment(view.findViewById<EditText>(R.id.editTextText).text.toString()) //toTrim() ¿?

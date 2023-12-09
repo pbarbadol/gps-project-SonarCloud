@@ -37,6 +37,9 @@ class HomeViewModel(
             _beer.value = value!!
         }
 
+    fun setBeerNull() {
+        _beer.value = null
+    }
 
     fun isNull(): Boolean {
         return (beerInSession == null)

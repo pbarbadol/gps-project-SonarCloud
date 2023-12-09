@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,20 +17,26 @@ class ShowBeerViewModel(
     private val favRepository: FavRepository
 ) : ViewModel() {
 
+    val favBeers = favRepository.favBeers
     private val _isFavourite = MutableLiveData<Boolean>(null)
     val isFavourite: LiveData<Boolean>
         get() = _isFavourite
     var user: User? = null
+        set(value) {
+            field = value
+            favRepository.setUserid(value!!.userId)
+        }
     var beer: Beer? = null
         set(value) {
             field = value
             checkIfFavourite()
         }
 
+
     private fun checkIfFavourite() {
         viewModelScope.launch {
-            val favouriteBeers = favRepository.loadFavs(user!!.userId)
-            _isFavourite.value = favouriteBeers.value?.contains(beer) ?: false
+            Log.d("ObservationFavorite", "checkIfFavourite: ${favBeers.value}")
+            _isFavourite.value = favBeers.value?.contains(beer) == true
         }
     }
 

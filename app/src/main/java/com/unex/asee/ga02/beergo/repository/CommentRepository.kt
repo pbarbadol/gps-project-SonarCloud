@@ -1,7 +1,10 @@
 package com.unex.asee.ga02.beergo.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
 import com.unex.asee.ga02.beergo.database.CommentDao
+import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.Comment
 
 /**
@@ -13,6 +16,13 @@ import com.unex.asee.ga02.beergo.model.Comment
  * @property commentDao Instancia de CommentDao para acceder a la base de datos local.
  */
 class CommentRepository (private val commentDao: CommentDao) {
+
+    private val beerFilter = MutableLiveData<Long>()
+    val commentBeers: LiveData<List<Comment>> = beerFilter.switchMap{ beerId -> commentDao.findByBeer(beerId) }
+    fun setBeerId(beerId: Long) {
+        beerFilter.value = beerId
+    }
+
     /**
      * Método para agregar un comentario a la base de datos local.
      *

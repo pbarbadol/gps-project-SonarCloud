@@ -49,28 +49,27 @@ class FavsFragment : Fragment() {
     }
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
+        setUpRecyclerView()
+
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             Log.d("Observation", "User observed: $user")
             viewModel.user = user
         }
+        subscribeUi(adapter)
 
-        setUpRecyclerView()
+    }
+
+    fun subscribeUi (adapter: FavsAdapter){
         viewModel.favBeers.observe(viewLifecycleOwner) { favBeers ->
-            Log.d("Observation", "FavBeers observed: $favBeers")
             adapter.updateData(favBeers)
         }
     }
     private fun setUpRecyclerView()  {
-        adapter = FavsAdapter(beers = viewModel.favBeers?.value!!, onClick = {
+        Log.d("Observation", "RECYCLER")
+        adapter = FavsAdapter(beers = emptyList(), onClick = {
 
-            if (viewModel.beer == null) {
-                // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
-                viewModel.beer = it
-                navigateToShowBeerFragment()
-            } else {
-                // Si ya hay una cerveza seleccionada, solo mostrar los detalles
-                navigateToShowBeerFragment()
-            }
+            homeViewModel.beerInSession = it
+            navigateToShowBeerFragment()
         },
             onLongClick = {
                 viewModel.deleteBeer(it)

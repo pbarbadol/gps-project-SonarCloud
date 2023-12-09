@@ -48,7 +48,7 @@ class ProfileViewModel(
     fun cerrarSesion(block: suspend () -> Unit) : Job {
         return viewModelScope.launch {
             if (user != null) {
-                userRepository.setUser(null)
+                //userRepository.setUser(null)//TODO: NO VA
                 block()
             } else
                 throw Exception("User no encontrado")
@@ -62,7 +62,7 @@ class ProfileViewModel(
      * @param userId El ID del usuario.
      * @return Método countBeersInsertedByUser de userRepository.
      */
-    fun countBeersInsertedByUser(): Int {
+    suspend fun countBeersInsertedByUser(): Int {
         if(user == null) {
             return 0
         }else{
