@@ -82,8 +82,7 @@ class CommentsFragment : Fragment() {
             viewModel.deleteComment(it) //TODO: No sabemos si se debe pasar si o si el it
         })
         with(binding) {
-            val numberOfColumns = 1
-            rvCommentsList.layoutManager = GridLayoutManager(context, numberOfColumns)
+            rvCommentsList.layoutManager = GridLayoutManager(context, 1)
             rvCommentsList.adapter = adapter
         }
     }

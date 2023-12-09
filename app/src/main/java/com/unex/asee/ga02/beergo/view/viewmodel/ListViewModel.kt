@@ -16,6 +16,7 @@ import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.BeerRepository
 import com.unex.asee.ga02.beergo.repository.FavRepository
 import com.unex.asee.ga02.beergo.repository.UserRepository
+import com.unex.asee.ga02.beergo.view.list.ListAdapter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -24,8 +25,16 @@ class ListViewModel (
     private val beerRepository: BeerRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    val user: User? = null
-    var beer = beerRepository.beers
+    var user: User? = null
+    var beers: LiveData<List<Beer>>? = null
+    var beersFiltered: List<Beer> = emptyList()
+    var cachedBeers: List<Beer> = emptyList()
+
+    var beer: Beer? = null
+        set(value) {
+            field=value
+            beers = beerRepository.getAll()
+        }
 
     private val _spinner = MutableLiveData<Boolean>()
     val spinner: LiveData<Boolean>
@@ -46,34 +55,6 @@ class ListViewModel (
     }
 
     /**
-     * Cambia el valor del LiveData de la cerveza seleccionada a null.
-     *
-     * @return Método setSelectedBeer de beerRepository.
-     */
-    fun setNoSelectedBeer(){
-        beerRepository.setSelectedBeer(null)
-    }
-
-    /**
-     * Cambia el valor del LiveData de la cerveza seleccionada.
-     *
-     * @param beer La cerveza que se establecerá como la cerveza seleccionada.
-     * @return Método setSelectedBeer de beerRepository.
-     */
-    fun setSelectedBeer(beer: Beer){
-        beerRepository.setSelectedBeer(beer)
-    }
-
-    /**
-     * Obtiene la cerveza seleccionada actualmente.
-     *
-     * @return Método getSelectedBeer de beerRepository.
-     */
-    fun getSelectedBeer(): Beer? {
-        return beerRepository.getSelectedBeer()
-    }
-
-    /**
      * Añade una cerveza a favoritos
      *
      * @param beer la Cerveza que se añadirá a favoritos.
@@ -83,7 +64,17 @@ class ListViewModel (
         viewModelScope.launch {
             favRepository.addFav(user!!.userId, beer.beerId)
         }
+        _toast.value = "Cerveza añadida a favoritos"
     }
+
+    fun performSearch(query: String){
+        beersFiltered = if (query.isNotBlank()) {
+            cachedBeers.filter { it.title.contains(query, ignoreCase = true) }
+        } else {
+            cachedBeers
+        }
+    }
+
 
     private fun launchDataLoad(block: suspend () -> Unit) : Job {
         return viewModelScope.launch {
@@ -97,6 +88,7 @@ class ListViewModel (
             }
         }
     }
+
 
 
     companion object {

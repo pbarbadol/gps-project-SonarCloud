@@ -27,9 +27,6 @@ class ListFragment : Fragment() {
     private val viewmodel: ListViewModel by viewModels { ListViewModel.Factory }
     private val homeViewModel: HomeViewModel by activityViewModels()
 
-    private var beers: List<Beer> = emptyList()
-    private var beersFiltered: List<Beer> = emptyList()
-    private var cachedBeers: List<Beer> = emptyList()
     private lateinit var listener: OnShowClickListener
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
@@ -54,7 +51,7 @@ class ListFragment : Fragment() {
     }
 
     private fun subscribeUi (adapter: ListAdapter){
-        viewmodel.beer.observe(viewLifecycleOwner) { beers ->
+        viewmodel.beers?.observe(viewLifecycleOwner) { beers ->
             adapter.updateData(beers)
         }
     }
@@ -92,13 +89,13 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //Obtenemos las dependencias del contenedor de dependencias
-
-
         setUpUI()
-        viewmodel.setNoSelectedBeer()
+        homeViewModel.beerInSession = null
         setUpRecyclerView()
+
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            viewmodel.user = user
+        }
 
         viewmodel.spinner.observe(viewLifecycleOwner){show->
                 binding.spinner.visibility = if (show) View.VISIBLE else View.GONE
@@ -124,7 +121,9 @@ class ListFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    performSearch(it)
+                    viewmodel.performSearch(it)
+                    adapter.updateData(viewmodel.beersFiltered)
+                    adapter.notifyDataSetChanged()
                 }
                 return true
             }
@@ -132,7 +131,7 @@ class ListFragment : Fragment() {
 
         // Restaurar la lista original al cerrar el buscador
         binding.searchView.setOnCloseListener {
-            adapter.updateData(cachedBeers)
+            adapter.updateData(viewmodel.cachedBeers)
             adapter.notifyDataSetChanged()
             true
         }
@@ -145,14 +144,11 @@ class ListFragment : Fragment() {
 
 
     private fun setUpSortingSpinner() {
-        val spinnerOpciones = binding.spinnerOpciones
-        val listaOpciones = arrayOf("Abv", "Titulo", "Año")
+//        val adapterSpinner: ArrayAdapter<String> =
+//            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, arrayOf("Abv", "Titulo", "Año"))
+        binding.spinnerOpciones.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, arrayOf("Abv", "Titulo", "Año"))
 
-        val adapterSpinner: ArrayAdapter<String> =
-            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaOpciones)
-        spinnerOpciones.adapter = adapterSpinner
-
-        spinnerOpciones.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spinnerOpciones.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
                 view: View?,
@@ -173,14 +169,13 @@ class ListFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
-        adapter = ListAdapter(beers = beers, onClick = {
+        adapter = ListAdapter(beers = viewmodel.beers?.value!!, onClick = {
             homeViewModel.beerInSession = it
-            val cervezaSeleccionada = viewmodel.getSelectedBeer()
-            val history = History(beer = it, date = Date())
-            History.saveHistory(history)
-            if (cervezaSeleccionada == null) {
+//            val cervezaSeleccionada = viewmodel.getSelectedBeer()
+            History.saveHistory(History(beer = it, date = Date())) //TODO mirar si esto se hace así o no
+            if (homeViewModel.isNull()) {
                 // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
-                viewmodel.setSelectedBeer(it)
+                homeViewModel.beerInSession = it
                 listener.onShowClick(it)
             } else {
                 // Si ya hay una cerveza seleccionada, solo mostrar los detalles
@@ -189,30 +184,17 @@ class ListFragment : Fragment() {
         }, onLongClick = {
 
             viewmodel.setFavourite(it)
-            Toast.makeText(context, "${it.title} añadida a favoritos", Toast.LENGTH_SHORT).show()
         }, context = context
         )
 
         with(binding) {
-            val numberOfColumns = 2
-            rvBeerList.layoutManager = GridLayoutManager(context, numberOfColumns)
+            rvBeerList.layoutManager = GridLayoutManager(context, 2)
             rvBeerList.adapter = adapter
         }
         Log.d("DiscoverFragment", "setUpRecyclerView")
     }
 
 
-
-    private fun performSearch(query: String) {
-        beersFiltered = if (query.isNotBlank()) {
-            cachedBeers.filter { it.title.contains(query, ignoreCase = true) }
-        } else {
-            cachedBeers
-        }
-        adapter.updateData(beersFiltered)
-        adapter.notifyDataSetChanged()
-        Log.d("ListFragment", "Filtered Beers: $beersFiltered")
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
