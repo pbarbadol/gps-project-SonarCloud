@@ -56,6 +56,10 @@ class CommentsFragment : Fragment() {
             Log.d("Observation", "User observed: $user")
             viewModel.user = user
         }
+        homeViewModel.beer.observe(viewLifecycleOwner) { beer ->
+            viewModel.beer = beer
+        }
+        Log.d("Observation", "bEER observed2: ${viewModel.beer}")
         // Show a Toast whenever the [toast] is updated a non-null value
         viewModel.toast.observe(viewLifecycleOwner) { text ->
             text?.let {
@@ -66,10 +70,8 @@ class CommentsFragment : Fragment() {
         //Inicializamos el adapter
         setUpRecyclerView()
         //En caso de cambio, lo actualizamos
-        viewModel.beerComments?.observe(viewLifecycleOwner) { comments ->
-            comments?.let {
+        viewModel.beerComment.observe(viewLifecycleOwner) { comments ->
                 adapter.updateData(comments)
-            }
         }
         //TODO: falta spinner
         binding.addCommentButton.setOnClickListener {
@@ -78,7 +80,7 @@ class CommentsFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
-        adapter = CommentsAdapter(comments = viewModel.beerComments?.value!!, onClick = {}, onLongClick = {
+        adapter = CommentsAdapter(comments = emptyList(), onClick = {}, onLongClick = {
             viewModel.deleteComment(it) //TODO: No sabemos si se debe pasar si o si el it
         })
         with(binding) {

@@ -89,25 +89,30 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpUI()
-        homeViewModel.beerInSession = null
-        setUpRecyclerView()
 
+        //homeViewModel.setBeerNull()
+
+        homeViewModel.beer.observe(viewLifecycleOwner) { beer ->
+            viewmodel.beer = beer
+        }
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             viewmodel.user = user
         }
 
-        viewmodel.spinner.observe(viewLifecycleOwner){show->
-                binding.spinner.visibility = if (show) View.VISIBLE else View.GONE
+        viewmodel.spinner.observe(viewLifecycleOwner){visible->
+                binding.spinner.visibility = if (visible) View.VISIBLE else View.GONE
         }
         viewmodel.toast.observe(viewLifecycleOwner){text->
             text?.let {
-                Toast.makeText(context, text, Toast.LENGTH_SHORT)
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
                 viewmodel.onToastShown()
             }
         }
 
+        setUpUI()
+        setUpRecyclerView()
         subscribeUi(adapter)
+        setUpSortingSpinner()
 
     }
 
@@ -131,7 +136,7 @@ class ListFragment : Fragment() {
 
         // Restaurar la lista original al cerrar el buscador
         binding.searchView.setOnCloseListener {
-            adapter.updateData(viewmodel.cachedBeers)
+            adapter.updateData(viewmodel.beers?.value!!)
             adapter.notifyDataSetChanged()
             true
         }
@@ -144,10 +149,10 @@ class ListFragment : Fragment() {
 
 
     private fun setUpSortingSpinner() {
-//        val adapterSpinner: ArrayAdapter<String> =
-//            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, arrayOf("Abv", "Titulo", "Año"))
-        binding.spinnerOpciones.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, arrayOf("Abv", "Titulo", "Año"))
 
+
+        binding.spinnerOpciones.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, arrayOf("Abv", "Titulo", "Año"))
+        (binding.spinnerOpciones.adapter as ArrayAdapter<String>).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerOpciones.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
@@ -169,8 +174,10 @@ class ListFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
-        adapter = ListAdapter(beers = viewmodel.beers?.value!!, onClick = {
+        adapter = ListAdapter(beers = emptyList(), onClick = {
             homeViewModel.beerInSession = it
+            Log.d("BeerViewModel", "Cerveza seleccionada: ${homeViewModel.beerInSession}")
+
 //            val cervezaSeleccionada = viewmodel.getSelectedBeer()
             History.saveHistory(History(beer = it, date = Date())) //TODO mirar si esto se hace así o no
             if (homeViewModel.isNull()) {
@@ -184,6 +191,9 @@ class ListFragment : Fragment() {
         }, onLongClick = {
 
             viewmodel.setFavourite(it)
+
+
+
         }, context = context
         )
 

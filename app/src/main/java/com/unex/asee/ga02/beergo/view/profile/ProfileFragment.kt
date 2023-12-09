@@ -37,15 +37,13 @@ class ProfileFragment : Fragment() {
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             Log.d("Observation", "User observed: $user")
             viewModel.user = user
+            showBinding()
+            lifecycleScope.launch(Dispatchers.IO) {
+                setUpStadistics()
+            }
         }
         Log.d("Observation", "Finalizado ProfileFragment")
-        //El viewModel se encargará solo de calcular el nivel y la experiencia
-        binding.idUser.text = viewModel.user?.name
-        binding.progressBar.progress = viewModel.exp
-        binding.levelTextView.text = "Nivel ${viewModel.nivel}"
-        binding.expTextView.text = "${viewModel.exp}%"
-        binding.idUser.text = viewModel.user?.name
-        setUpStadistics()
+
         //Eliminar usuario
         binding.eliminarUsuario.setOnClickListener {
             viewModel.deleteUser { //lambda
@@ -64,10 +62,19 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun setUpStadistics() {
+    private fun showBinding(){
+        //El viewModel se encargará solo de calcular el nivel y la experiencia
+        binding.idUser.text = viewModel.user?.name
+        binding.progressBar.progress = viewModel.exp
+        binding.levelTextView.text = "Nivel ${viewModel.nivel}"
+        binding.expTextView.text = "${viewModel.exp}%"
+        binding.idUser.text = viewModel.user?.name
+    }
+    private suspend fun setUpStadistics() {
         binding.cervezasAnadidas.text = "Cervezas Añadidas: ${
             viewModel.countBeersInsertedByUser()
-        }"
+        }" //TODO: ¿TIENE QUE ESTAR CON LIVEDATA?
+
         binding.cervezasFavoritas.text = "Cervezas Favoritas: ${
             viewModel.countFavouritesByUser()
         }"

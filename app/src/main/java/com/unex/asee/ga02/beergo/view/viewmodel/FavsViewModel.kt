@@ -16,9 +16,12 @@ class FavsViewModel(
     private var favRepository: FavRepository
 ): ViewModel() {
 
+    val favBeers = favRepository.favBeers
+
     var user: User? = null
         set(value) {
             field = value
+            favRepository.setUserid(value!!.userId)
         }
 
     private val _spinner = MutableLiveData<Boolean>(false)
@@ -33,60 +36,11 @@ class FavsViewModel(
     val toast: LiveData<String?>
         get() = _toast
 
-    var favBeers: LiveData<List<Beer>> = MutableLiveData<List<Beer>>()
-    init{
-        favBeers = favRepository.loadFavs(user!!.userId)
-    }
-
-
-/*
-    /**
-     * Cambia el valor del LiveData de la cerveza seleccionada a null.
-     * @return Método setSelecterBeer de beerRepository.
-     */
-    fun setNoSelectedBeer(){
-        beerRepository.setSelectedBeer(null)
-    }
-
-    /**
-     * Cambia el valor del LiveData de la cerveza seleccionada.
-     *
-     * @param beer la Cerveza seleccionada
-     * @return Método setSelecterBeer de beerRepository.
-     */
-    fun setSelectedBeer(beer: Beer){
-        beerRepository.setSelectedBeer(beer)
-    }
-
-    /**
-     * Obtiene la cerveza seleccionada actualmente.
-     * @return @return Método getSelecterBeer de beerRepository..
-     */
-    fun getSelectedBeer(): Beer? {
-        return beerRepository.getSelectedBeer()
-    }
-
-
-    /**
-     * Obtiene las cervezas favoritas de un usuario
-     *
-     * @param userId el ID del usuario
-     * @return Método loadFavs de favRepository.
-     */
-    suspend fun loadFavs(userId: Long): List<Beer>{
-        return favRepository.loadFavs(userId)
-    }
-
-
-    suspend fun deleteFav(userId: Long, beerId: Long){
-        return favRepository.deleteFav(userId, beerId)
-    }*/
-
     fun loadFavourites(){
         viewModelScope.launch {
-            _spinner.value = true
-            favBeers = favRepository.loadFavs(user!!.userId)
-            _spinner.value = false
+            //_spinner.value = true
+            //favBeers = favRepository.loadFavs(user!!.userId)
+            //_spinner.value = false
         }
     }
     fun onToastShown() {

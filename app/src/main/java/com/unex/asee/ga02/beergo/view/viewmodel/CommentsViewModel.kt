@@ -19,11 +19,12 @@ class CommentsViewModel(
 ) : ViewModel() {
 
     var user: User? = null
-    var beerComments : LiveData<List<Comment>>? = null
+
+    val beerComment = commentRepository.commentBeers
     var beer: Beer? = null
         set(value) {
             field = value
-            beerComments = commentRepository.loadComments(value!!.beerId)
+            commentRepository.setBeerId(value!!.beerId)
         }
 
     private val _toast = MutableLiveData<String?>()

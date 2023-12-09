@@ -49,6 +49,18 @@ class ShowBeerFragment : Fragment() {
             viewModel.user = user
         }
 
+        homeViewModel.beer.observe(viewLifecycleOwner) { beer ->
+            viewModel.beer = beer
+            showBinding()
+            Log.d("Observation", "Beer observed: ${viewModel.beer}")
+        }
+        Log.d("Observation", "Beer observed2: ${viewModel.beer}")
+
+
+    }
+
+    fun showBinding() {
+        Log.d("Observation", "Beer observed3: ${viewModel.beer}")
         binding.id.text = viewModel.beer?.beerId.toString()
         binding.title.text = viewModel.beer?.title
         binding.anio.text = viewModel.beer?.year
@@ -60,17 +72,22 @@ class ShowBeerFragment : Fragment() {
             val navController = findNavController()
             navController.navigate(ShowBeerFragmentDirections.actionShowBeerFragmentToCommentsFragment())
         }
-        viewModel.isFavourite.observe(viewLifecycleOwner) {isFavourite ->
+
+        viewModel.favBeers.observe(viewLifecycleOwner) { favBeers ->
+            Log.d("ObservationFavorite", "favBeers: $favBeers")//TODO: PREGUNTAR ROBERTO
+        }
+        viewModel.isFavourite.observe(viewLifecycleOwner) { isFavourite ->
             binding.favSwitch.isChecked = isFavourite
+        }
 
             binding.favSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (isFavourite) {
+                if (isChecked) {
                     viewModel.addFav()
                 } else {
                     viewModel.deleteFav()
                 }
             }
-        }
+
     }
 
 }

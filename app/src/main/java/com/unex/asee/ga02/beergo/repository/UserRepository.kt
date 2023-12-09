@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.unex.asee.ga02.beergo.database.UserDao
@@ -16,22 +17,6 @@ import com.unex.asee.ga02.beergo.utils.CredentialCheck
  * @property userDao Instancia de UserDao para acceder a la base de datos local de usuarios.
  */
 class UserRepository (private val userDao: UserDao) {
-
-    private val userLiveData = MutableLiveData<User>()
-
-    // Propiedad pública solo de lectura para acceder al LiveData del usuario.
-    val user: LiveData<User>
-        get() = userLiveData
-
-    // Método para cambiar el valor del LiveData del usuario.
-    fun setUser(user: User?) {
-        userLiveData.value = user!!
-    }
-
-    // Función para obtener el usuario.
-    fun getCurrentUser(): User {
-        return userLiveData.value!!
-    }
 
     /**
      * Intenta autenticar a un usuario utilizando el nombre de usuario y la contraseña proporcionados.
@@ -87,19 +72,37 @@ class UserRepository (private val userDao: UserDao) {
         userDao.delete(user)
     }
 
-    fun countBeersInsertedByUser(userId: Long): Int {
-        return userDao.countBeersInsertedByUser(userId).value!!
+    suspend fun countBeersInsertedByUser(userId: Long): Int {
+        if(userDao.countBeersInsertedByUser(userId) == null) {
+            return 0
+        }else{
+            return userDao.countBeersInsertedByUser(userId)
+        }
     }
 
     fun countFavouritesByUser(userId: Long): Int {
-        return userDao.countUserFavouriteBeers(userId).value!!
+        if(userDao.countUserFavouriteBeers(userId) == null) {
+            return 0
+        }else{
+            return userDao.countUserFavouriteBeers(userId)
+        }
+
     }
 
     fun countCommentsByUser(userId: Long): Int {
-        return userDao.countCommentsByUser(userId).value!!
+        if(userDao.countCommentsByUser(userId) == null) {
+            return 0
+        }else{
+            return userDao.countCommentsByUser(userId)
+        }
+
     }
 
     fun countUserAchievements(userId: Long): Int {
-        return userDao.countUserAchievements(userId).value!!
+        if(userDao.countUserAchievements(userId) == null) {
+            return 0
+        }else{
+            return userDao.countUserAchievements(userId)
+        }
     }
 }
