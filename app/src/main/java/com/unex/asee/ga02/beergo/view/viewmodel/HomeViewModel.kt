@@ -1,5 +1,8 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -14,6 +17,26 @@ class HomeViewModel(
     private var beerRepository: BeerRepository
 ): ViewModel() {
 
+    // Propiedad pública solo de lectura para acceder al LiveData del usuario.
+    private val _user = MutableLiveData<User>(null)
+    private val _beer = MutableLiveData<Beer>(null)
+    val user: LiveData<User>
+        get() = _user
+    var userInSession: User? = null
+        set(value) {
+            field = value
+            _user.value = value!!
+            Log.d("Observation", "UserInSession updated: $value")
+        }
+
+    val beer: LiveData<Beer>
+        get() = _beer
+    var beerInSession: Beer? = null
+        set(value) {
+            field = value
+            _beer.value = value!!
+        }
+
     /**
      * Cambia el valor del LiveData de la cerveza seleccionada.
      *
@@ -23,18 +46,6 @@ class HomeViewModel(
     fun setSelectedBeer(beer: Beer?){ //TODO: estamos almacenando el valor en el repositorio. ¿Es correcto?
         return beerRepository.setSelectedBeer(beer)
     }
-
-    /**
-     * Guarda la información del usuario logueado.
-     *
-     * @param user el usuario
-     * @return @return Método setUser de userRepository.
-     */
-    fun setUser(user: User?) {
-        return userRepository.setUser(user)
-    }
-
-
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

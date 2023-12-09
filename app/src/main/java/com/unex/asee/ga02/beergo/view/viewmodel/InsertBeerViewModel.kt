@@ -14,14 +14,8 @@ class InsertBeerViewModel(
     private var beerRepository: BeerRepository
 ): ViewModel() {
 
-    /**
-     * Obtiene el usuario logueado
-     *
-     * @return Método getCurrentUser de userRepository.
-     */
-    fun getCurrentUser(): User {
-        return userRepository.getCurrentUser()
-    }
+    var user : User? = null
+
 
     /**
      *  Añade una cerveza a la base de datos local.

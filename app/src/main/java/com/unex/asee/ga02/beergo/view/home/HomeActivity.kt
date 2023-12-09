@@ -29,7 +29,6 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
     private val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
-
     private val viewModel: HomeViewModel by viewModels { HomeViewModel.Factory }
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
@@ -37,9 +36,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         public fun start(
             context: Context,
             user: User
-        ) {
-        }
-    }
+        ){}}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) // Creamos la actividad
         // Inflar el diseño usando DataBinding
@@ -48,12 +45,9 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         // Configuración de la barra de acción
         supportActionBar?.setDisplayShowTitleEnabled(false)
         // Obtener el usuario desde la actividad anterior
-        val user = intent.getSerializableExtra(LOGIN_USER) as User
-
-        viewModel.setSelectedBeer(null)
-        viewModel.setUser(user)
+        viewModel.userInSession = intent.getSerializableExtra(LOGIN_USER) as User //TODO: El usuario se obtiene del intent y se guarda en el HomeViewModel
         // Inicialización de la interfaz de usuario
-        setUpUI(user)
+        setUpUI()
         // Inicialización de los listeners
         setUpListeners()
     }
@@ -67,7 +61,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
             CommentsFragmentDirections.actionCommentsFragmentToAddCommentFragment()
         )
     }
-    fun setUpUI(user: User) {
+    fun setUpUI() {
         binding.bottomNavigationView.setupWithNavController(navController) //Le decimos que el navController que va a usar es el del navHostFragment
         appBarConfiguration = AppBarConfiguration(
             setOf(

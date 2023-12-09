@@ -87,19 +87,19 @@ class UserRepository (private val userDao: UserDao) {
         userDao.delete(user)
     }
 
-    suspend fun countBeersInsertedByUser(userId: Long): Int {
-        return userDao.countBeersInsertedByUser(userId)
+    fun countBeersInsertedByUser(userId: Long): Int {
+        return userDao.countBeersInsertedByUser(userId).value!!
     }
 
-    suspend fun countFavouritesByUser(userId: Long): Int {
-        return userDao.countUserFavouriteBeers(userId)
+    fun countFavouritesByUser(userId: Long): Int {
+        return userDao.countUserFavouriteBeers(userId).value!!
     }
 
-    suspend fun countCommentsByUser(userId: Long): Int {
-        return userDao.countCommentsByUser(userId)
+    fun countCommentsByUser(userId: Long): Int {
+        return userDao.countCommentsByUser(userId).value!!
     }
 
-    suspend fun countUserAchievements(userId: Long): Int {
-        return userDao.countUserAchievements(userId)
+    fun countUserAchievements(userId: Long): Int {
+        return userDao.countUserAchievements(userId).value!!
     }
 }

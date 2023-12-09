@@ -10,12 +10,14 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.ListViewModel
 import java.util.Date
 import kotlin.collections.*
@@ -23,6 +25,8 @@ import kotlin.collections.*
 class ListFragment : Fragment() {
     //declaracion del ViewModel
     private val viewmodel: ListViewModel by viewModels { ListViewModel.Factory }
+    private val homeViewModel: HomeViewModel by activityViewModels()
+
     private var beers: List<Beer> = emptyList()
     private var beersFiltered: List<Beer> = emptyList()
     private var cachedBeers: List<Beer> = emptyList()
@@ -170,6 +174,7 @@ class ListFragment : Fragment() {
 
     private fun setUpRecyclerView() {
         adapter = ListAdapter(beers = beers, onClick = {
+            homeViewModel.beerInSession = it
             val cervezaSeleccionada = viewmodel.getSelectedBeer()
             val history = History(beer = it, date = Date())
             History.saveHistory(history)

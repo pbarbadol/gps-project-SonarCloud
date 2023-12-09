@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.repository
 
+import androidx.lifecycle.LiveData
 import com.unex.asee.ga02.beergo.database.CommentDao
 import com.unex.asee.ga02.beergo.model.Comment
 
@@ -12,10 +13,6 @@ import com.unex.asee.ga02.beergo.model.Comment
  * @property commentDao Instancia de CommentDao para acceder a la base de datos local.
  */
 class CommentRepository (private val commentDao: CommentDao) {
-
-    // Variable para almacenar el tiempo de la última actualización de datos.
-    private var lastUpdateTimeMillis: Long = 0L
-
     /**
      * Método para agregar un comentario a la base de datos local.
      *
@@ -40,40 +37,8 @@ class CommentRepository (private val commentDao: CommentDao) {
      * @param beerId Identificador de la cerveza asociada a los comentarios.
      * @return Lista de objetos Comment obtenidos desde la base de datos local.
      */
-    suspend fun loadComments(beerId: Long): List<Comment> {
-        tryUpdateCommentsCache()
+    fun loadComments(beerId: Long): LiveData<List<Comment>> {
         return commentDao.findByBeer(beerId)
-    }
-
-    /**
-     * Intenta actualizar la caché de comentarios si es necesario.
-     */
-    private suspend fun tryUpdateCommentsCache() {
-        if (shouldUpdateCommentsCache()) {
-            fetchComments() // Realiza la actualización de la caché.
-        }
-    }
-
-    /**
-     * Realiza la llamada a la API y actualiza la base de datos local con los datos obtenidos.
-     *
-     * Aquí implementarías la lógica para obtener los comentarios desde la API.
-     * Después de obtener los comentarios, los insertas en la base de datos local.
-     * Además, actualizas lastUpdateTimeMillis.
-     */
-    private suspend fun fetchComments() {
-        // Lógica de obtención de comentarios desde la API y actualización de la base de datos local.
-    }
-
-    /**
-     * Verifica si se debe actualizar la caché de comentarios.
-     *
-     * @return `true` si se debe actualizar, `false` de lo contrario.
-     */
-    private suspend fun shouldUpdateCommentsCache(): Boolean {
-        val lastFetchTimeMillis = lastUpdateTimeMillis
-        val timeFromLastFetch = System.currentTimeMillis() - lastFetchTimeMillis
-        return timeFromLastFetch > MIN_TIME_FROM_LAST_FETCH_MILLIS
     }
 
     // Compañero del objeto Repository que gestiona la creación de instancias.

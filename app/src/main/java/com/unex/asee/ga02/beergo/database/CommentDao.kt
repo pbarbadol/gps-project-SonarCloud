@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -46,5 +47,5 @@ interface CommentDao {
      * @return Una lista de comentarios para la cerveza especificada.
      */
     @Query("SELECT * FROM comment WHERE beerId = :beerId")
-    suspend fun findByBeer(beerId: Long): List<Comment>
+    fun findByBeer(beerId: Long): LiveData<List<Comment>>
 }

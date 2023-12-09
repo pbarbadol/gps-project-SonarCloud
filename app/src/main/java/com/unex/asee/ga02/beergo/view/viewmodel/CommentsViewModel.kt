@@ -1,7 +1,10 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.model.Beer
@@ -9,38 +12,39 @@ import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.BeerRepository
 import com.unex.asee.ga02.beergo.repository.CommentRepository
-import com.unex.asee.ga02.beergo.repository.UserRepository
+import kotlinx.coroutines.launch
 
-class CommentsViewModel (
-    private val beerRepository: BeerRepository,
-    private val userRepository: UserRepository,
-    private val commentRepository: CommentRepository
-): ViewModel(){
+class CommentsViewModel(
+    private val beerRepository: BeerRepository, private val commentRepository: CommentRepository
+) : ViewModel() {
 
-    /**
-     * Obtiene la cerveza seleccionada actualmente.
-     * @return Método getSelectedBeer de beerRepository.
-     */
-    fun getSelectedBeer(): Beer? {
-        return beerRepository.getSelectedBeer()
-    }
+    var user: User? = null
+    var beerComments : LiveData<List<Comment>>? = null
+    var beer: Beer? = null
+        set(value) {
+            field = value
+            beerComments = commentRepository.loadComments(value!!.beerId)
+        }
 
-    /**
-     * Obtiene la el usuario logueado
-     * @return Método getCurrentUser de userRepository.
-     */
-    fun getCurrentUser(): User? {
-        return userRepository.getCurrentUser()
-    }
+    private val _toast = MutableLiveData<String?>()
+    val toast: LiveData<String?>
+        get() = _toast
 
     /**
-     * Método para borrar un comentario de la base de datos local.
+     * Método para borrar un comentario
      *
      * @param comment Objeto Comment que se va a eliminar.
-     * @return Método deleteComment de commentRepository.
+     * @return True si se elimina, False en caso contrario.
      */
-    suspend fun deleteComment(comment: Comment) {
-        return commentRepository.deleteComment(comment)
+    fun deleteComment(comment: Comment): Boolean {
+        if (comment.userId == user!!.userId) {
+            viewModelScope.launch {
+                commentRepository.deleteComment(comment)
+            }
+            _toast.value = "Comentario eliminado correctamente"
+            return true
+        } else _toast.value = "No puedes eliminar este comentario sinverguenza!"
+        return false
     }
 
     /**
@@ -49,23 +53,21 @@ class CommentsViewModel (
      * @param beerId Identificador de la cerveza asociada a los comentarios.
      * @return Método loadComments de commentRepository.
      */
-    suspend fun loadComments(beerId: Long): List<Comment> {
-        return commentRepository.loadComments(beerId)
+    fun onToastShown() {
+        _toast.value = null
     }
 
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
-                modelClass: Class<T>,
-                extras: CreationExtras
+                modelClass: Class<T>, extras: CreationExtras
             ): T { // Get the Application object from extras
 
                 val application =
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return CommentsViewModel(
                     (application as BeerGoApplication).appContainer.beerRepository,
-                    (application as BeerGoApplication).appContainer.userRepository,
                     (application as BeerGoApplication).appContainer.commentRepository,
                 ) as T
             }
