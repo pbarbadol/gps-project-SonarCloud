@@ -104,8 +104,7 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
         }
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_settings -> { // User chooses the "Settings" item. Show the app settings UI.
-            val action = ListFragmentDirections.actionHomeToSettingsFragment()
-            navController.navigate(action)
+            navController.navigate(ListFragmentDirections.actionHomeToSettingsFragment())
             true
         }
             else -> {

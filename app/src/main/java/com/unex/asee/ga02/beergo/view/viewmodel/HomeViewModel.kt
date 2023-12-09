@@ -37,15 +37,11 @@ class HomeViewModel(
             _beer.value = value!!
         }
 
-    /**
-     * Cambia el valor del LiveData de la cerveza seleccionada.
-     *
-     * @param beer la Cerveza seleccionada
-     * @return Método setSelecterBeer de beerRepository.
-     */
-    fun setSelectedBeer(beer: Beer?){ //TODO: estamos almacenando el valor en el repositorio. ¿Es correcto?
-        return beerRepository.setSelectedBeer(beer)
+
+    fun isNull(): Boolean {
+        return (beerInSession == null)
     }
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

@@ -13,19 +13,12 @@ import com.unex.asee.ga02.beergo.repository.CommentRepository
 import kotlinx.coroutines.launch
 
 class AddCommentViewModel(
-    private val beerRepository: BeerRepository, private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository
 
 ) : ViewModel() {
     var user: User? = null
     var beer: Beer? = null //TODO: hay que asignarle un valor en algun momento
 
-    /**
-     * Obtiene la cerveza seleccionada actualmente.
-     * @return Método getSelectedBeer de beerRepository
-     */
-    fun getSelectedBeer(): Beer? {
-        return beerRepository.getSelectedBeer()
-    }
 
     /**
      * Escribe el comentario a partir del parametro de entrada, el nombre de usuario, el id de usuario y de la cerveza.
@@ -60,7 +53,6 @@ class AddCommentViewModel(
                 val application =
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return AddCommentViewModel(
-                    (application as BeerGoApplication).appContainer.beerRepository,
                     (application as BeerGoApplication).appContainer.commentRepository,
                 ) as T
             }

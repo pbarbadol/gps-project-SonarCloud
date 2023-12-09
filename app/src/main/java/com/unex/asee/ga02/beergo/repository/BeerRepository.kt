@@ -23,8 +23,6 @@ import kotlinx.coroutines.withContext
 class BeerRepository(private val beerDao: BeerDao, private val networkService : BeerApiInterface) {
     // Variable para almacenar el tiempo de la última actualización de datos.
     private var lastUpdateTimeMillis: Long = 0L
-    // Lista de cervezas obtenidas de la base de datos local.
-    val beers = beerDao.getAll()
     // LiveData que contiene información de la cerveza seleccionada.
     private val selectedBeer = MutableLiveData<Beer?>()
 
@@ -41,6 +39,10 @@ class BeerRepository(private val beerDao: BeerDao, private val networkService : 
     fun setSelectedBeer(beer: Beer?) {
         selectedBeer.value = beer
         Log.d("BeerViewModel", "Cerveza seleccionada: ${beer}")
+    }
+
+    fun getAll(): LiveData<List<Beer>>{
+        return beerDao.getAll()
     }
 
     /**
