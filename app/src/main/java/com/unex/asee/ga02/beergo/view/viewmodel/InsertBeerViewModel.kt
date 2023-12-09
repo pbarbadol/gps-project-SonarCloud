@@ -1,6 +1,8 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -27,9 +29,6 @@ class InsertBeerViewModel(
     val beer : Beer? = null
     var selectedImageUri: Uri? = null
 
-    // View Binding
-    private var _binding: FragmentInsertBeerBinding? = null
-    private val binding get() = _binding!!
 
 
     /**
@@ -42,7 +41,10 @@ class InsertBeerViewModel(
         return beerRepository.addBeer(beer)
     }
 
+    private val _toast = MutableLiveData<String?>()
 
+    val toast: LiveData<String?>
+        get() = _toast
 
     /**
      * Crea una instancia de la clase [Beer] con los datos proporcionados.
@@ -75,6 +77,10 @@ class InsertBeerViewModel(
         )
     }
 
+    fun onToastShown(){
+        _toast.value = null
+    }
+
     /**
      * Verifica si los campos necesarios para la inserción son válidos.
      *
@@ -93,9 +99,6 @@ class InsertBeerViewModel(
         return title.isNotEmpty() && description.isNotEmpty() && year.isNotEmpty() && abvString.isNotEmpty()
     }
 
-    private fun showNotification(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
-    }
 
     /**
      * Se encarga de llevar a cabo el proceso de la inserción
@@ -118,7 +121,7 @@ class InsertBeerViewModel(
                 }
                 viewModelScope.launch() {
                     addBeer(beer)
-                    showNotification("Cerveza insertada")
+                    _toast.value = "Cerveza insertada"
 
                 }
             } else {
@@ -136,7 +139,7 @@ class InsertBeerViewModel(
      */
     private fun handleInvalidAbv() {
         // Manejar el caso donde el campo de porcentaje de alcohol no es un número válido
-        showNotification("Porcentaje de alcohol no válido. Introduce un número válido.")
+        _toast.value = "Porcentaje de alcohol no válido. Introduce un número válido."
     }
 
     /**
@@ -144,7 +147,7 @@ class InsertBeerViewModel(
      */
     private fun handleIncompleteFields() {
         // Manejar el caso donde los campos no están completos
-        showNotification("Completa todos los campos antes de insertar la cerveza.")
+        _toast.value = "Completa todos los campos antes de insertar la cerveza."
     }
 
     companion object {
