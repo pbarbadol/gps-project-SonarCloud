@@ -6,18 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
-import com.unex.asee.ga02.beergo.repository.BeerRepository
-import com.unex.asee.ga02.beergo.repository.UserRepository
 
-class HomeViewModel(
-    private var userRepository: UserRepository,
-    private var beerRepository: BeerRepository
-): ViewModel() {
+class HomeViewModel : ViewModel() {
 
-    // Propiedad pública solo de lectura para acceder al LiveData del usuario.
     private val _user = MutableLiveData<User>(null)
     private val _beer = MutableLiveData<Beer>(null)
     val user: LiveData<User>
@@ -55,10 +48,7 @@ class HomeViewModel(
 
                 val application =
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
-                return HomeViewModel(
-                    (application as BeerGoApplication).appContainer.userRepository,
-                    (application as BeerGoApplication).appContainer.beerRepository
-                ) as T
+                return HomeViewModel() as T
             }
         }
     }

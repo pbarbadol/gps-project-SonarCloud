@@ -6,12 +6,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
-import com.unex.asee.ga02.beergo.model.UserWithAchievements
 import com.unex.asee.ga02.beergo.repository.AchievementRepository
-import com.unex.asee.ga02.beergo.repository.UserRepository
 
 class AchievementsViewModel(
-    private var userRepository: UserRepository,
     private var achievementRepository: AchievementRepository
 ): ViewModel() {
 
@@ -45,7 +42,6 @@ class AchievementsViewModel(
                 val application =
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return AchievementsViewModel(
-                    (application as BeerGoApplication).appContainer.userRepository,
                     (application as BeerGoApplication).appContainer.achievmentRepository
                 ) as T
             }

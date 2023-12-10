@@ -33,7 +33,7 @@ class SettingsTest {
 
 
     @Test
-    fun settingsTest2() {
+    fun settingsTest() {
 
         val materialButton = onView(
             allOf(
