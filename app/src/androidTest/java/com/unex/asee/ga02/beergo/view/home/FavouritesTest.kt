@@ -25,14 +25,14 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class FavouriteTest {
+class FavouritesTest {
 
     @Rule
     @JvmField
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
     @Test
-    fun favouriteTest() {
+    fun favouritesTest() {
         val materialButton = onView(
             allOf(
                 withId(R.id.bt_register), withText("Unete!"),
@@ -48,6 +48,11 @@ class FavouriteTest {
         )
         materialButton.perform(click())
 
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
         val appCompatEditText = onView(
             allOf(
                 withId(R.id.et_username),
@@ -61,7 +66,7 @@ class FavouriteTest {
                 isDisplayed()
             )
         )
-        appCompatEditText.perform(replaceText("esspreso"), closeSoftKeyboard())
+        appCompatEditText.perform(replaceText("espresso"), closeSoftKeyboard())
 
         val appCompatEditText2 = onView(
             allOf(
@@ -76,7 +81,7 @@ class FavouriteTest {
                 isDisplayed()
             )
         )
-        appCompatEditText2.perform(replaceText("1111"), closeSoftKeyboard())
+        appCompatEditText2.perform(replaceText("latte"), closeSoftKeyboard())
 
         val appCompatEditText3 = onView(
             allOf(
@@ -91,7 +96,7 @@ class FavouriteTest {
                 isDisplayed()
             )
         )
-        appCompatEditText3.perform(replaceText("1111"), closeSoftKeyboard())
+        appCompatEditText3.perform(replaceText("latte"), closeSoftKeyboard())
 
         val materialButton2 = onView(
             allOf(
@@ -133,6 +138,142 @@ class FavouriteTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+        val appCompatImageButton = onView(
+            allOf(
+                withId(R.id.btnAddBeer),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.nav_host_fragment),
+                        0
+                    ),
+                    4
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatImageButton.perform(click())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        val appCompatEditText4 = onView(
+            allOf(
+                withId(R.id.editTextBeerName),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.nav_host_fragment),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText4.perform(replaceText("Cerveza"), closeSoftKeyboard())
+
+        val appCompatEditText5 = onView(
+            allOf(
+                withId(R.id.editTextBeerDescription),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.nav_host_fragment),
+                        0
+                    ),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText5.perform(replaceText("Descripcion"), closeSoftKeyboard())
+
+        val appCompatEditText6 = onView(
+            allOf(
+                withId(R.id.editTextYear),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.nav_host_fragment),
+                        0
+                    ),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText6.perform(replaceText("2023"), closeSoftKeyboard())
+
+        val appCompatEditText7 = onView(
+            allOf(
+                withId(R.id.editTextAlcoholPercentage),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.nav_host_fragment),
+                        0
+                    ),
+                    3
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText7.perform(replaceText("1"), closeSoftKeyboard())
+
+        val materialButton4 = onView(
+            allOf(
+                withId(R.id.buttonInsertBeer), withText("Insertar cerveza"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.nav_host_fragment),
+                        0
+                    ),
+                    6
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton4.perform(click())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        val appCompatImageButton2 = onView(
+            allOf(
+                withContentDescription("Navigate up"),
+                childAtPosition(
+                    allOf(
+                        withId(R.id.toolbar),
+                        childAtPosition(
+                            withClassName(`is`("androidx.constraintlayout.widget.ConstraintLayout")),
+                            2
+                        )
+                    ),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatImageButton2.perform(click())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        val viewGroup = onView(
+            allOf(
+                withParent(
+                    allOf(
+                        withId(R.id.cv_Item),
+                        withParent(withId(R.id.cl_item))
+                    )
+                ),
+                isDisplayed()
+            )
+        )
+        viewGroup.check(matches(isDisplayed()))
+
         val recyclerView = onView(
             allOf(
                 withId(R.id.rv_beer_list),
@@ -142,7 +283,7 @@ class FavouriteTest {
                 )
             )
         )
-        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(6, longClick()))
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(0, longClick()))
 
         val bottomNavigationItemView = onView(
             allOf(
@@ -164,14 +305,43 @@ class FavouriteTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+        val frameLayout = onView(
+            allOf(
+                withId(R.id.bottomNavigationView),
+                withParent(withParent(withId(android.R.id.content))),
+                isDisplayed()
+            )
+        )
+        frameLayout.check(matches(isDisplayed()))
+
         val textView = onView(
             allOf(
-                withId(R.id.title), withText("AB:12"),
+                withId(com.google.android.material.R.id.navigation_bar_item_large_label_view),
+                withText("Favoritas"),
+                withParent(
+                    allOf(
+                        withId(com.google.android.material.R.id.navigation_bar_item_labels_group),
+                        withParent(
+                            allOf(
+                                withId(R.id.favsFragment),
+                                withContentDescription("Favoritas")
+                            )
+                        )
+                    )
+                ),
+                isDisplayed()
+            )
+        )
+        textView.check(matches(withText("Favoritas")))
+
+        val textView2 = onView(
+            allOf(
+                withId(R.id.title), withText("Cerveza"),
                 withParent(withParent(withId(R.id.cv_Item))),
                 isDisplayed()
             )
         )
-        textView.check(matches(withText("AB:12")))
+        textView2.check(matches(withText("Cerveza")))
 
         val recyclerView2 = onView(
             allOf(
