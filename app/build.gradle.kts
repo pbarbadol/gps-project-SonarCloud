@@ -39,6 +39,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        encoding = "UTF-8" //Para que detecte bien las tildes y la ñ
+
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -100,4 +102,7 @@ dependencies{
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test:runner:1.5.1")
     androidTestImplementation("androidx.test:rules:1.5.0")
+    debugImplementation("androidx.tracing:tracing:1.1.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+
 }

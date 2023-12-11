@@ -84,6 +84,7 @@ private constructor(private val beerDao: BeerDao) { //TODO: Sigue el patron sing
             e.printStackTrace()
             throw e
         }
+
     }
 
     /**
@@ -92,7 +93,7 @@ private constructor(private val beerDao: BeerDao) { //TODO: Sigue el patron sing
     private suspend fun fetchBeers()
     {
         val beers = fetchBeersFromApi()
-        beerDao.insertAll(beers)
+        //beerDao.insertAll(beers)
     }
 
     /**
