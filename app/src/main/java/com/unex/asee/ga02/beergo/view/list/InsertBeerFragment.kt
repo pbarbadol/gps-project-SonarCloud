@@ -37,15 +37,6 @@ class InsertBeerFragment : Fragment() {
     private val homeViewModel: HomeViewModel by activityViewModels()
 
     /**
-     * Método llamado cuando se crea la instancia del fragmento.
-     *
-     * @param savedInstanceState Bundle que contiene el estado previamente guardado del fragmento.
-     */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    /**
      * Método llamado para crear y devolver la vista asociada con el fragmento.
      *
      * @param inflater El objeto LayoutInflater que puede ser utilizado para inflar cualquier vista en el fragmento.
