@@ -67,6 +67,9 @@ dependencies{
         implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
         implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
 
+        //Opción 1: probar llamadas a Retrofit - opción recomendada
+        testImplementation("com.squareup.okhttp3:mockwebserver:4.2.1")
+
 
         val nav_version = "2.5.3"
         // Kotlin
