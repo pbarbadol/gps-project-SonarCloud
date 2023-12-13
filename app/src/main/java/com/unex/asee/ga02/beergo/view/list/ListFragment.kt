@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.view.viewmodel.CheckViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.ListViewModel
 import java.util.Date
@@ -26,6 +27,7 @@ class ListFragment : Fragment() {
     //declaracion del ViewModel
     private val viewmodel: ListViewModel by viewModels { ListViewModel.Factory }
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModelCheckAchievement : CheckViewModel by viewModels{ CheckViewModel.Factory }
 
     private lateinit var listener: OnShowClickListener
     private var _binding: FragmentListBinding? = null
@@ -97,6 +99,7 @@ class ListFragment : Fragment() {
         }
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             viewmodel.user = user
+            viewModelCheckAchievement.user = user
         }
 
         viewmodel.spinner.observe(viewLifecycleOwner){visible->
@@ -106,6 +109,12 @@ class ListFragment : Fragment() {
             text?.let {
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
                 viewmodel.onToastShown()
+            }
+        }
+        viewModelCheckAchievement.toast.observe(viewLifecycleOwner){text->
+            text?.let {
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                viewModelCheckAchievement.onToastShown()
             }
         }
 
@@ -191,6 +200,7 @@ class ListFragment : Fragment() {
         }, onLongClick = {
 
             viewmodel.setFavourite(it)
+            viewModelCheckAchievement.checkAchievementsFav()
 
 
 

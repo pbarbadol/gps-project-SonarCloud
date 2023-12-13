@@ -1,39 +1,32 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.model.UserWithAchievements
 import com.unex.asee.ga02.beergo.repository.AchievementRepository
-import com.unex.asee.ga02.beergo.repository.UserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AchievementsViewModel(
-    private var userRepository: UserRepository,
     private var achievementRepository: AchievementRepository
 ): ViewModel() {
 
-    var user : User? = null
+    val achievementsUser = achievementRepository.listAchievementUser
+    val achievements = achievementRepository.getAllAchievements()
+    var user: User? = null
+        set(value) {
+            field = value
+            achievementRepository.setUserid(value!!.userId)
 
-    /**
-     * Obtiene todos los logros.
-     * @return Método getAllAchievements de achievementRepository.
-     */
-    suspend fun getAllAchievements(): List<Achievement> {
-        return achievementRepository.getAllAchievements()
-    }
+        }
 
-    /**
-     * Obtiene los logros de un usuario específico.
-     *
-     * @param userId ID del usuario.
-     * @return Método getUserAchievements de achievementRepository.
-     */
-    fun getUserAchievements(): List<Achievement>?{
-        return achievementRepository.getUserAchievements(user?.userId!!)
-    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -45,7 +38,6 @@ class AchievementsViewModel(
                 val application =
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return AchievementsViewModel(
-                    (application as BeerGoApplication).appContainer.userRepository,
                     (application as BeerGoApplication).appContainer.achievmentRepository
                 ) as T
             }

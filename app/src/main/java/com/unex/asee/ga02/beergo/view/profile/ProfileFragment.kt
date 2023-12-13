@@ -39,7 +39,7 @@ class ProfileFragment : Fragment() {
             viewModel.user = user
             showBinding()
             lifecycleScope.launch(Dispatchers.IO) {
-                setUpStadistics()
+                //setUpStadistics()
             }
         }
         Log.d("Observation", "Finalizado ProfileFragment")
@@ -70,6 +70,7 @@ class ProfileFragment : Fragment() {
         binding.expTextView.text = "${viewModel.exp}%"
         binding.idUser.text = viewModel.user?.name
     }
+    /*
     private suspend fun setUpStadistics() {
         binding.cervezasAnadidas.text = "Cervezas Añadidas: ${
             viewModel.countBeersInsertedByUser()
@@ -85,4 +86,6 @@ class ProfileFragment : Fragment() {
             viewModel.countUserAchievements()
         }"
     }
+    */
+
 }

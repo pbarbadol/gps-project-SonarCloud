@@ -62,39 +62,44 @@ class ProfileViewModel(
      * @param userId El ID del usuario.
      * @return Método countBeersInsertedByUser de userRepository.
      */
-    suspend fun countBeersInsertedByUser(): Int {
+    /*
+    fun countBeersInsertedByUser(): Int {
         if(user == null) {
             return 0
         }else{
-            return userRepository.countBeersInsertedByUser(user!!.userId)
+            //return userRepository.countBeersInsertedByUser(user!!.userId)
         }
     }
+    */
+
 
     /**
      * Obtiene el número de cervezas favoritas de un usuario específico.
      *
      * @return Método countFavouritesByUser de userRepository.
      */
+    /*
     fun countFavouritesByUser(): Int {
         if(user == null) {
             return 0
         }else{
-            return userRepository.countFavouritesByUser(user!!.userId)
+            //return userRepository.countFavouritesByUser(user!!.userId)
         }
     }
-
+*/
     /**
      * Obtiene el número de comentarios realizados por un usuario específico.
      *
      * @return Método countCommentsByUser de userRepository.
      */
+    /*
     fun countCommentsByUser(): Int {
         if(user == null) {
             return 0
         }else{
-            return userRepository.countCommentsByUser(user!!.userId)
+            //return userRepository.countCommentsByUser(user!!.userId)
         }
-    }
+    }*/
 
     /**
      * Obtiene el número de logros obtenidos por un usuario específico.
@@ -118,7 +123,8 @@ class ProfileViewModel(
         if(user == null) {
             throw Exception("User no encontrado")
         }else{
-            return achievementRepository.getUserAchievements(user!!.userId)
+            //return achievementRepository.getUserAchievements(user!!.userId)
+            return null
         }
     }
 
