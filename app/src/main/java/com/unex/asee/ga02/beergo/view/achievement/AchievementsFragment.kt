@@ -85,6 +85,9 @@ class AchievementsFragment : Fragment() {
         viewModel.achievementsUser.observe(viewLifecycleOwner) { achievementsUser ->
             adapter.updateDataUser(achievementsUser.achievements)
         }
+        viewModel.spinner.observe(viewLifecycleOwner){visible->
+            binding.Achievementspinner.visibility = if (visible) View.VISIBLE else View.GONE
+        }
 
     }
 

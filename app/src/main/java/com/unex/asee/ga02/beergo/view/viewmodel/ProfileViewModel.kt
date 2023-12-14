@@ -1,6 +1,8 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -28,6 +30,24 @@ class ProfileViewModel(
         }
     var nivel: Int = 0
     var exp: Int = 0
+
+    val _beerInsert = MutableLiveData<Int>()
+     val beerInsert : LiveData<Int>
+        get() = _beerInsert
+    val _favInsert = MutableLiveData<Int>()
+    val favInsert : LiveData<Int>
+        get() = _favInsert
+    val _comments =MutableLiveData<Int>()
+    val comments: LiveData<Int>
+        get() = _comments
+
+
+
+    init {
+        _beerInsert.value = 0
+        _favInsert.value = 0
+    }
+
 
     /**
      * Elimina el usuario de la base de datos.
@@ -62,15 +82,13 @@ class ProfileViewModel(
      * @param userId El ID del usuario.
      * @return Método countBeersInsertedByUser de userRepository.
      */
-    /*
-    fun countBeersInsertedByUser(): Int {
-        if(user == null) {
-            return 0
-        }else{
-            //return userRepository.countBeersInsertedByUser(user!!.userId)
+
+    fun countBeersInsertedByUser() {
+        userRepository.countBeersInsertedByUser(user!!.userId).observeForever{
+            _beerInsert.value = it
         }
     }
-    */
+
 
 
     /**
@@ -78,28 +96,24 @@ class ProfileViewModel(
      *
      * @return Método countFavouritesByUser de userRepository.
      */
-    /*
-    fun countFavouritesByUser(): Int {
-        if(user == null) {
-            return 0
-        }else{
-            //return userRepository.countFavouritesByUser(user!!.userId)
+
+    fun countFavouritesByUser() {
+        userRepository.countFavouritesByUser(user!!.userId).observeForever{
+            _favInsert.value = it
         }
     }
-*/
+
     /**
      * Obtiene el número de comentarios realizados por un usuario específico.
      *
      * @return Método countCommentsByUser de userRepository.
      */
-    /*
-    fun countCommentsByUser(): Int {
-        if(user == null) {
-            return 0
-        }else{
-            //return userRepository.countCommentsByUser(user!!.userId)
+
+    fun countCommentsByUser(){
+       userRepository.countCommentsByUser(user!!.userId).observeForever{
+            _comments.value = it
         }
-    }*/
+    }
 
     /**
      * Obtiene el número de logros obtenidos por un usuario específico.

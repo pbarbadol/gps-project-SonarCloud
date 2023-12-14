@@ -88,87 +88,87 @@ class CheckViewModel(
      * Verifica y otorga el logro "Eclectic Taste" si el usuario ha añadido al menos 1 cerveza a favoritos.
      */
     fun checkEclecticTasteAchievement() {
-            userRepository.countFavouritesByUser(user!!.userId).observeForever { count ->
-                if (count != null && count > 0) {
-                    insertAchievementAndShowToast(1L)
-                }
+        userRepository.countFavouritesByUser(user!!.userId).observeForever { count ->
+            if (count != null && count > 0) {
+                insertAchievementAndShowToast(1L)
             }
         }
+    }
 
 
         /**
          * Verifica y otorga el logro "Aromatic Words" si el usuario ha añadido al menos 1 comentario a una cerveza.
          */
-        fun checkAromaticWordsAchievement() {
-                userRepository.countCommentsByUser(user!!.userId).observeForever { numComments ->
-                    Log.d("Observation", "CountComment: $numComments")
-                    if (numComments != null && numComments >0) {
-                        Log.d("Observation", "CountComment INSERTADO: $numComments")
-                        insertAchievementAndShowToast(2L)
-                    }
-                }
-        }
-
-        /**
-         * Verifica y otorga el logro "Global Flavor Explorer" si el usuario ha añadido al menos 3 cervezas a favoritos.
-         */
-        fun checkGlobalFlavorExplorerAchievement() {
-            userRepository.countFavouritesByUser(user!!.userId).observeForever { count ->
-                if (count != null && count >= 3) {
-                    insertAchievementAndShowToast(3L)
-                }
-            }
-
-
-        }
-
-        /**
-         * Verifica y otorga el logro "Diverse Styles" si el usuario tiene al menos 1 cerveza con un grado de alcohol mayor a 10.
-         */
-        fun checkDiverseStylesAchievement() {
-            userRepository.getUserBeers(user!!.userId).observeForever { beers ->
-                if (beers != null && beers.isNotEmpty() && beers.any { it.abv > 10.0 }) {
-                    insertAchievementAndShowToast(4L)
-                }
-            }
-        }
-
-
-        /**
-         * Verifica y otorga el logro "Beer Rhythm" si el usuario ha añadido al menos 3 cervezas a su colección.
-         */
-        fun checkBeerRhythmAchievement() {
-            userRepository.countBeersInsertedByUser(user!!.userId).observeForever { count ->
-                Log.d("Observation", "Count: $count")
-                if (count != null && count >= 3) {
-                    insertAchievementAndShowToast(5L)
-                }
-            }
-        }
-
-        /**
-         * Verifica y otorga el logro "Collection Master" si el usuario ha añadido al menos 5 comentarios.
-         */
-        fun checkCollectionMasterAchievement() {
+    fun checkAromaticWordsAchievement() {
             userRepository.countCommentsByUser(user!!.userId).observeForever { numComments ->
-                if (numComments != null && numComments >= 5) {
-                    insertAchievementAndShowToast(6L)
+                Log.d("Observation", "CountComment: $numComments")
+                if (numComments != null && numComments >0) {
+                    Log.d("Observation", "CountComment INSERTADO: $numComments")
+                    insertAchievementAndShowToast(2L)
                 }
+            }
+    }
+
+    /**
+     * Verifica y otorga el logro "Global Flavor Explorer" si el usuario ha añadido al menos 3 cervezas a favoritos.
+     */
+    fun checkGlobalFlavorExplorerAchievement() {
+        userRepository.countFavouritesByUser(user!!.userId).observeForever { count ->
+            if (count != null && count >= 3) {
+                insertAchievementAndShowToast(3L)
             }
         }
 
 
-        /**
-         * Verifica y otorga el logro "Beer Party King" si el usuario ha añadido al menos 7 cervezas a su colección.
-         */
-        fun checkBeerPartyKingAchievement() {
-            userRepository.countBeersInsertedByUser(user!!.userId).observeForever { count ->
-                Log.d("Observation", "Count: $count")
-                if (count != null && count >= 7) {
-                    insertAchievementAndShowToast(7L)
-                }
+    }
+
+    /**
+     * Verifica y otorga el logro "Diverse Styles" si el usuario tiene al menos 1 cerveza con un grado de alcohol mayor a 10.
+     */
+    fun checkDiverseStylesAchievement() {
+        userRepository.getUserBeers(user!!.userId).observeForever { beers ->
+            if (beers != null && beers.isNotEmpty() && beers.any { it.abv > 10.0 }) {
+                insertAchievementAndShowToast(4L)
             }
         }
+    }
+
+
+    /**
+     * Verifica y otorga el logro "Beer Rhythm" si el usuario ha añadido al menos 3 cervezas a su colección.
+     */
+    fun checkBeerRhythmAchievement() {
+        userRepository.countBeersInsertedByUser(user!!.userId).observeForever { count ->
+            Log.d("Observation", "Count: $count")
+            if (count != null && count >= 3) {
+                insertAchievementAndShowToast(5L)
+            }
+        }
+    }
+
+    /**
+     * Verifica y otorga el logro "Collection Master" si el usuario ha añadido al menos 5 comentarios.
+     */
+    fun checkCollectionMasterAchievement() {
+        userRepository.countCommentsByUser(user!!.userId).observeForever { numComments ->
+            if (numComments != null && numComments >= 5) {
+                insertAchievementAndShowToast(6L)
+            }
+        }
+    }
+
+
+    /**
+     * Verifica y otorga el logro "Beer Party King" si el usuario ha añadido al menos 7 cervezas a su colección.
+     */
+    fun checkBeerPartyKingAchievement() {
+        userRepository.countBeersInsertedByUser(user!!.userId).observeForever { count ->
+            Log.d("Observation", "Count: $count")
+            if (count != null && count >= 7) {
+                insertAchievementAndShowToast(7L)
+            }
+        }
+    }
     fun insertAchievementAndShowToast(achievementIndex: Long) {
         // Se obtiene la lista de logros actual
         bool.value = false
