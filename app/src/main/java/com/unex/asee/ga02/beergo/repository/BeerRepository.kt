@@ -94,7 +94,7 @@ class BeerRepository(private val beerDao: BeerDao, private val networkService : 
     private suspend fun fetchBeers()
     {
         val beers = fetchBeersFromApi()
-        //beerDao.insertAll(beers)
+        beerDao.insertAll(beers)
     }
 
     /**
