@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -19,12 +20,15 @@ import com.unex.asee.ga02.beergo.databinding.FragmentAddcommentBinding
 import com.unex.asee.ga02.beergo.model.Comment
 //import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.AddCommentViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.CheckViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
 class AddCommentFragment : Fragment() {
     private val viewModel: AddCommentViewModel by viewModels { AddCommentViewModel.Factory }
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModelCheckAchievement : CheckViewModel by viewModels{ CheckViewModel.Factory }
+
     private var _binding: FragmentAddcommentBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -39,17 +43,18 @@ class AddCommentFragment : Fragment() {
         //Observamos el usuario de HomeViewModel y se lo asignamos a nuestro viewModel
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             viewModel.user = user
+            viewModelCheckAchievement.user = user
         }
-
         homeViewModel.beer.observe(viewLifecycleOwner) { beer ->
             viewModel.beer = beer
         }
-        //Si el usuario pulsa en aceptar, se escribe el comentario en la base de datos y volvemos a la pantalla anterior
         binding.btAccept.setOnClickListener {
             viewModel.writeComment(view.findViewById<EditText>(R.id.editTextText).text.toString()) //toTrim() ¿?
+            viewModelCheckAchievement.checkAchievementsComment()
             findNavController().popBackStack()
-        }
-        //Si el usuario pulsa en cancelar, volvemos a la pantalla anterior
+
+            }
+
         binding.btCancel.setOnClickListener {
             findNavController().popBackStack()
         }

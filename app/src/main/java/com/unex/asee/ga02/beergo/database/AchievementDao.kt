@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -22,7 +23,7 @@ interface AchievementDao {
      * @return Lista de [Achievement].
      */
     @Query("SELECT * FROM Achievement")
-    suspend fun getAll(): List<Achievement>
+    fun getAll(): LiveData<List<Achievement>>
 
     /**
      * Obtiene un logro por su ID.
@@ -39,7 +40,7 @@ interface AchievementDao {
      * @param achievement El logro a insertar o reemplazar.
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(achievement: Achievement)
+    fun insert(achievement: Achievement)
 
     /**
      * Elimina un logro.
@@ -54,7 +55,7 @@ interface AchievementDao {
      * @param crossRef La relación a insertar.
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertUserAchievement(crossRef: UserAchievementCrossRef)
+    fun insertUserAchievement(crossRef: UserAchievementCrossRef)
 
     /**
      * Inserta un logro y lo relaciona con un usuario en una transacción.
@@ -63,7 +64,7 @@ interface AchievementDao {
      * @param userId El ID del usuario.
      */
     @Transaction
-    suspend fun insertAndRelate(achievement: Achievement, userId: Long) {
+    fun insertAndRelate(achievement: Achievement, userId: Long) {
         // Inserta el logro
         insert(achievement)
         // Inserta la relación entre usuario y logro

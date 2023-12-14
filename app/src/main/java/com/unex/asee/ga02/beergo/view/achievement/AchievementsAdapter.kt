@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.databinding.FragmentListAchievementBinding
 import com.unex.asee.ga02.beergo.model.Achievement
+import com.unex.asee.ga02.beergo.model.Comment
 
 /**
  * Adaptador para la lista de logros.
@@ -16,8 +17,8 @@ import com.unex.asee.ga02.beergo.model.Achievement
  * @property onLongClick Función de clic largo.
  */
 class AchievementsAdapter(
-    private val achievements: List<Achievement>,
-    private val userAchievements: List<Achievement>,
+    private var achievements: List<Achievement>,
+    private var userAchievements: List<Achievement>,
     private val onClick: (Achievement) -> Unit,
     private val onLongClick: (Achievement) -> Unit
 ) : RecyclerView.Adapter<AchievementsAdapter.ShowAchievementHolder>() {
@@ -90,6 +91,16 @@ class AchievementsAdapter(
             }
         }
     }
+
+    fun updateData(achievement:  List<Achievement>) {
+        achievements = achievement
+        notifyDataSetChanged()
+    }
+    fun updateDataUser(achievement:  List<Achievement>) {
+        userAchievements = achievement
+        notifyDataSetChanged()
+    }
+
 
     /**
      * Crea un nuevo ViewHolder.

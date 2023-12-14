@@ -5,22 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.google.android.material.snackbar.Snackbar
 import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.R
-import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.BeerRepository
-import com.unex.asee.ga02.beergo.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class InsertBeerViewModel(
-    private var userRepository: UserRepository,
     private var beerRepository: BeerRepository,
     private val application: BeerGoApplication
 ): ViewModel() {
@@ -161,7 +155,6 @@ class InsertBeerViewModel(
                 val application =
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return InsertBeerViewModel(
-                    (application as BeerGoApplication).appContainer.userRepository,
                     (application as BeerGoApplication).appContainer.beerRepository,
                     (application)
                 ) as T
