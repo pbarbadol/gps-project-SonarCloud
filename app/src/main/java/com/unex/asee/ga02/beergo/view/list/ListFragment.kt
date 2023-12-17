@@ -58,26 +58,7 @@ class ListFragment : Fragment() {
         }
     }
 
-
-
-//    private suspend fun mostrarCervezas() {
-//        try {
-//            //Obtener cervezas de la bd
-//            cachedBeers = db.beerDao().getAll()
-//
-//            //Actualiza la lista de cervezas
-//            adapter.updateData(cachedBeers)
-//            //Ordena la lista de cervezas por abv
-//            adapter.sortByAbv()
-//
-//        } catch (error: APIError) {
-//            Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-//        } finally {
-//            withContext(Dispatchers.Main) {
-//                binding.spinner.visibility = View.GONE
-//            }
-//        }
-//    }
+    
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -188,7 +169,7 @@ class ListFragment : Fragment() {
             Log.d("BeerViewModel", "Cerveza seleccionada: ${homeViewModel.beerInSession}")
 
 //            val cervezaSeleccionada = viewmodel.getSelectedBeer()
-            History.saveHistory(History(beer = it, date = Date())) //TODO mirar si esto se hace así o no
+            History.saveHistory(History(beer = it, date = Date()))
             if (homeViewModel.isNull()) {
                 // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
                 homeViewModel.beerInSession = it

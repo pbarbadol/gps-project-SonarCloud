@@ -84,7 +84,7 @@ class ShowBeerFragment : Fragment() {
         }
 
         viewModel.favBeers.observe(viewLifecycleOwner) { favBeers ->
-            Log.d("ObservationFavorite", "favBeers: $favBeers")//TODO: PREGUNTAR ROBERTO
+            Log.d("ObservationFavorite", "favBeers: $favBeers")
         }
         viewModel.isFavourite.observe(viewLifecycleOwner) { isFavourite ->
             binding.favSwitch.isChecked = isFavourite

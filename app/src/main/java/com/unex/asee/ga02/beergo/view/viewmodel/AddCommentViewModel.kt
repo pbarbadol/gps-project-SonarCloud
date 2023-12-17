@@ -17,7 +17,7 @@ class AddCommentViewModel(
 
 ) : ViewModel() {
     var user: User? = null
-    var beer: Beer? = null //TODO: hay que asignarle un valor en algun momento
+    var beer: Beer? = null
 
 
     /**

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
+import androidx.room.Query
 import com.unex.asee.ga02.beergo.database.AchievementDao
 import com.unex.asee.ga02.beergo.database.UserDao
 import com.unex.asee.ga02.beergo.model.Achievement
@@ -48,6 +49,7 @@ class AchievementRepository (private val userDao: UserDao, private val achieveme
             achievementDao.insertAndRelate(achievement, userId)
         }
     }
+
     /**
      * Verifica si un usuario ha alcanzado un logro específico.
      *

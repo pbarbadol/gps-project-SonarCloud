@@ -1,6 +1,6 @@
 package com.unex.asee.ga02.beergo.data
-import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.model.Achievement
+
 val beerAchievements = listOf(
     Achievement(1, "Primer Sorbo", "Añade la primera cerveza a tu colección", 4, "Barril de madera"),
     Achievement(2, "Gusto Eclectico", "Añade 1 cerveza a favoritos",  6, "Barril de madera"),

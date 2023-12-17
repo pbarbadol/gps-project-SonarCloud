@@ -19,12 +19,12 @@ class ProfileViewModel(
     private var userRepository: UserRepository,
     private var achievementRepository: AchievementRepository
 ): ViewModel() {
-    private var userAchievements: List<Achievement> = emptyList()
+    val achievementsUser = achievementRepository.listAchievementUser
 
     var user: User? = null
         set(value) {
             field = value
-            getUserAchievements()
+            achievementRepository.setUserid(value!!.userId)
             updateLevelAndExp()
             Log.d("Observation", "User: $user asignado")
         }
@@ -68,7 +68,7 @@ class ProfileViewModel(
     fun cerrarSesion(block: suspend () -> Unit) : Job {
         return viewModelScope.launch {
             if (user != null) {
-                //userRepository.setUser(null)//TODO: NO VA
+                //userRepository.setUser(null)
                 block()
             } else
                 throw Exception("User no encontrado")
@@ -133,23 +133,24 @@ class ProfileViewModel(
      *
      * @return Método getUserAchievements de achievementRepository.
      */
-    private fun getUserAchievements(): List<Achievement>? {
-        if(user == null) {
-            throw Exception("User no encontrado")
-        }else{
-            //return achievementRepository.getUserAchievements(user!!.userId)
-            return null
-        }
-    }
+
 
     private fun updateLevelAndExp() {
-        for (achievement in userAchievements) {
-            exp += achievement.expPoint
+        achievementsUser.observeForever { userWithAchievements ->
+            userWithAchievements?.let {
+
+                for (achievement in it.achievements) {
+                    exp += achievement.expPoint
+                }
+
+                while (exp >= 100) {
+                    nivel++
+                    exp -= 100
+                }
+
+            }
         }
-        while (exp >= 100) {
-            nivel++
-            exp -= 100
-        }
+
 
     }
     companion object {

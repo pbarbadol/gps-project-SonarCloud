@@ -9,7 +9,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.UserAchievementCrossRef
-import com.unex.asee.ga02.beergo.model.UserWithAchievements
 
 /**
  * Data Access Object (DAO) para la entidad Achievement.

@@ -1,9 +1,7 @@
 package com.unex.asee.ga02.beergo.model
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.Serializable
 
 /**
  * Representa un logro en la aplicación BeerGo.
@@ -14,7 +12,7 @@ import java.io.Serializable
  * @property expPoint Puntos de experiencia asociados al logro.
  * @property category La categoría del logro.
  */
-@Entity //(tableName = "achievements") //Esto no es necesario, pero está bien saberlo
+@Entity
 data class Achievement(
     @PrimaryKey
     var achievementId: Long,

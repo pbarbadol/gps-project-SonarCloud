@@ -75,7 +75,7 @@ class CommentsFragment : Fragment() {
         viewModel.beerComment.observe(viewLifecycleOwner) { comments ->
                 adapter.updateData(comments)
         }
-        //TODO: falta spinner
+
         binding.addCommentButton.setOnClickListener {
             findNavController().navigate(CommentsFragmentDirections.actionCommentsFragmentToAddCommentFragment())
         }
@@ -88,7 +88,7 @@ class CommentsFragment : Fragment() {
 
     private fun setUpRecyclerView() {
         adapter = CommentsAdapter(comments = emptyList(), onClick = {}, onLongClick = {
-            viewModel.deleteComment(it) //TODO: No sabemos si se debe pasar si o si el it
+            viewModel.deleteComment(it)
         })
         with(binding) {
             rvCommentsList.layoutManager = GridLayoutManager(context, 1)
