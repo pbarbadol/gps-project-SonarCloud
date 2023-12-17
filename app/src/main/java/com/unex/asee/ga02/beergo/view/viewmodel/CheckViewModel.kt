@@ -23,8 +23,7 @@ class CheckViewModel(
     private var userRepository: UserRepository,
     private var achievementRepository: AchievementRepository
 ): ViewModel() {
-    val listAchievement = mutableListOf<Achievement>()
-    var bool = MutableLiveData<Boolean>(false)
+    var bool = MutableLiveData(false)
     var user: User? = null
         set(value) {
             field = value
@@ -34,28 +33,13 @@ class CheckViewModel(
     val toast: LiveData<String?>
         get() = _toast
 
-    private val _toast2 = MutableLiveData<String?>()
-    val toast2: LiveData<String?>
-        get() = _toast2
+
+
     fun onToastShown(){
         _toast.value = null
     }
-    fun onToastShown2(){
-        _toast2.value = null
-    }
-
-    /*
 
 
-    private val _userAchivements = MutableLiveData<List<Achievement>>(null)
-    val user: LiveData<List<Achievement>>
-        get() = _userAchivements
-    var userAchievemntInSession: List<Achievement>? = null
-        set(value) {
-            field = value
-            _userAchivements.value = value!!
-            Log.d("Observation", "UserInSession updated: $value")
-        }*/
     fun checkAchievementsInsert(){
         checkFirstSipAchievement()
         checkDiverseStylesAchievement()
@@ -173,14 +157,8 @@ class CheckViewModel(
         // Se obtiene la lista de logros actual
         bool.value = false
         Log.d("Observation", "Se insertará")
+        if (!CheckViewModel.listAchievement.contains(beerAchievements[achievementIndex.toInt()]) ) {
 
-
-        if (!listAchievement.contains(beerAchievements[achievementIndex.toInt()]) ) {
-            if (achievementIndex == 2L || achievementIndex == 6L) {
-                _toast2.value =
-                    "¡Has desbloqueado el logro ${beerAchievements[achievementIndex.toInt()].title}!"
-            }
-            Log.d("Observation", "Se insertará dentro if")
             _toast.value =
                 "¡Has desbloqueado el logro ${beerAchievements[achievementIndex.toInt()].title}!"
 
@@ -189,7 +167,7 @@ class CheckViewModel(
                 achievementRepository.insertAndRelate(achievement, user!!.userId)
             }
 
-            listAchievement.add(beerAchievements[achievementIndex.toInt()])
+            CheckViewModel.listAchievement.add(beerAchievements[achievementIndex.toInt()])
 
 
             bool.value = true
@@ -199,6 +177,11 @@ class CheckViewModel(
 
 
     companion object {
+
+            var listAchievement = mutableListOf<Achievement>()
+                private set
+
+
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(

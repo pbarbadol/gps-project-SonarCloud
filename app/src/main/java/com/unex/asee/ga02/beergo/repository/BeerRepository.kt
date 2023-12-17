@@ -46,14 +46,6 @@ class BeerRepository(private val beerDao: BeerDao, private val networkService : 
     }
 
     /**
-     * Obtiene la cerveza seleccionada actualmente.
-     * @return La cerveza seleccionada. Puede ser nulo si no hay una cerveza seleccionada.
-     */
-    fun getSelectedBeer(): Beer? {
-        return selectedBeer.value
-    }
-
-    /**
      *  Añade una cerveza a la base de datos local.
      */
     suspend fun addBeer(beer: Beer) {
@@ -95,7 +87,7 @@ class BeerRepository(private val beerDao: BeerDao, private val networkService : 
     private suspend fun fetchBeers()
     {
         val beers = fetchBeersFromApi()
-        //beerDao.insertAll(beers)
+        beerDao.insertAll(beers)
     }
 
     /**

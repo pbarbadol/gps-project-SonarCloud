@@ -14,7 +14,6 @@ import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 
 class HistoryFragment : Fragment() {
     private var _binding: FragmentHistoryBinding? = null
-    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private val binding get() = _binding!!
     private lateinit var adapter: HistoryAdapter

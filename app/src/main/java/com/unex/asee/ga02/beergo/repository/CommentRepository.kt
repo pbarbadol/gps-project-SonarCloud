@@ -41,16 +41,6 @@ class CommentRepository (private val commentDao: CommentDao) {
         commentDao.delete(comment)
     }
 
-    /**
-     * Método para cargar comentarios de la base de datos local, intentando actualizar la caché si es necesario.
-     *
-     * @param beerId Identificador de la cerveza asociada a los comentarios.
-     * @return Lista de objetos Comment obtenidos desde la base de datos local.
-     */
-    fun loadComments(beerId: Long): LiveData<List<Comment>> {
-        return commentDao.findByBeer(beerId)
-    }
-
     // Compañero del objeto Repository que gestiona la creación de instancias.
     companion object {
         // Tiempo mínimo (en milisegundos) que debe pasar antes de realizar una nueva actualización.

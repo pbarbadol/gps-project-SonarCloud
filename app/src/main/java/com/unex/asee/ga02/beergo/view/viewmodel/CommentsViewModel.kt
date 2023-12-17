@@ -10,12 +10,11 @@ import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.model.User
-import com.unex.asee.ga02.beergo.repository.BeerRepository
 import com.unex.asee.ga02.beergo.repository.CommentRepository
 import kotlinx.coroutines.launch
 
 class CommentsViewModel(
-    private val beerRepository: BeerRepository, private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository
 ) : ViewModel() {
 
     var user: User? = null
@@ -68,7 +67,6 @@ class CommentsViewModel(
                 val application =
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return CommentsViewModel(
-                    (application as BeerGoApplication).appContainer.beerRepository,
                     (application as BeerGoApplication).appContainer.commentRepository,
                 ) as T
             }

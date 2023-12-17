@@ -5,22 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
-import com.unex.asee.ga02.beergo.repository.AchievementRepository
-import com.unex.asee.ga02.beergo.repository.BeerRepository
-import com.unex.asee.ga02.beergo.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class HomeViewModel(
-    private val achievementRepository: AchievementRepository
-): ViewModel() {
+class HomeViewModel : ViewModel() {
 
     // Propiedad pública solo de lectura para acceder al LiveData del usuario.
     private val _user = MutableLiveData<User>(null)
@@ -51,16 +41,10 @@ class HomeViewModel(
             _beer.value = value!!
         }
 
-    fun setBeerNull() {
-        _beer.value = null
-    }
+
 
     fun isNull(): Boolean {
         return (beerInSession == null)
-    }
-
-    fun setToast(){
-        _toast.value = "Logro conseguido"
     }
 
     companion object {
@@ -73,9 +57,7 @@ class HomeViewModel(
 
                 val application =
                     checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
-                return HomeViewModel(
-                    (application as BeerGoApplication).appContainer.achievmentRepository
-                ) as T
+                return HomeViewModel() as T
             }
         }
     }
