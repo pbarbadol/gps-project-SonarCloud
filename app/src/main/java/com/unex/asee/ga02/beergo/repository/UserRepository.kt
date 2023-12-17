@@ -1,8 +1,10 @@
 package com.unex.asee.ga02.beergo.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.unex.asee.ga02.beergo.database.UserDao
+import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
 
@@ -15,23 +17,7 @@ import com.unex.asee.ga02.beergo.utils.CredentialCheck
  *
  * @property userDao Instancia de UserDao para acceder a la base de datos local de usuarios.
  */
-class UserRepository private constructor(private val userDao: UserDao) { //TODO: Sigue el patron singlenton implementado
-
-    private val userLiveData = MutableLiveData<User>()
-
-    // Propiedad pública solo de lectura para acceder al LiveData del usuario.
-    val user: LiveData<User>
-        get() = userLiveData
-
-    // Método para cambiar el valor del LiveData del usuario.
-    fun setUser(user: User?) {
-        userLiveData.value = user!!
-    }
-
-    // Función para obtener el usuario.
-    fun getCurrentUser(): User {
-        return userLiveData.value!!
-    }
+class UserRepository (private val userDao: UserDao) {
 
     /**
      * Intenta autenticar a un usuario utilizando el nombre de usuario y la contraseña proporcionados.
@@ -87,38 +73,32 @@ class UserRepository private constructor(private val userDao: UserDao) { //TODO:
         userDao.delete(user)
     }
 
-    suspend fun countBeersInsertedByUser(userId: Long): Int {
+    fun countBeersInsertedByUser(userId: Long): LiveData<Int> {
         return userDao.countBeersInsertedByUser(userId)
+
     }
 
-    suspend fun countFavouritesByUser(userId: Long): Int {
-        return userDao.countUserFavouriteBeers(userId)
+    fun countFavouritesByUser(userId: Long): LiveData<Int> {
+
+            return userDao.countUserFavouriteBeers(userId)
+
+
     }
 
-    suspend fun countCommentsByUser(userId: Long): Int {
-        return userDao.countCommentsByUser(userId)
+    fun countCommentsByUser(userId: Long): LiveData<Int> {
+        Log.d("Observation", "CountCommentRer: ${userDao.countCommentsByUser(userId).value}")
+            return userDao.countCommentsByUser(userId)
     }
 
-    suspend fun countUserAchievements(userId: Long): Int {
-        return userDao.countUserAchievements(userId)
-    }
-
-    companion object {
-        private var INSTANCE: UserRepository? = null
-
-        /**
-         * Obtiene una instancia única del UserRepository.
-         *
-         * @param userDao Instancia de UserDao para acceder a la base de datos local de usuarios.
-         * @return Instancia única del UserRepository.
-         */
-        fun getInstance(userDao: UserDao): UserRepository {
-            if (INSTANCE == null) {
-                synchronized(UserRepository::class) {
-                    INSTANCE = UserRepository(userDao)
-                }
-            }
-            return INSTANCE!!
+    fun countUserAchievements(userId: Long): Int {
+        if(userDao.countUserAchievements(userId) == null) {
+            return 0
+        }else{
+            return userDao.countUserAchievements(userId)
         }
+    }
+
+    fun getUserBeers(userId: Long): LiveData<List<Beer>> {
+        return userDao.getBeersByUserId(userId)
     }
 }

@@ -13,8 +13,8 @@ import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
 import com.unex.asee.ga02.beergo.model.Comment
 import com.unex.asee.ga02.beergo.model.UserAchievementCrossRef
 import com.unex.asee.ga02.beergo.model.UserBeerCrossRef
-import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.DatabaseObserver
-import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.DatabaseSubject
+//import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.DatabaseObserver
+//import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.DatabaseSubject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
     version = 2
 ) //La base de datos se encuentra en versión 2 debido a que se ha hecho una actualización de los atributos de la clase Beer
 
-abstract class BeerGoDatabase : RoomDatabase(), DatabaseSubject {
+abstract class BeerGoDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun achievementDao(): AchievementDao
     abstract fun beerDao(): BeerDao
@@ -49,19 +49,19 @@ abstract class BeerGoDatabase : RoomDatabase(), DatabaseSubject {
             INSTANCE = null
         }
     }
-    private val databaseObservers = mutableMapOf<String, MutableList<DatabaseObserver>>()
-    override fun addDatabaseObserver(tableName: String, observer: DatabaseObserver) {
-        val observers = databaseObservers.getOrPut(tableName) { mutableListOf() }
-        observers.add(observer)
-    }
-    override fun removeDatabaseObserver(tableName: String, observer: DatabaseObserver) {
-        val observers = databaseObservers[tableName]
-        observers?.remove(observer)
-    }
-    override fun notifyDatabaseObservers(tableName: String) {
-        val observers = databaseObservers[tableName]
-        observers?.forEach { observer -> observer.onTableChanged(tableName) }
-    }
+//    private val databaseObservers = mutableMapOf<String, MutableList<DatabaseObserver>>()
+//    override fun addDatabaseObserver(tableName: String, observer: DatabaseObserver) {
+//        val observers = databaseObservers.getOrPut(tableName) { mutableListOf() }
+//        observers.add(observer)
+//    }
+//    override fun removeDatabaseObserver(tableName: String, observer: DatabaseObserver) {
+//        val observers = databaseObservers[tableName]
+//        observers?.remove(observer)
+//    }
+//    override fun notifyDatabaseObservers(tableName: String) {
+//        val observers = databaseObservers[tableName]
+//        observers?.forEach { observer -> observer.onTableChanged(tableName) }
+//    }
     // Clase interna para realizar la precarga de datos
     private class BeerGoCallback(private val context: Context) : RoomDatabase.Callback()  {
 

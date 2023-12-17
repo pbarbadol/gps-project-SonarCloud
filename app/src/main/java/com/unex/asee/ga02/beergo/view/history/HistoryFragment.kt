@@ -6,12 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.unex.asee.ga02.beergo.databinding.FragmentHistoryBinding
 import com.unex.asee.ga02.beergo.view.history.HistoryAdapter
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 
 class HistoryFragment : Fragment() {
     private var _binding: FragmentHistoryBinding? = null
+    private val homeViewModel: HomeViewModel by activityViewModels()
+
     private val binding get() = _binding!!
     private lateinit var adapter: HistoryAdapter
     override fun onCreate(savedInstanceState: Bundle?) {

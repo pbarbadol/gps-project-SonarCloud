@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.unex.asee.ga02.beergo.databinding.FragmentAchievementsBinding
 import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.view.viewmodel.AchievementsViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,19 +25,15 @@ import kotlinx.coroutines.withContext
 class AchievementsFragment : Fragment() {
 
     private val viewModel: AchievementsViewModel by viewModels { AchievementsViewModel.Factory }
+    private val homeViewModel: HomeViewModel by activityViewModels()
+
     // View Binding
     private var _binding: FragmentAchievementsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: AchievementsAdapter
-    private var achievements: List<Achievement> = emptyList()
-    private var userAchievements: List<Achievement> = emptyList()
-    private lateinit var currentUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Obtener el usuario actual
-        currentUser = viewModel.getCurrentUser()!!
     }
 
     override fun onCreateView(
@@ -46,25 +44,20 @@ class AchievementsFragment : Fragment() {
         return _binding?.root
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            viewModel.user = user
+        }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            // Muestra el ProgressBar
-            binding.loadingProgressBar.visibility = View.VISIBLE
-            consultaLogros()
 
-            withContext(Dispatchers.Main) {
                 // Ocultar el ProgressBar
-                binding.loadingProgressBar.visibility = View.GONE
+                //binding.loadingProgressBar.visibility = View.GONE
 
                 // Crear y configurar el adaptador
-                adapter = AchievementsAdapter(achievements = achievements,
-                    userAchievements = userAchievements,
+                adapter = AchievementsAdapter(achievements = emptyList(),
+                    userAchievements = emptyList(),
                     onClick = { achievement ->
                         // Manejar clic en el logro
                         Toast.makeText(
@@ -84,8 +77,18 @@ class AchievementsFragment : Fragment() {
                         androidx.recyclerview.widget.LinearLayoutManager(context)
                     rvAchievementList.adapter = adapter
                 }
-            }
+
+
+        viewModel.achievements.observe(viewLifecycleOwner) { achievements ->
+            adapter.updateData(achievements)
         }
+        viewModel.achievementsUser.observe(viewLifecycleOwner) { achievementsUser ->
+            adapter.updateDataUser(achievementsUser.achievements)
+        }
+        viewModel.spinner.observe(viewLifecycleOwner){visible->
+            binding.Achievementspinner.visibility = if (visible) View.VISIBLE else View.GONE
+        }
+
     }
 
     override fun onDestroyView() {
@@ -96,13 +99,6 @@ class AchievementsFragment : Fragment() {
     /**
      * Realiza una consulta de logros en la base de datos.
      */
-    private suspend fun consultaLogros() {
-        // Obtener la lista de logros
-        achievements = viewModel.getAllAchievements()
 
-        // Obtener la lista de logros del usuario
-        val userWithAchievements = viewModel.getUserAchievements(currentUser.userId)
-        userAchievements = userWithAchievements.achievements
-    }
 
 }

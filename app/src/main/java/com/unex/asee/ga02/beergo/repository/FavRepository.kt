@@ -1,36 +1,27 @@
 package com.unex.asee.ga02.beergo.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
 import com.unex.asee.ga02.beergo.database.UserDao
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
 
-class FavRepository private constructor(private val userDao: UserDao) { //TODO: Sigue el patron singlenton implementado
+class FavRepository (private val userDao: UserDao) {
+    private val userFilter = MutableLiveData<Long>()
+    val favBeers: LiveData<List<Beer>> = userFilter.switchMap{ userId -> userDao.getFavouritesBeersByUserId(userId) }
+
     suspend fun addFav(userId: Long, beerId: Long) {
         userDao.insertAndRelateUserFavouriteBeer(userId, beerId)
     }
-    suspend fun loadFavs(userId: Long): List<Beer> {
+    fun setUserid(userid: Long) {
+        userFilter.value = userid
+    }
+    /*
+    fun loadFavs(userId: Long): LiveData<List<Beer>> {
         return userDao.getFavouritesBeersByUserId(userId)
-    }
+    }*/
     suspend fun deleteFav(userId: Long, beerId: Long) {
-        val uFb = UserFavouriteBeerCrossRef(userId, beerId)
-        userDao.deleteUserFavouriteBeer(uFb)
-    }
-    suspend fun isFavorite(userId: Long, beerId: Long): Boolean {
-        val beers = userDao.getFavouritesBeersByUserId(userId)
-        var isFav = false
-        beers.forEach {
-            if (it.beerId == beerId) {
-                isFav = true
-            }
-        }
-        return isFav
-    }
-    companion object {
-        private var INSTANCE: FavRepository? = null
-        fun getInstance(userDao: UserDao): FavRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: FavRepository(userDao)
-            }
-        }
+        userDao.deleteUserFavouriteBeer(UserFavouriteBeerCrossRef(userId, beerId))
     }
 }

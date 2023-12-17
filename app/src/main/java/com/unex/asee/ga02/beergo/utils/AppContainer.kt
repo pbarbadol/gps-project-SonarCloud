@@ -11,10 +11,11 @@ import com.unex.asee.ga02.beergo.repository.UserRepository
 
 class AppContainer(context: Context?) {
     val db = BeerGoDatabase.getInstance(context!!)
-    val beerRepository = BeerRepository.getInstance(db!!.beerDao(), getNetworkService())
-    val favRepository = FavRepository.getInstance(db!!.userDao())
-    val achievmentRepository = AchievementRepository.getInstance(db!!.userDao(), db!!.achievementDao())
-    val commentRepository = CommentRepository.getInstance(db!!.commentDao())
-    val userRepository = UserRepository.getInstance(db!!.userDao())
+    private val networkService = getNetworkService()
+    val beerRepository = BeerRepository(db!!.beerDao(), networkService)
+    val favRepository = FavRepository(db!!.userDao())
+    val achievmentRepository = AchievementRepository(db!!.userDao(), db.achievementDao())
+    val commentRepository = CommentRepository(db!!.commentDao())
+    val userRepository = UserRepository(db!!.userDao())
 
 }

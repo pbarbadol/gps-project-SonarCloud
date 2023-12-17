@@ -1,12 +1,10 @@
 package com.unex.asee.ga02.beergo.view.viewmodel
 
-import android.view.View
-import android.widget.Toast
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.unex.asee.ga02.beergo.BeerGoApplication
@@ -15,25 +13,34 @@ import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.repository.BeerRepository
 import com.unex.asee.ga02.beergo.repository.FavRepository
-import com.unex.asee.ga02.beergo.repository.UserRepository
+
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class ListViewModel (
     private val favRepository: FavRepository,
-    private val beerRepository: BeerRepository,
-    private val userRepository: UserRepository
+    private val beerRepository: BeerRepository
 ) : ViewModel() {
-    val user: User? = null
-    var beer = beerRepository.beers
+    var user: User? = null
+    var beers: LiveData<List<Beer>>? = beerRepository.getAll()
+    var beersFiltered: List<Beer> = emptyList()
+
+    var beer: Beer? = null
+        set(value) {
+            field=value
+
+        }
+
+    private val _toast = MutableLiveData<String?>()
+    val toast: LiveData<String?>
+        get() = _toast
 
     private val _spinner = MutableLiveData<Boolean>()
     val spinner: LiveData<Boolean>
         get() = _spinner
 
-    private val _toast = MutableLiveData<String?>()
-    val toast: LiveData<String?>
-        get() = _toast
+
+
 
     init {
         refresh()
@@ -46,44 +53,26 @@ class ListViewModel (
     }
 
     /**
-     * Cambia el valor del LiveData de la cerveza seleccionada a null.
-     *
-     * @return Método setSelectedBeer de beerRepository.
-     */
-    fun setNoSelectedBeer(){
-        beerRepository.setSelectedBeer(null)
-    }
-
-    /**
-     * Cambia el valor del LiveData de la cerveza seleccionada.
-     *
-     * @param beer La cerveza que se establecerá como la cerveza seleccionada.
-     * @return Método setSelectedBeer de beerRepository.
-     */
-    fun setSelectedBeer(beer: Beer){
-        beerRepository.setSelectedBeer(beer)
-    }
-
-    /**
-     * Obtiene la cerveza seleccionada actualmente.
-     *
-     * @return Método getSelectedBeer de beerRepository.
-     */
-    fun getSelectedBeer(): Beer? {
-        return beerRepository.getSelectedBeer()
-    }
-
-    /**
      * Añade una cerveza a favoritos
      *
      * @param beer la Cerveza que se añadirá a favoritos.
      */
     fun setFavourite(beer: Beer) {
-        val user = userRepository.getCurrentUser()
         viewModelScope.launch {
             favRepository.addFav(user!!.userId, beer.beerId)
+            _toast.value = "${beer.title} añadida a favoritos"
+
         }
     }
+
+    fun performSearch(query: String){
+        beersFiltered = if (query.isNotBlank()) {
+            beers?.value!!.filter { it.title.contains(query, ignoreCase = true) }
+        } else {
+            beers?.value!!
+        }
+    }
+
 
     private fun launchDataLoad(block: suspend () -> Unit) : Job {
         return viewModelScope.launch {
@@ -99,6 +88,7 @@ class ListViewModel (
     }
 
 
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -112,7 +102,6 @@ class ListViewModel (
                 return ListViewModel(
                     (application as BeerGoApplication).appContainer.favRepository,
                     (application as BeerGoApplication).appContainer.beerRepository,
-                    (application as BeerGoApplication).appContainer.userRepository,
                     ) as T
             }
         }

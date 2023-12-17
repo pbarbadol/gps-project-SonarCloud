@@ -1,37 +1,32 @@
 package com.unex.asee.ga02.beergo.view.favs
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.databinding.FragmentFavsBinding
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.view.viewmodel.FavsViewModel
-import kotlinx.coroutines.launch
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 
 class FavsFragment : Fragment() {
 
     private val viewModel: FavsViewModel by viewModels { FavsViewModel.Factory }
-    private lateinit var listener: OnShowClickListener
-    interface OnShowClickListener {
-        fun onShowClick(beer : Beer)
-    }
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private var _binding: FragmentFavsBinding? = null
     private val binding get() = _binding!!
     private lateinit  var adapter: FavsAdapter
-    private var favBeers = emptyList<Beer>()
 
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    private lateinit var listener: OnShowClickListener
+    interface OnShowClickListener {
+        fun onShowClick(beer : Beer)
     }
 
     override fun onAttach(context: android.content.Context) {
@@ -43,6 +38,7 @@ class FavsFragment : Fragment() {
         }
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,32 +49,37 @@ class FavsFragment : Fragment() {
     }
     override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
         super.onViewCreated(View, savedInstanceState)
-
-        viewModel.setNoSelectedBeer()
         setUpRecyclerView()
-        loadFavourites()
-    }
-    fun setUpUI() {
+
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            Log.d("Observation", "User observed: $user")
+            viewModel.user = user
+        }
+        subscribeUi(adapter)
+
     }
 
+    fun subscribeUi (adapter: FavsAdapter){
+        viewModel.favBeers.observe(viewLifecycleOwner) { favBeers ->
+            adapter.updateData(favBeers)
+        }
+    }
     private fun setUpRecyclerView()  {
-        adapter = FavsAdapter(beers = favBeers, onClick = {
+        Log.d("Observation", "RECYCLER")
+        adapter = FavsAdapter(beers = emptyList(), onClick = {
 
-            val cervezaSeleccionada = viewModel.getSelectedBeer()
-
-            if (cervezaSeleccionada == null) {
-                // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
-                viewModel.setSelectedBeer(it)
-                navigateToShowBeerFragment(it)
-            } else {
-                // Si ya hay una cerveza seleccionada, solo mostrar los detalles
-                navigateToShowBeerFragment(it)
-            }
+            homeViewModel.beerInSession = it
+            navigateToShowBeerFragment()
         },
             onLongClick = {
-                deleteBeer(it)
-                loadFavourites()
-                Toast.makeText(context, "${it.title} eliminada de favoritos", Toast.LENGTH_SHORT).show()
+                viewModel.deleteBeer(it)
+                viewModel.loadFavourites()
+                viewModel.toast.observe(viewLifecycleOwner) { text ->
+                    text?.let {
+                        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                        viewModel.onToastShown()
+                    }
+                }
             }, context = context
         )
         with (binding) {
@@ -88,25 +89,13 @@ class FavsFragment : Fragment() {
         }
         android.util.Log.d("DiscoverFragment", "setUpRecyclerView")
     }
-    private fun loadFavourites(){
-        val user = viewModel.getCurrentUser()
-        lifecycleScope.launch {
-            binding.spinner.visibility = View.VISIBLE
-            favBeers = viewModel.loadFavs(user!!.userId)
-            adapter.updateData(favBeers)
-            binding.spinner.visibility = View.GONE
-        }
+
+
+    //TODO: COMPROBAR CAMBIO
+    private fun navigateToShowBeerFragment() {
+        findNavController().navigate(FavsFragmentDirections.actionFavsFragmentToShowBeerFragment())
     }
-    private fun deleteBeer(beer: Beer) {
-        val user = viewModel.getCurrentUser()
-        lifecycleScope.launch {
-            viewModel.deleteFav(user!!.userId, beer.beerId)
-        }
-    }
-    private fun navigateToShowBeerFragment(beer: Beer) {
-        val action = FavsFragmentDirections.actionFavsFragmentToShowBeerFragment()
-        findNavController().navigate(action)
-    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // avoid memory leaks

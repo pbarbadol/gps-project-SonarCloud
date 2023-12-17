@@ -1,7 +1,16 @@
 package com.unex.asee.ga02.beergo.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import com.unex.asee.ga02.beergo.database.AchievementDao
 import com.unex.asee.ga02.beergo.database.UserDao
+import com.unex.asee.ga02.beergo.model.Achievement
+import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.model.UserWithAchievements
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Repositorio para manejar operaciones relacionadas con logros (Achievements).
@@ -9,14 +18,21 @@ import com.unex.asee.ga02.beergo.database.UserDao
  * @property userDao DAO para la entidad de usuario.
  * @property achievementDao DAO para la entidad de logro (Achievement).
  */
-class AchievementRepository private constructor(private val userDao: UserDao, private val achievementDao: AchievementDao) { //TODO: Sigue el patron singlenton implementado
+class AchievementRepository (private val userDao: UserDao, private val achievementDao: AchievementDao) {
+
+    private val userFilter = MutableLiveData<Long>()
+    val listAchievementUser: LiveData<UserWithAchievements> = userFilter.switchMap{ userId -> userDao.getUserAchievements(userId) }
+
+    fun setUserid(userid: Long) {
+        userFilter.value = userid
+    }
 
     /**
      * Obtiene todos los logros.
      *
      * @return Lista de todos los logros.
      */
-    suspend fun getAllAchievements() = achievementDao.getAll()
+    fun getAllAchievements() = achievementDao.getAll()
 
     /**
      * Obtiene los logros de un usuario específico.
@@ -24,8 +40,14 @@ class AchievementRepository private constructor(private val userDao: UserDao, pr
      * @param userId ID del usuario.
      * @return Logros del usuario.
      */
-    suspend fun getUserAchievements(userId: Long) = userDao.getUserAchievements(userId)
 
+
+
+    suspend fun insertAndRelate(achievement: Achievement, userId: Long) {
+        withContext(Dispatchers.IO){
+            achievementDao.insertAndRelate(achievement, userId)
+        }
+    }
     /**
      * Verifica si un usuario ha alcanzado un logro específico.
      *
@@ -33,34 +55,5 @@ class AchievementRepository private constructor(private val userDao: UserDao, pr
      * @param achievementId ID del logro a verificar.
      * @return `true` si el usuario ha alcanzado el logro, `false` en caso contrario.
      */
-    suspend fun checkAchievement(userId: Long, achievementId: Long): Boolean {
-        val userAchievements = userDao.getUserAchievements(userId).achievements
-        var exist = false
-        userAchievements.forEach {
-            if (it.achievementId == achievementId) {
-                exist = true
-            }
-        }
-        return exist
-    }
 
-    /**
-     * Singleton para obtener una única instancia del repositorio.
-     */
-    companion object {
-        @Volatile
-        private var instance: AchievementRepository? = null
-
-        /**
-         * Obtiene o crea la instancia única del repositorio.
-         *
-         * @param userDao DAO para la entidad de usuario.
-         * @param achievementDao DAO para la entidad de logro (Achievement).
-         * @return Instancia única del repositorio.
-         */
-        fun getInstance(userDao: UserDao, achievementDao: AchievementDao) =
-            instance ?: synchronized(this) {
-                instance ?: AchievementRepository(userDao, achievementDao).also { instance = it }
-            }
-    }
 }

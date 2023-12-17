@@ -8,23 +8,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.R
-import com.unex.asee.ga02.beergo.api.BeerApiInterface
-import com.unex.asee.ga02.beergo.api.getNetworkService
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
 import com.unex.asee.ga02.beergo.model.Beer
-import com.unex.asee.ga02.beergo.model.User
-import com.unex.asee.ga02.beergo.repository.BeerRepository
-import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
+import com.unex.asee.ga02.beergo.view.viewmodel.CheckViewModel
+import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
+//import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.InsertBeerViewModel
-import com.unex.asee.ga02.beergo.view.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -36,28 +34,10 @@ class InsertBeerFragment : Fragment() {
     // View Binding
     private var _binding: FragmentInsertBeerBinding? = null
     private val binding get() = _binding!!
-    private var selectedImageUri: Uri? = null
-    // Database
-    private lateinit var db: BeerGoDatabase
+
     private val viewModel: InsertBeerViewModel by viewModels { InsertBeerViewModel.Factory }
-    private lateinit var currentUser: User
-    private lateinit var challengeObserverForBeerTable : ChallengeAchievementObserver
-
-    //Repositorios
-
-
-    /**
-     * Método llamado cuando se crea la instancia del fragmento.
-     *
-     * @param savedInstanceState Bundle que contiene el estado previamente guardado del fragmento.
-     */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        currentUser = viewModel.getCurrentUser()
-        // Añadir el observador de desafíos para la tabla de cervezas
-        challengeObserverForBeerTable = ChallengeAchievementObserver(viewModel.getCurrentUser(), requireContext(), db)
-        db.addDatabaseObserver("UserBeerCrossRef", challengeObserverForBeerTable)
-    }
+    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModelCheckAchievement : CheckViewModel by viewModels{ CheckViewModel.Factory }
 
     /**
      * Método llamado para crear y devolver la vista asociada con el fragmento.
@@ -73,22 +53,36 @@ class InsertBeerFragment : Fragment() {
         _binding = FragmentInsertBeerBinding.inflate(inflater, container, false)
 
         setupInsertButton()
-
         return binding.root
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val appContainer = (this.activity?.application as BeerGoApplication).appContainer
-        db = appContainer.db!!
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            viewModel.user = user
+            viewModelCheckAchievement.user = user
+        }
+
+        viewModel.toast.observe(viewLifecycleOwner) { text ->
+            text?.let {
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                viewModel.onToastShown()
+            }
+        }
+        viewModelCheckAchievement.toast.observe(viewLifecycleOwner){text->
+            text?.let {
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                viewModelCheckAchievement.onToastShown()
+            }
+        }
+
     }
 
     /**
      * Configura el botón de inserción para manejar la lógica de inserción de cervezas.
      */
     private fun setupInsertButton() {
-
         /*
          * Define la acción del botón de seleccionar imagen
          */
@@ -97,121 +91,24 @@ class InsertBeerFragment : Fragment() {
         }
 
         binding.buttonInsertBeer.setOnClickListener {
-            val title = binding.editTextBeerName.text.toString()
-            val description = binding.editTextBeerDescription.text.toString()
-            val year = binding.editTextYear.text.toString()
-            val abvString = binding.editTextAlcoholPercentage.text.toString()
+            viewModel.procesoInsertar(binding.editTextBeerName.text.toString(),
+                                      binding.editTextBeerDescription.text.toString(),
+                                      binding.editTextYear.text.toString(),
+                                      binding.editTextAlcoholPercentage.text.toString())
 
-            if (areFieldsValid(title, description, year, abvString)) {
-                val abv = abvString.toDoubleOrNull()
+            viewModelCheckAchievement.checkAchievementsInsert()
 
-                if (abv != null) {
-                    val beer: Beer
-                    if (selectedImageUri != null) {
-                        beer = createBeer(title, description, year, abv, selectedImageUri)
-                    } else {
-                        beer = createBeer(title, description, year, abv, null) // Pasa null si no hay imagen seleccionada
-                    }
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        insertarCerveza(beer)
-                        showNotification("Cerveza insertada")
-
-                    }
-                } else {
-                    // Manejar el caso donde el campo de porcentaje de alcohol no es un número válido
-                    handleInvalidAbv()
-                }
-            } else {
-                // Manejar el caso donde los campos no están completos
-                handleIncompleteFields()
-            }
         }
     }
+
 
 
     /*
      * Lanza un Intent para abrir la galería de imágenes para poder seleccionar una imagen
      */
     private fun openGalleryForImage() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, GALLERY_REQUEST_CODE)
-    }
-
-    /**
-     * Verifica si los campos necesarios para la inserción son válidos.
-     *
-     * @param title Nombre de la cerveza.
-     * @param description Descripción de la cerveza.
-     * @param year Año de la cerveza.
-     * @param abvString Porcentaje de alcohol en formato de cadena.
-     * @return `true` si los campos son válidos, `false` de lo contrario.
-     */
-    private fun areFieldsValid(
-        title: String,
-        description: String,
-        year: String,
-        abvString: String
-    ): Boolean {
-        return title.isNotEmpty() && description.isNotEmpty() && year.isNotEmpty() && abvString.isNotEmpty()
-    }
-
-    /**
-     * Maneja el caso donde el campo de porcentaje de alcohol no es un número válido.
-     */
-    private fun handleInvalidAbv() {
-        // Manejar el caso donde el campo de porcentaje de alcohol no es un número válido
-        showNotification("Porcentaje de alcohol no válido. Introduce un número válido.")
-    }
-
-    /**
-     * Maneja el caso donde los campos no están completos.
-     */
-    private fun handleIncompleteFields() {
-        // Manejar el caso donde los campos no están completos
-        showNotification("Completa todos los campos antes de insertar la cerveza.")
-    }
-
-    /**
-     * Crea una instancia de la clase [Beer] con los datos proporcionados.
-     *
-     * @param title Nombre de la cerveza.
-     * @param description Descripción de la cerveza.
-     * @param year Año de la cerveza.
-     * @param abv Porcentaje de alcohol.
-     * @param image URL de la imagen de la cerveza.
-     * @param insertedBy ID del usuario que insertó la cerveza.
-     * @return Una instancia de la clase [Beer].
-     */
-    private fun createBeer(
-        title: String,
-        description: String,
-        year: String,
-        abv: Double,
-        imageUri: Uri?
-    ): Beer {
-        val defaultImageUri = "android.resource://${requireActivity().packageName}/${R.drawable.default_image}"
-        val image = imageUri?.toString() ?: defaultImageUri
-        return Beer(
-            beerId = 0,
-            title = title,
-            description = description,
-            year = year,
-            abv = abv,
-            image = image,
-            insertedBy = currentUser.userId
-        )
-    }
-
-    /**
-     * Inserta una nueva cerveza en la base de datos de BeerGo de manera asíncrona.
-     *
-     * @param beer La cerveza que se va a insertar en la base de datos.
-     */
-    private suspend fun insertarCerveza(beer: Beer) {
-        viewModel.addBeer(beer)
-        // Notificar a los observadores de desafíos
-        //db.notifyDatabaseObservers("UserBeerCrossRef") TODO: observer
+        Intent(Intent.ACTION_PICK).type = "image/*"
+        startActivityForResult(Intent(Intent.ACTION_PICK), GALLERY_REQUEST_CODE)
     }
 
     /**
@@ -220,10 +117,6 @@ class InsertBeerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null // Evitar fugas de memoria
-    }
-
-    private fun showNotification(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
     }
 
     /*
@@ -235,7 +128,7 @@ class InsertBeerFragment : Fragment() {
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
                 binding.imageViewSelected.setImageURI(uri)
-                selectedImageUri = uri // Asignar la URI seleccionada a la variable de clase
+                viewModel.selectedImageUri = uri // Asignar la URI seleccionada a la variable de clase
             }
         }
     }

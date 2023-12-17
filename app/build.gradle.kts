@@ -39,8 +39,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-        encoding = "UTF-8" //Para que detecte bien las tildes y la ñ
-
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -68,6 +66,9 @@ dependencies{
         implementation("com.squareup.retrofit2:converter-gson:2.9.0")
         implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
         implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
+
+        //Opción 1: probar llamadas a Retrofit - opción recomendada
+        testImplementation("com.squareup.okhttp3:mockwebserver:4.2.1")
 
 
         val nav_version = "2.5.3"
@@ -100,9 +101,8 @@ dependencies{
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation("androidx.test:runner:1.5.1")
     androidTestImplementation("androidx.test:rules:1.5.0")
     debugImplementation("androidx.tracing:tracing:1.1.0")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
-
 }

@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
  * Actividad que maneja la pantalla de inicio de sesión.
  */
 class LoginActivity : AppCompatActivity(){
-    private lateinit var db: BeerGoDatabase
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels { LoginViewModel.Factory }
     // Resultado lanzador para la actividad de registro
@@ -52,9 +51,6 @@ class LoginActivity : AppCompatActivity(){
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inicialización de la base de datos desde el contenedor de dependencias
-        val appContainer = (this.application as BeerGoApplication).appContainer
-        db = appContainer.db!!
 
         // Inicialización de las vistas y los listeners
         setUpUI()
@@ -64,6 +60,7 @@ class LoginActivity : AppCompatActivity(){
     }
     /**
      * Lee las preferencias de configuración para recordar el nombre de usuario y la contraseña.
+     * TODO: NO SE, NI DE COÑA
      */
     private fun readSetings(){
         val preferences = PreferenceManager.getDefaultSharedPreferences(this).all

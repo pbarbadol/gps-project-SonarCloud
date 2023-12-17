@@ -1,5 +1,6 @@
 package com.unex.asee.ga02.beergo.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -59,7 +60,7 @@ interface UserDao {
      * @return Lista con las cervezas del usuario.
      */
     @Query("SELECT * FROM beer WHERE insertedBy = :userId")
-    suspend fun getBeersByUserId(userId: Long): List<Beer>
+    fun getBeersByUserId(userId: Long): LiveData<List<Beer>>
 
     /**
      * Obtiene el número de cervezas insertadas por un usuario específico.
@@ -68,7 +69,7 @@ interface UserDao {
      * @return El número de cervezas insertadas por el usuario.
      */
     @Query("SELECT COUNT(*) FROM Beer WHERE insertedBy = :userId")
-    suspend fun countBeersInsertedByUser(userId: Long): Int
+    fun countBeersInsertedByUser(userId: Long): LiveData<Int>
 
     /**
      * Obtiene todas las cervezas favoritas de un usuario.
@@ -78,7 +79,7 @@ interface UserDao {
      */
     @Transaction
     @Query("SELECT * FROM Beer WHERE beerId IN (SELECT beerId FROM userfavouritebeercrossref WHERE userId = :userId)")
-    suspend fun getFavouritesBeersByUserId(userId: Long): List<Beer>
+    fun getFavouritesBeersByUserId(userId: Long): LiveData<List<Beer>>
 
     /**
      * Obtiene el número de cervezas favoritas de un usuario específico.
@@ -87,7 +88,7 @@ interface UserDao {
      * @return El número de cervezas favoritas del usuario.
      */
     @Query("SELECT COUNT(*) FROM UserFavouriteBeerCrossRef WHERE userId = :userId")
-    suspend fun countUserFavouriteBeers(userId: Long): Int
+    fun countUserFavouriteBeers(userId: Long): LiveData<Int>
 
     /**
      * Obtiene el número de comentarios realizados por un usuario específico.
@@ -96,7 +97,7 @@ interface UserDao {
      * @return El número de comentarios realizados por el usuario.
      */
     @Query("SELECT COUNT(*) FROM Comment WHERE userId = :userId")
-    suspend fun countCommentsByUser(userId: Long): Int
+    fun countCommentsByUser(userId: Long): LiveData<Int>
 
     /**
      * Obtiene un usuario con sus logros.
@@ -106,7 +107,8 @@ interface UserDao {
      */
     @Transaction
     @Query("SELECT * FROM User where userId = :userId")
-    suspend fun getUserAchievements(userId: Long): UserWithAchievements
+    fun getUserAchievements(userId: Long): LiveData<UserWithAchievements>
+
 
     /**
      * Obtiene el número de logros obtenidos por un usuario específico.
@@ -115,7 +117,7 @@ interface UserDao {
      * @return El número de logros obtenidos por el usuario.
      */
     @Query("SELECT COUNT(*) FROM UserAchievementCrossRef WHERE userId = :userId")
-    suspend fun countUserAchievements(userId: Long): Int
+    fun countUserAchievements(userId: Long): Int
 
     /**
      * Obtiene el número de comentarios realizados por un usuario específico.
@@ -124,7 +126,7 @@ interface UserDao {
      * @return El número de comentarios realizados por el usuario.
      */
     @Query("SELECT COUNT(*) FROM comment WHERE userId = :userId ")
-    suspend fun getNumberComments(userId: Long): Int
+    fun getNumberComments(userId: Long): Int
 
     /**
      * Comprueba si un usuario tiene un logro.
