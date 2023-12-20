@@ -2,6 +2,21 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="CheckAchievementTest">
+        <State />
+      </entry>
+      <entry key="CommentTest">
+        <State />
+      </entry>
+      <entry key="CreateUserTest">
+        <State />
+      </entry>
+      <entry key="DeleteUserTest">
+        <State />
+      </entry>
+      <entry key="InsertBeerTest">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>

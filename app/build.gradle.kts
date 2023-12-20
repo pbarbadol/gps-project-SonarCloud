@@ -105,4 +105,6 @@ dependencies{
     androidTestImplementation("androidx.test:runner:1.5.1")
     androidTestImplementation("androidx.test:rules:1.5.0")
     debugImplementation("androidx.tracing:tracing:1.1.0")
+
+    androidTestImplementation("org.mockito:mockito-core:3.+")
 }
