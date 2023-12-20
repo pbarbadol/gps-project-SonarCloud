@@ -3,9 +3,8 @@ package com.unex.asee.ga02.beergo.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.unex.asee.ga02.beergo.api.ModoPrueba
 import com.unex.asee.ga02.beergo.api.BeerApiInterface
-import com.unex.asee.ga02.beergo.api.getNetworkService
-import com.unex.asee.ga02.beergo.data.api.BeerApi
 import com.unex.asee.ga02.beergo.data.toBeer
 import com.unex.asee.ga02.beergo.database.BeerDao
 import com.unex.asee.ga02.beergo.model.Beer
@@ -86,8 +85,10 @@ class BeerRepository(private val beerDao: BeerDao, private val networkService : 
      */
     private suspend fun fetchBeers()
     {
-        val beers = fetchBeersFromApi()
-        beerDao.insertAll(beers)
+        if(!ModoPrueba.modoPrueba) {
+            val beers = fetchBeersFromApi()
+            beerDao.insertAll(beers)
+        }
     }
 
     /**
