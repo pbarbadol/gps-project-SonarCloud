@@ -9,6 +9,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
+import com.unex.asee.ga02.beergo.model.UserAchievementCrossRef
 import com.unex.asee.ga02.beergo.model.UserFavouriteBeerCrossRef
 import com.unex.asee.ga02.beergo.model.UserWithAchievements
 
@@ -164,5 +165,7 @@ interface UserDao {
     suspend fun insertAndRelateUserFavouriteBeer(userId: Long, beerId: Long) {
         insertUserFavouriteBeer(UserFavouriteBeerCrossRef(userId, beerId))
     }
+
+
 
 }

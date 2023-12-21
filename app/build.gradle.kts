@@ -51,7 +51,7 @@ android {
 }
 
 dependencies{
-
+    androidTestImplementation ("androidx.arch.core:core-testing:2.1.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     val room_version = "2.5.0"
     implementation("androidx.room:room-runtime:$room_version")
