@@ -69,4 +69,6 @@ interface AchievementDao {
         // Inserta la relación entre usuario y logro
         insertUserAchievement(UserAchievementCrossRef(userId, achievement.achievementId))
     }
+    @Query("SELECT * FROM UserAchievementCrossRef WHERE userId = :userId AND achievementId = :achievementId")
+    suspend fun getUserAchievementCrossRef(userId: Long, achievementId: Long): UserAchievementCrossRef?
 }
