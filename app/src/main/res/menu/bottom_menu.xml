@@ -1,17 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/HomeFragment"
+        android:id="@+id/favsFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_star_24"
+        android:title="@string/FavsFragment"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/achievementsFragment"
+        android:enabled="true"
+        android:icon="@drawable/trofeo_removebg_preview"
+        android:title="@string/achievementsFragment"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/listFragment"
         android:enabled="true"
         android:icon="@drawable/baseline_home_24"
-        android:title="Home"
+        android:title="@string/listFragment"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/LoginFragment"
+        android:id="@+id/historyFragment"
         android:enabled="true"
-        android:icon="@drawable/baseline_search_24"
-        android:title="Login"
+        android:icon="@drawable/baseline_history_24"
+        android:title="@string/historyFragment"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/profileFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_person_24"
+        android:title="Perfil"
+        app:showAsAction="ifRoom"/>
+
 
 </menu>

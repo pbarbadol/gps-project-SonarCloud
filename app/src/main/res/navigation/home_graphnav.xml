@@ -3,16 +3,93 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_graphnav"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/listFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.unex.asee.ga02.beergo.view.home.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/achievementsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.achievement.AchievementsFragment"
+        android:label="@string/achievementsFragment"
+        tools:layout="@layout/fragment_achievements" />
+
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.unex.asee.ga02.beergo.view.home.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
-</navigation>
+        android:id="@+id/historyFragment"
+        android:name="com.unex.asee.ga02.beergo.view.history.HistoryFragment"
+        android:label="@string/historyFragment"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/favsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.favs.FavsFragment"
+        android:label="@string/FavsFragment"
+        tools:layout="@layout/fragment_favs" >
+        <action
+            android:id="@+id/action_favsFragment_to_showBeerFragment"
+            app:destination="@id/showBeerFragment" />
+    </fragment>
+
+
+
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.unex.asee.ga02.beergo.view.list.ListFragment"
+        android:label="@string/listFragment"
+        tools:layout="@layout/fragment_list" >
+        <action
+            android:id="@+id/action_listFragment_to_showBeerFragment"
+            app:destination="@id/showBeerFragment" />
+        <action
+            android:id="@+id/action_listFragment_to_insertBeerFragment"
+            app:destination="@id/insertBeerFragment" />
+    </fragment>
+
+
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.settings.SettingsFragment"
+        android:label="SettingsFragment" />
+
+
+    <action
+        android:id="@+id/action_home_to_settingsFragment"
+        app:destination="@id/settingsFragment" />
+
+
+    <fragment
+        android:id="@+id/showBeerFragment"
+        android:name="com.unex.asee.ga02.beergo.view.detail.ShowBeerFragment"
+        android:label="Cerveza"
+
+        tools:layout="@layout/fragment_show_beer" >
+        <action
+            android:id="@+id/action_showBeerFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCommentFragment"
+        android:name="com.unex.asee.ga02.beergo.view.comment.AddCommentFragment"
+        android:label="@string/AddCommentFragment" >
+    </fragment>
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.unex.asee.ga02.beergo.view.comment.CommentsFragment"
+        android:label="@string/CommentsFragment" >
+        <action
+            android:id="@+id/action_commentsFragment_to_addCommentFragment"
+            app:destination="@id/addCommentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.unex.asee.ga02.beergo.view.profile.ProfileFragment"
+        android:label="Perfil"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/insertBeerFragment"
+        android:name="com.unex.asee.ga02.beergo.view.list.InsertBeerFragment"
+        android:label="Añadir cerveza"
+        tools:layout="@layout/fragment_insert_beer" />
+    <action
+        android:id="@+id/action_insertBeerFragment_to_listFragment"
+        app:destination="@id/listFragment" />
+</navigation> <!-- Closing tag added -->
+
