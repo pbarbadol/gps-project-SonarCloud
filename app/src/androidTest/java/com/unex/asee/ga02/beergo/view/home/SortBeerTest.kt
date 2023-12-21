@@ -19,6 +19,7 @@ import org.hamcrest.Matchers.anything
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,6 +27,11 @@ import org.junit.runner.RunWith
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 class SortBeerTest {
+
+    @Before
+    fun setUp() {
+        ModoPrueba.modoPrueba = true
+    }
 
     @Rule
     @JvmField
