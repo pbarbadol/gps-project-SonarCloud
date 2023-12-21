@@ -52,6 +52,7 @@ android {
 
 dependencies{
 
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     val room_version = "2.5.0"
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version") // To use Kotlin Symbol Processing (KSP)

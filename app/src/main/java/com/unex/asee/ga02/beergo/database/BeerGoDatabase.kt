@@ -62,6 +62,7 @@ abstract class BeerGoDatabase : RoomDatabase() {
             val beerDao = getInstance(context)!!.beerDao()
             val commentDao = getInstance(context)!!.commentDao()
             //Inserción de los logros en la base de datos
+            /*
             GlobalScope.launch(Dispatchers.IO) {
                 if (!ModoPrueba.modoPrueba) {
                     for (achievement in beerAchievements) {
@@ -81,6 +82,8 @@ abstract class BeerGoDatabase : RoomDatabase() {
                     }
                 }
             }
+            */
+
         }
     }
 }
