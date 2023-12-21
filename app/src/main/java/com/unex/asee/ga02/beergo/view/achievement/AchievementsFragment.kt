@@ -31,8 +31,6 @@ class AchievementsFragment : Fragment() {
     private var _binding: FragmentAchievementsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: AchievementsAdapter
-    private var achievements: List<Achievement> = emptyList()
-    private var userAchievements: List<Achievement> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,19 +47,17 @@ class AchievementsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            viewModel.user = user
+        }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            // Muestra el ProgressBar
-            binding.loadingProgressBar.visibility = View.VISIBLE
-            consultaLogros()
 
-            withContext(Dispatchers.Main) {
                 // Ocultar el ProgressBar
-                binding.loadingProgressBar.visibility = View.GONE
+                //binding.loadingProgressBar.visibility = View.GONE
 
                 // Crear y configurar el adaptador
-                adapter = AchievementsAdapter(achievements = achievements,
-                    userAchievements = userAchievements,
+                adapter = AchievementsAdapter(achievements = emptyList(),
+                    userAchievements = emptyList(),
                     onClick = { achievement ->
                         // Manejar clic en el logro
                         Toast.makeText(
@@ -81,8 +77,18 @@ class AchievementsFragment : Fragment() {
                         androidx.recyclerview.widget.LinearLayoutManager(context)
                     rvAchievementList.adapter = adapter
                 }
-            }
+
+
+        viewModel.achievements.observe(viewLifecycleOwner) { achievements ->
+            adapter.updateData(achievements)
         }
+        viewModel.achievementsUser.observe(viewLifecycleOwner) { achievementsUser ->
+            adapter.updateDataUser(achievementsUser.achievements)
+        }
+        viewModel.spinner.observe(viewLifecycleOwner){visible->
+            binding.Achievementspinner.visibility = if (visible) View.VISIBLE else View.GONE
+        }
+
     }
 
     override fun onDestroyView() {
@@ -93,12 +99,6 @@ class AchievementsFragment : Fragment() {
     /**
      * Realiza una consulta de logros en la base de datos.
      */
-    private suspend fun consultaLogros() {
-        // Obtener la lista de logros
-        achievements = viewModel.getAllAchievements()
 
-        // Obtener la lista de logros del usuario
-        userAchievements = viewModel.getUserAchievements()!!
-    }
 
 }

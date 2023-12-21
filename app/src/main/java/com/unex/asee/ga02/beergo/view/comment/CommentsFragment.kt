@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.databinding.FragmentCommentsBinding
 import com.unex.asee.ga02.beergo.model.Comment
+import com.unex.asee.ga02.beergo.view.viewmodel.CheckViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.CommentsViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
@@ -59,8 +60,8 @@ class CommentsFragment : Fragment() {
         homeViewModel.beer.observe(viewLifecycleOwner) { beer ->
             viewModel.beer = beer
         }
+
         Log.d("Observation", "bEER observed2: ${viewModel.beer}")
-        // Show a Toast whenever the [toast] is updated a non-null value
         viewModel.toast.observe(viewLifecycleOwner) { text ->
             text?.let {
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
@@ -69,24 +70,31 @@ class CommentsFragment : Fragment() {
         }
         //Inicializamos el adapter
         setUpRecyclerView()
+
         //En caso de cambio, lo actualizamos
         viewModel.beerComment.observe(viewLifecycleOwner) { comments ->
                 adapter.updateData(comments)
         }
-        //TODO: falta spinner
+
         binding.addCommentButton.setOnClickListener {
             findNavController().navigate(CommentsFragmentDirections.actionCommentsFragmentToAddCommentFragment())
         }
+
+        homeViewModel.liveDataAchievements.observe(viewLifecycleOwner) {
+            Toast.makeText(context, "Logro conseguido", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun setUpRecyclerView() {
         adapter = CommentsAdapter(comments = emptyList(), onClick = {}, onLongClick = {
-            viewModel.deleteComment(it) //TODO: No sabemos si se debe pasar si o si el it
+            viewModel.deleteComment(it)
         })
         with(binding) {
             rvCommentsList.layoutManager = GridLayoutManager(context, 1)
             rvCommentsList.adapter = adapter
         }
+
     }
 
     override fun onDestroyView() {

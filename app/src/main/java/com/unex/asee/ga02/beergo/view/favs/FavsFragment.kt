@@ -91,7 +91,6 @@ class FavsFragment : Fragment() {
     }
 
 
-    //TODO: COMPROBAR CAMBIO
     private fun navigateToShowBeerFragment() {
         findNavController().navigate(FavsFragmentDirections.actionFavsFragmentToShowBeerFragment())
     }

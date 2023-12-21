@@ -10,11 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Otros elementos del diseño -->
+
+
         <TextView
             android:id="@+id/idUser"
             android:layout_width="110dp"
             android:layout_height="37dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:fontFamily="sans-serif"
             android:text="TextView"
             android:textAlignment="center"
@@ -26,17 +29,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
-        <!-- Otros elementos del diseño -->
-
-
         <TextView
             android:id="@+id/levelTextView"
             android:layout_width="73dp"
             android:layout_height="54dp"
 
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="11dp"
-            android:layout_marginBottom="19dp"
+            android:layout_marginTop="228dp"
             android:text="Nivel"
             android:textAlignment="center"
             android:textSize="24sp"
@@ -44,7 +43,7 @@
             app:layout_constraintBottom_toTopOf="@+id/progressBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/idUser" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/expTextView"
@@ -52,23 +51,27 @@
             android:layout_height="26dp"
             android:layout_below="@id/levelTextView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="28dp"
             android:text="exp"
             android:textAlignment="center"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/cerrarSesion"
+            app:layout_constraintBottom_toTopOf="@+id/textView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+            app:layout_constraintTop_toBottomOf="@+id/progressBar"
+            app:layout_constraintVertical_bias="0.0" />
 
         <Button
             android:id="@+id/eliminarUsuario"
-            android:layout_width="203dp"
-            android:layout_height="62dp"
+            android:layout_width="161dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="13dp"
             android:backgroundTint="#E91E63"
             android:text="Eliminar Usuario"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/levelTextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/idUser" />
 
@@ -82,28 +85,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <Button
             android:id="@+id/cerrarSesion"
-            android:layout_width="204dp"
-            android:layout_height="61dp"
+            android:layout_width="164dp"
+            android:layout_height="55dp"
+            android:layout_marginBottom="10dp"
             android:text="Cerrar Sesión"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/levelTextView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/eliminarUsuario"
-            app:layout_constraintVertical_bias="0.339" />
+            app:layout_constraintHorizontal_bias="0.464"
+            app:layout_constraintStart_toEndOf="@+id/eliminarUsuario"
+            app:layout_constraintTop_toBottomOf="@+id/idUser"
+            app:layout_constraintVertical_bias="1.0" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="365dp"
             android:layout_height="72dp"
-            android:layout_marginTop="112dp"
+            android:layout_marginTop="184dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView4" />
-
 
         <TextView
             android:id="@+id/textView2"
@@ -115,10 +119,10 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.478"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cerrarSesion"
-            app:layout_constraintVertical_bias="0.144" />
+            app:layout_constraintTop_toBottomOf="@+id/progressBar"
+            app:layout_constraintVertical_bias="0.307" />
 
         <TextView
             android:id="@+id/cervezasAnadidas"

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.unex.asee.ga02.beergo.database.UserDao
+import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
 
@@ -72,30 +73,21 @@ class UserRepository (private val userDao: UserDao) {
         userDao.delete(user)
     }
 
-    suspend fun countBeersInsertedByUser(userId: Long): Int {
-        if(userDao.countBeersInsertedByUser(userId) == null) {
-            return 0
-        }else{
-            return userDao.countBeersInsertedByUser(userId)
-        }
+    fun countBeersInsertedByUser(userId: Long): LiveData<Int> {
+        return userDao.countBeersInsertedByUser(userId)
+
     }
 
-    fun countFavouritesByUser(userId: Long): Int {
-        if(userDao.countUserFavouriteBeers(userId) == null) {
-            return 0
-        }else{
+    fun countFavouritesByUser(userId: Long): LiveData<Int> {
+
             return userDao.countUserFavouriteBeers(userId)
-        }
+
 
     }
 
-    fun countCommentsByUser(userId: Long): Int {
-        if(userDao.countCommentsByUser(userId) == null) {
-            return 0
-        }else{
+    fun countCommentsByUser(userId: Long): LiveData<Int> {
+        Log.d("Observation", "CountCommentRer: ${userDao.countCommentsByUser(userId).value}")
             return userDao.countCommentsByUser(userId)
-        }
-
     }
 
     fun countUserAchievements(userId: Long): Int {
@@ -104,5 +96,9 @@ class UserRepository (private val userDao: UserDao) {
         }else{
             return userDao.countUserAchievements(userId)
         }
+    }
+
+    fun getUserBeers(userId: Long): LiveData<List<Beer>> {
+        return userDao.getBeersByUserId(userId)
     }
 }

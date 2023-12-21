@@ -59,7 +59,7 @@
 //     * Verifica y otorga el logro "Diverse Styles" si el usuario tiene al menos 1 cerveza con un grado de alcohol mayor a 10.
 //     */
 //    suspend fun checkDiverseStylesAchievement() {
-//        val beers = db.userDao().getBeersByUserId(user.userId) //TODO: arreglar repository
+//        val beers = db.userDao().getBeersByUserId(user.userId)
 //        val hasDiverseStyleBeer = beers.any { it.abv > 10.0 }
 //        if (hasDiverseStyleBeer) {
 //            insertAchievementAndShowToast(4)
@@ -116,7 +116,7 @@
 ////                    ).show()
 ////                }
 ////            }
-////        } TODO: no funciona porque se ha eliminado el metodo checkAchievement debido a que ahora se hace el check desde repository. Hay que arreglarlo
+////        }
 //    }
 //}
 //

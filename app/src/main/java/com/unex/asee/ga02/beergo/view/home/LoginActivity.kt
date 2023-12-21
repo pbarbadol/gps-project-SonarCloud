@@ -60,7 +60,6 @@ class LoginActivity : AppCompatActivity(){
     }
     /**
      * Lee las preferencias de configuración para recordar el nombre de usuario y la contraseña.
-     * TODO: NO SE, NI DE COÑA
      */
     private fun readSetings(){
         val preferences = PreferenceManager.getDefaultSharedPreferences(this).all
@@ -74,7 +73,6 @@ class LoginActivity : AppCompatActivity(){
             binding.etUsername.setText(username)
             binding.etPassword.setText(passwd)
         }
-
     }
     /**
      * Inicializa las vistas utilizando el view binding.

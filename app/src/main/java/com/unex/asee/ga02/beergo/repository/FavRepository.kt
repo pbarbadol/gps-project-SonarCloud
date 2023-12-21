@@ -17,10 +17,7 @@ class FavRepository (private val userDao: UserDao) {
     fun setUserid(userid: Long) {
         userFilter.value = userid
     }
-    /*
-    fun loadFavs(userId: Long): LiveData<List<Beer>> {
-        return userDao.getFavouritesBeersByUserId(userId)
-    }*/
+
     suspend fun deleteFav(userId: Long, beerId: Long) {
         userDao.deleteUserFavouriteBeer(UserFavouriteBeerCrossRef(userId, beerId))
     }

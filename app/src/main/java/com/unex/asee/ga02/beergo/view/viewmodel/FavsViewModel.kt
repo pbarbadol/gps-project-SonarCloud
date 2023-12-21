@@ -38,9 +38,9 @@ class FavsViewModel(
 
     fun loadFavourites(){
         viewModelScope.launch {
-            //_spinner.value = true
+            _spinner.value = true
             //favBeers = favRepository.loadFavs(user!!.userId)
-            //_spinner.value = false
+            _spinner.value = false
         }
     }
     fun onToastShown() {

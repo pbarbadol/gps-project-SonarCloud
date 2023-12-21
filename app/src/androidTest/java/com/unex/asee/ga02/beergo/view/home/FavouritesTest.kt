@@ -27,7 +27,7 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class HistoryTest {
+class FavouritesTest {
 
     @Before
     fun setUp() {
@@ -39,7 +39,7 @@ class HistoryTest {
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
     @Test
-    fun historyTest() {
+    fun favouritesTest() {
         val materialButton = onView(
             allOf(
                 withId(R.id.bt_register), withText("Unete!"),
@@ -290,40 +290,17 @@ class HistoryTest {
                 )
             )
         )
-        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(0, click()))
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(0, longClick()))
 
-        val appCompatImageButton3 = onView(
-            allOf(
-                withContentDescription("Navigate up"),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.toolbar),
-                        childAtPosition(
-                            withClassName(`is`("androidx.constraintlayout.widget.ConstraintLayout")),
-                            2
-                        )
-                    ),
-                    2
-                ),
-                isDisplayed()
-            )
-        )
-        appCompatImageButton3.perform(click())
-
-        try {
-            Thread.sleep(2000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
         val bottomNavigationItemView = onView(
             allOf(
-                withId(R.id.historyFragment), withContentDescription("Historial"),
+                withId(R.id.favsFragment), withContentDescription("Favoritas"),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.bottomNavigationView),
                         0
                     ),
-                    3
+                    0
                 ),
                 isDisplayed()
             )
@@ -347,14 +324,14 @@ class HistoryTest {
         val textView = onView(
             allOf(
                 withId(com.google.android.material.R.id.navigation_bar_item_large_label_view),
-                withText("Historial"),
+                withText("Favoritas"),
                 withParent(
                     allOf(
                         withId(com.google.android.material.R.id.navigation_bar_item_labels_group),
                         withParent(
                             allOf(
-                                withId(R.id.historyFragment),
-                                withContentDescription("Historial")
+                                withId(R.id.favsFragment),
+                                withContentDescription("Favoritas")
                             )
                         )
                     )
@@ -362,24 +339,36 @@ class HistoryTest {
                 isDisplayed()
             )
         )
-        textView.check(matches(withText("Historial")))
-
-        val viewGroup2 = onView(
-            allOf(
-                withParent(withParent(withId(R.id.rv_history))),
-                isDisplayed()
-            )
-        )
-        viewGroup2.check(matches(isDisplayed()))
+        textView.check(matches(withText("Favoritas")))
 
         val textView2 = onView(
             allOf(
-                withId(R.id.beer_name), withText("Cerveza"),
-                withParent(withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))),
+                withId(R.id.title), withText("Cerveza"),
+                withParent(withParent(withId(R.id.cv_Item))),
                 isDisplayed()
             )
         )
         textView2.check(matches(withText("Cerveza")))
+
+        val recyclerView2 = onView(
+            allOf(
+                withId(R.id.rv_favsbeer_list),
+                childAtPosition(
+                    withClassName(`is`("androidx.constraintlayout.widget.ConstraintLayout")),
+                    1
+                )
+            )
+        )
+        recyclerView2.perform(actionOnItemAtPosition<ViewHolder>(0, click()))
+
+        val switch_ = onView(
+            allOf(
+                withId(R.id.favSwitch), withText("Favorita "),
+                withParent(withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))),
+                isDisplayed()
+            )
+        )
+        switch_.check(matches(isChecked()))
     }
 
     private fun childAtPosition(

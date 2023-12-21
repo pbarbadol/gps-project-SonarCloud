@@ -11,11 +11,13 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.unex.asee.ga02.beergo.R
+import com.unex.asee.ga02.beergo.api.ModoPrueba
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,7 +31,10 @@ class SettingsTest {
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
 
-
+    @Before
+    fun setUp() {
+        ModoPrueba.modoPrueba = true
+    }
 
 
     @Test

@@ -42,9 +42,6 @@ class JoinActivity : AppCompatActivity() {
         binding = ActivityJoinBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-        //views initialization and listeners
         setUpUI()
         setUpListeners()
     }

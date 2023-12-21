@@ -19,7 +19,6 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.TypeSafeMatcher
-import org.hamcrest.core.IsInstanceOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,7 +26,7 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class HistoryTest {
+class GetAchievementTest {
 
     @Before
     fun setUp() {
@@ -39,7 +38,7 @@ class HistoryTest {
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
     @Test
-    fun historyTest() {
+    fun getAchievementTest() {
         val materialButton = onView(
             allOf(
                 withId(R.id.bt_register), withText("Unete!"),
@@ -55,11 +54,13 @@ class HistoryTest {
         )
         materialButton.perform(click())
 
+
         try {
             Thread.sleep(2000)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
         val appCompatEditText = onView(
             allOf(
                 withId(R.id.et_username),
@@ -73,7 +74,13 @@ class HistoryTest {
                 isDisplayed()
             )
         )
-        appCompatEditText.perform(replaceText("espresso"), closeSoftKeyboard())
+        appCompatEditText.perform(replaceText("1234"), closeSoftKeyboard())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
 
         val appCompatEditText2 = onView(
             allOf(
@@ -88,7 +95,13 @@ class HistoryTest {
                 isDisplayed()
             )
         )
-        appCompatEditText2.perform(replaceText("latte"), closeSoftKeyboard())
+        appCompatEditText2.perform(replaceText("1234"), closeSoftKeyboard())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
 
         val appCompatEditText3 = onView(
             allOf(
@@ -103,7 +116,13 @@ class HistoryTest {
                 isDisplayed()
             )
         )
-        appCompatEditText3.perform(replaceText("latte"), closeSoftKeyboard())
+        appCompatEditText3.perform(replaceText("1234"), closeSoftKeyboard())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
 
         val materialButton2 = onView(
             allOf(
@@ -125,6 +144,7 @@ class HistoryTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
         val materialButton3 = onView(
             allOf(
                 withId(R.id.bt_login), withText("Inicar Sesion"),
@@ -145,6 +165,7 @@ class HistoryTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
         val appCompatImageButton = onView(
             allOf(
                 withId(R.id.btnAddBeer),
@@ -165,6 +186,7 @@ class HistoryTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
         val appCompatEditText4 = onView(
             allOf(
                 withId(R.id.editTextBeerName),
@@ -178,7 +200,13 @@ class HistoryTest {
                 isDisplayed()
             )
         )
-        appCompatEditText4.perform(replaceText("Cerveza"), closeSoftKeyboard())
+        appCompatEditText4.perform(replaceText("Prueba"), closeSoftKeyboard())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
 
         val appCompatEditText5 = onView(
             allOf(
@@ -193,7 +221,13 @@ class HistoryTest {
                 isDisplayed()
             )
         )
-        appCompatEditText5.perform(replaceText("Descripcion"), closeSoftKeyboard())
+        appCompatEditText5.perform(replaceText("Prueba"), closeSoftKeyboard())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
 
         val appCompatEditText6 = onView(
             allOf(
@@ -210,6 +244,12 @@ class HistoryTest {
         )
         appCompatEditText6.perform(replaceText("2023"), closeSoftKeyboard())
 
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+
         val appCompatEditText7 = onView(
             allOf(
                 withId(R.id.editTextAlcoholPercentage),
@@ -223,7 +263,13 @@ class HistoryTest {
                 isDisplayed()
             )
         )
-        appCompatEditText7.perform(replaceText("1"), closeSoftKeyboard())
+        appCompatEditText7.perform(replaceText("10"), closeSoftKeyboard())
+
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
 
         val materialButton4 = onView(
             allOf(
@@ -245,6 +291,7 @@ class HistoryTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
         val appCompatImageButton2 = onView(
             allOf(
                 withContentDescription("Navigate up"),
@@ -268,18 +315,6 @@ class HistoryTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        val viewGroup = onView(
-            allOf(
-                withParent(
-                    allOf(
-                        withId(R.id.cv_Item),
-                        withParent(withId(R.id.cl_item))
-                    )
-                ),
-                isDisplayed()
-            )
-        )
-        viewGroup.check(matches(isDisplayed()))
 
         val recyclerView = onView(
             allOf(
@@ -290,40 +325,23 @@ class HistoryTest {
                 )
             )
         )
-        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(0, click()))
-
-        val appCompatImageButton3 = onView(
-            allOf(
-                withContentDescription("Navigate up"),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.toolbar),
-                        childAtPosition(
-                            withClassName(`is`("androidx.constraintlayout.widget.ConstraintLayout")),
-                            2
-                        )
-                    ),
-                    2
-                ),
-                isDisplayed()
-            )
-        )
-        appCompatImageButton3.perform(click())
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(0, longClick()))
 
         try {
             Thread.sleep(2000)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
         val bottomNavigationItemView = onView(
             allOf(
-                withId(R.id.historyFragment), withContentDescription("Historial"),
+                withId(R.id.achievementsFragment), withContentDescription("Logros"),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.bottomNavigationView),
                         0
                     ),
-                    3
+                    1
                 ),
                 isDisplayed()
             )
@@ -335,51 +353,30 @@ class HistoryTest {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        val frameLayout = onView(
-            allOf(
-                withId(R.id.bottomNavigationView),
-                withParent(withParent(withId(android.R.id.content))),
-                isDisplayed()
-            )
-        )
-        frameLayout.check(matches(isDisplayed()))
 
         val textView = onView(
             allOf(
-                withId(com.google.android.material.R.id.navigation_bar_item_large_label_view),
-                withText("Historial"),
-                withParent(
-                    allOf(
-                        withId(com.google.android.material.R.id.navigation_bar_item_labels_group),
-                        withParent(
-                            allOf(
-                                withId(R.id.historyFragment),
-                                withContentDescription("Historial")
-                            )
-                        )
-                    )
-                ),
+                withId(R.id.name_achievement), withText("Primer Sorbo"),
+                withParent(withParent(withId(R.id.cv_Item))),
                 isDisplayed()
             )
         )
-        textView.check(matches(withText("Historial")))
+        textView.check(matches(withText("Primer Sorbo")))
 
-        val viewGroup2 = onView(
-            allOf(
-                withParent(withParent(withId(R.id.rv_history))),
-                isDisplayed()
-            )
-        )
-        viewGroup2.check(matches(isDisplayed()))
+        try {
+            Thread.sleep(2000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
 
         val textView2 = onView(
             allOf(
-                withId(R.id.beer_name), withText("Cerveza"),
-                withParent(withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))),
+                withId(R.id.name_achievement), withText("Gusto Eclectico"),
+                withParent(withParent(withId(R.id.cv_Item))),
                 isDisplayed()
             )
         )
-        textView2.check(matches(withText("Cerveza")))
+        textView2.check(matches(withText("Gusto Eclectico")))
     }
 
     private fun childAtPosition(

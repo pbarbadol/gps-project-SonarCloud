@@ -26,10 +26,6 @@ fun getNetworkService() = service
 
 class APIError(message: String, cause: Throwable) : Exception(message)
 
-interface APICallback {
-    fun onCompleted(beers:List<BeerApi>)
-    fun onError(error:APIError)
-}
 interface BeerApiInterface {
     @GET("beers")
     fun getBeers(

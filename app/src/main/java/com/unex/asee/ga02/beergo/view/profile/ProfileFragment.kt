@@ -37,12 +37,27 @@ class ProfileFragment : Fragment() {
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             Log.d("Observation", "User observed: $user")
             viewModel.user = user
+            viewModel.countBeersInsertedByUser()
+            viewModel.countFavouritesByUser()
+            viewModel.countCommentsByUser()
             showBinding()
             lifecycleScope.launch(Dispatchers.IO) {
                 setUpStadistics()
             }
         }
         Log.d("Observation", "Finalizado ProfileFragment")
+
+        viewModel.beerInsert.observe(viewLifecycleOwner){beerInsert->
+            binding.cervezasAnadidas.text = "Cervezas Añadidas: ${beerInsert}"
+        }
+        viewModel.favInsert.observe(viewLifecycleOwner){favInsert->
+            binding.cervezasFavoritas.text = "Cervezas Favoritas: ${favInsert}"
+        }
+
+        viewModel.comments.observe(viewLifecycleOwner){comments->
+            binding.comentariosAnadidos.text = "Comentarios Añadidos: ${comments}"
+        }
+
 
         //Eliminar usuario
         binding.eliminarUsuario.setOnClickListener {
@@ -70,19 +85,13 @@ class ProfileFragment : Fragment() {
         binding.expTextView.text = "${viewModel.exp}%"
         binding.idUser.text = viewModel.user?.name
     }
-    private suspend fun setUpStadistics() {
-        binding.cervezasAnadidas.text = "Cervezas Añadidas: ${
-            viewModel.countBeersInsertedByUser()
-        }" //TODO: ¿TIENE QUE ESTAR CON LIVEDATA?
 
-        binding.cervezasFavoritas.text = "Cervezas Favoritas: ${
-            viewModel.countFavouritesByUser()
-        }"
-        binding.comentariosAnadidos.text = "Comentarios Añadidos: ${
-            viewModel.countCommentsByUser()
-        }"
+     private suspend fun setUpStadistics() {
+
         binding.logrosConseguidos.text = "Logros Conseguidos: ${
             viewModel.countUserAchievements()
         }"
     }
+
+
 }

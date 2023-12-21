@@ -6,13 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.unex.asee.ga02.beergo.model.Achievement
 import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.model.User
 
 class HomeViewModel : ViewModel() {
 
+    // Propiedad pública solo de lectura para acceder al LiveData del usuario.
     private val _user = MutableLiveData<User>(null)
     private val _beer = MutableLiveData<Beer>(null)
+    val liveDataAchievements = MutableLiveData<List<Achievement>>()
+
     val user: LiveData<User>
         get() = _user
     var userInSession: User? = null
@@ -22,6 +26,13 @@ class HomeViewModel : ViewModel() {
             Log.d("Observation", "UserInSession updated: $value")
         }
 
+    private val _toast = MutableLiveData<String?>()
+    val toast: LiveData<String?>
+        get() = _toast
+
+    fun onToastShown(){
+        _toast.value = null
+    }
     val beer: LiveData<Beer>
         get() = _beer
     var beerInSession: Beer? = null
@@ -30,9 +41,7 @@ class HomeViewModel : ViewModel() {
             _beer.value = value!!
         }
 
-    fun setBeerNull() {
-        _beer.value = null
-    }
+
 
     fun isNull(): Boolean {
         return (beerInSession == null)

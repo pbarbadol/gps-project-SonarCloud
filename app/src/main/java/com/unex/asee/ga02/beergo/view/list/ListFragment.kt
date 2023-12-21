@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.databinding.FragmentListBinding
 import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.view.viewmodel.CheckViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.ListViewModel
 import java.util.Date
@@ -26,6 +27,7 @@ class ListFragment : Fragment() {
     //declaracion del ViewModel
     private val viewmodel: ListViewModel by viewModels { ListViewModel.Factory }
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModelCheckAchievement : CheckViewModel by viewModels{ CheckViewModel.Factory }
 
     private lateinit var listener: OnShowClickListener
     private var _binding: FragmentListBinding? = null
@@ -56,26 +58,7 @@ class ListFragment : Fragment() {
         }
     }
 
-
-
-//    private suspend fun mostrarCervezas() {
-//        try {
-//            //Obtener cervezas de la bd
-//            cachedBeers = db.beerDao().getAll()
-//
-//            //Actualiza la lista de cervezas
-//            adapter.updateData(cachedBeers)
-//            //Ordena la lista de cervezas por abv
-//            adapter.sortByAbv()
-//
-//        } catch (error: APIError) {
-//            Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-//        } finally {
-//            withContext(Dispatchers.Main) {
-//                binding.spinner.visibility = View.GONE
-//            }
-//        }
-//    }
+    
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,6 +80,7 @@ class ListFragment : Fragment() {
         }
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             viewmodel.user = user
+            viewModelCheckAchievement.user = user
         }
 
         viewmodel.spinner.observe(viewLifecycleOwner){visible->
@@ -106,6 +90,12 @@ class ListFragment : Fragment() {
             text?.let {
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
                 viewmodel.onToastShown()
+            }
+        }
+        viewModelCheckAchievement.toast.observe(viewLifecycleOwner){text->
+            text?.let {
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                viewModelCheckAchievement.onToastShown()
             }
         }
 
@@ -179,7 +169,7 @@ class ListFragment : Fragment() {
             Log.d("BeerViewModel", "Cerveza seleccionada: ${homeViewModel.beerInSession}")
 
 //            val cervezaSeleccionada = viewmodel.getSelectedBeer()
-            History.saveHistory(History(beer = it, date = Date())) //TODO mirar si esto se hace así o no
+            History.saveHistory(History(beer = it, date = Date()))
             if (homeViewModel.isNull()) {
                 // Si no hay ninguna cerveza seleccionada, establecerla y luego mostrar los detalles
                 homeViewModel.beerInSession = it
@@ -191,6 +181,7 @@ class ListFragment : Fragment() {
         }, onLongClick = {
 
             viewmodel.setFavourite(it)
+            viewModelCheckAchievement.checkAchievementsFav()
 
 
 

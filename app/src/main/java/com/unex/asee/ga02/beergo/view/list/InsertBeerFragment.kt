@@ -12,12 +12,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.unex.asee.ga02.beergo.BeerGoApplication
 import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
 import com.unex.asee.ga02.beergo.model.Beer
+import com.unex.asee.ga02.beergo.view.viewmodel.CheckViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
 //import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.InsertBeerViewModel
@@ -35,15 +37,7 @@ class InsertBeerFragment : Fragment() {
 
     private val viewModel: InsertBeerViewModel by viewModels { InsertBeerViewModel.Factory }
     private val homeViewModel: HomeViewModel by activityViewModels()
-
-    /**
-     * Método llamado cuando se crea la instancia del fragmento.
-     *
-     * @param savedInstanceState Bundle que contiene el estado previamente guardado del fragmento.
-     */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val viewModelCheckAchievement : CheckViewModel by viewModels{ CheckViewModel.Factory }
 
     /**
      * Método llamado para crear y devolver la vista asociada con el fragmento.
@@ -67,12 +61,19 @@ class InsertBeerFragment : Fragment() {
 
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             viewModel.user = user
+            viewModelCheckAchievement.user = user
         }
 
         viewModel.toast.observe(viewLifecycleOwner) { text ->
             text?.let {
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
                 viewModel.onToastShown()
+            }
+        }
+        viewModelCheckAchievement.toast.observe(viewLifecycleOwner){text->
+            text?.let {
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                viewModelCheckAchievement.onToastShown()
             }
         }
 
@@ -94,6 +95,8 @@ class InsertBeerFragment : Fragment() {
                                       binding.editTextBeerDescription.text.toString(),
                                       binding.editTextYear.text.toString(),
                                       binding.editTextAlcoholPercentage.text.toString())
+
+            viewModelCheckAchievement.checkAchievementsInsert()
 
         }
     }
