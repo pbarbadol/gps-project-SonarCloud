@@ -26,10 +26,10 @@ class AddCommentViewModel(
      * @return Booleano que indica si se ha escrito el comentario o no.
      */
     fun writeComment(contenido: String): Boolean {
-        if (contenido.isEmpty()) {
-            return false
+        return if (contenido.isEmpty()) {
+            false
         } else {
-            val comment: Comment = Comment(
+            val comment = Comment(
                 commentId = 0,
                 beerId = beer!!.beerId,
                 userId = user!!.userId,
@@ -39,7 +39,7 @@ class AddCommentViewModel(
             viewModelScope.launch {
                 commentRepository.addComment(comment)
             }
-            return true
+            true
         }
     }
 

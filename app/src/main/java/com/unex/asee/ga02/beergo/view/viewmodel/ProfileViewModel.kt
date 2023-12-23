@@ -121,10 +121,10 @@ class ProfileViewModel(
      * @return Método countUserAchievements de userRepository.
      */
     fun countUserAchievements(): Int {
-        if(user == null) {
-            return 0
+        return if(user == null) {
+            0
         }else{
-            return userRepository.countUserAchievements(user!!.userId)
+            userRepository.countUserAchievements(user!!.userId)
         }
     }
 

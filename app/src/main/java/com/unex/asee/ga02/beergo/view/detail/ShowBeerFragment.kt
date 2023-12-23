@@ -44,8 +44,8 @@ class ShowBeerFragment : Fragment() {
         _binding = null
     }
 
-    override fun onViewCreated(View: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(View, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             Log.d("Observation", "User observed: $user")
