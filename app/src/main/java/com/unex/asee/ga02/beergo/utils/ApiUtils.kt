@@ -13,7 +13,7 @@ class ApiUtils {
             val result = getNetworkService().getBeers(1).execute()
 
             if (result.isSuccessful) {
-                result.body()?.map { it?.toBeer() ?: Beer(0, "", " ", " ", 0.0, "", 0) }
+                result.body()?.map { it.toBeer() ?: Beer(0, "", " ", " ", 0.0, "", 0) }
                     ?: throw Exception("Response body is null")
             } else {
                 throw Exception("Error: ${result.code()} ${result.message()}")

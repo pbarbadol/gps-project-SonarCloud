@@ -1,5 +1,4 @@
 package com.unex.asee.ga02.beergo.view.home
-import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -33,10 +32,9 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
     companion object {
         const val LOGIN_USER = "LOGIN_USER"
         val user = null
-        public fun start(
-            context: Context,
-            user: User
-        ){}}
+        fun start() {
+            // Si no ponemos un cuerpo, debería ser una funcion abstracta
+        }}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) // Creamos la actividad
         // Inflar el diseño usando DataBinding
@@ -112,5 +110,6 @@ class HomeActivity : AppCompatActivity(), ListFragment.OnShowClickListener , Com
             }
         }
         fun setUpListeners() {
+            // Inicializacion de los Listeners
         }
     }

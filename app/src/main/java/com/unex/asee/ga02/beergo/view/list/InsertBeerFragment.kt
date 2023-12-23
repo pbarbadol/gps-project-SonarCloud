@@ -1,9 +1,8 @@
 package com.unex.asee.ga02.beergo.view.list
 
+//import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,19 +11,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.Snackbar
-import com.unex.asee.ga02.beergo.BeerGoApplication
-import com.unex.asee.ga02.beergo.R
 import com.unex.asee.ga02.beergo.databinding.FragmentInsertBeerBinding
-import com.unex.asee.ga02.beergo.model.Beer
 import com.unex.asee.ga02.beergo.view.viewmodel.CheckViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
-//import com.unex.asee.ga02.beergo.utils.ChallengeAchievementFunction.ChallengeAchievementObserver
 import com.unex.asee.ga02.beergo.view.viewmodel.InsertBeerViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 /**
  * Fragmento para la inserción de nuevas cervezas.

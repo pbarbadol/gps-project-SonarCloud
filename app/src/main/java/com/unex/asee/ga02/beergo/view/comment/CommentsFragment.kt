@@ -29,7 +29,7 @@ class CommentsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: CommentsAdapter
 
-    interface OnShowClickListener {
+    fun interface OnShowClickListener {
         fun onShowClick(comment: Comment)
     }
 

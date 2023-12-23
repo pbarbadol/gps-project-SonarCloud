@@ -1,6 +1,5 @@
 package com.unex.asee.ga02.beergo.view.achievement
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +8,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.unex.asee.ga02.beergo.databinding.FragmentAchievementsBinding
-import com.unex.asee.ga02.beergo.model.Achievement
-import com.unex.asee.ga02.beergo.model.User
 import com.unex.asee.ga02.beergo.view.viewmodel.AchievementsViewModel
 import com.unex.asee.ga02.beergo.view.viewmodel.HomeViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * Fragmento que muestra la lista de logros.
