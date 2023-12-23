@@ -52,7 +52,7 @@ class UserRepository (private val userDao: UserDao) {
      */
     suspend fun registerUser(username: String, password: String): User? {
         val check = CredentialCheck.join(username, password, password)
-        var user: User? = null
+        var user: User?
         if (check.fail) {
             throw Exception(check.msg) // Lanza una excepción si el nombre de usuario no es válido.
         } else {

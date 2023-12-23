@@ -39,10 +39,12 @@ class CredentialCheck {
         }
 
         fun join(username: String, password: String, repassword: String): CredentialCheck {
-            return if (username.isBlank() || username.length < MINCHARS) checks[1]
-            else if (password.isBlank() || password.length < MINCHARS) checks[2]
-            else if (password!=repassword) checks[3]
-            else checks[0]
+            return when{
+                username.isBlank() || username.length < MINCHARS -> checks[1]
+                password.isBlank() || password.length < MINCHARS -> checks[2]
+                password!=repassword -> checks[3]
+                else -> checks[0]
+            }
         }
 
         fun passwordOk(password1: String, password2: String): CredentialCheck {

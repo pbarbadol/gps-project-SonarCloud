@@ -2,7 +2,6 @@ package com.unex.asee.ga02.beergo.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import java.time.LocalDate
 
 /**
  * La entidad `UserAchievementCrossRef` representa la relación muchos a muchos entre las entidades `User` y `Achievement`

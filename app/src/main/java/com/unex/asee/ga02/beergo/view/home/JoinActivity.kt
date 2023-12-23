@@ -8,11 +8,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.unex.asee.ga02.beergo.BeerGoApplication
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.ActivityJoinBinding
 import com.unex.asee.ga02.beergo.model.User
-import com.unex.asee.ga02.beergo.repository.UserRepository
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
 import com.unex.asee.ga02.beergo.view.viewmodel.JoinViewModel
 import kotlinx.coroutines.launch

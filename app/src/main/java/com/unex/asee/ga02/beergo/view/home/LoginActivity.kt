@@ -8,11 +8,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.unex.asee.ga02.beergo.BeerGoApplication
-import com.unex.asee.ga02.beergo.database.BeerGoDatabase
 import com.unex.asee.ga02.beergo.databinding.ActivityLoginBinding
 import com.unex.asee.ga02.beergo.model.User
-import com.unex.asee.ga02.beergo.repository.UserRepository
 import com.unex.asee.ga02.beergo.utils.CredentialCheck
 import com.unex.asee.ga02.beergo.view.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
@@ -77,7 +74,9 @@ class LoginActivity : AppCompatActivity(){
     /**
      * Inicializa las vistas utilizando el view binding.
      */
-    private fun setUpUI() {}
+    private fun setUpUI() {
+        //Lanza la interfaz de usuario
+    }
 
     /**
      * Configura los listeners para los botones.
@@ -106,7 +105,7 @@ class LoginActivity : AppCompatActivity(){
                 try {
                     // Intenta autenticar al usuario utilizando el UserRepository
                     val user = viewModel.loginUser(binding.etUsername.text.toString(), binding.etPassword.text.toString())
-                    navigateToHomeActivity(user, "Login successful")
+                    navigateToHomeActivity(user)
                 } catch (e: Exception) {
                     // Maneja excepciones relacionadas con la autenticación
                     notifyInvalidCredentials(e.message ?: "Authentication failed")
@@ -121,12 +120,11 @@ class LoginActivity : AppCompatActivity(){
     /**
      * Navega a la actividad principal después de un inicio de sesión exitoso.
      */
-    private fun navigateToHomeActivity(user: User, msg: String) {
-        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    private fun navigateToHomeActivity(user: User) {
         val intent = Intent(this, HomeActivity::class.java) //Crea un intent explícito para lanzar la actividad objetivo
         intent.putExtra(HomeActivity.LOGIN_USER, user)
         startActivity(intent) //Usa el método startActivity con el intent creado
-        HomeActivity.start(this, user) //Usa el método start de la clase HomeActivity
+        HomeActivity.start() //Usa el método start de la clase HomeActivity
     }
 
     /**
